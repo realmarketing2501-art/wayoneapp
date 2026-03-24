@@ -1,0 +1,117 @@
+import { useState } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
+import { mockWithdrawals, mockUser } from '@/data/mockData';
+import { Zap, Clock, Turtle } from 'lucide-react';
+import { cn } from '@/lib/utils';
+
+const withdrawTypes = [
+  { key: 'fast' as const, label: 'Veloce', time: '24h', fee: 20, icon: Zap, color: 'text-accent' },
+  { key: 'medium' as const, label: 'Medio', time: '48h', fee: 10, icon: Clock, color: 'text-primary' },
+  { key: 'slow' as const, label: 'Lento', time: '72h', fee: 5, icon: Turtle, color: 'text-way-sapphire' },
+];
+
+export default function WithdrawPage() {
+  const [amount, setAmount] = useState('');
+  const [wallet, setWallet] = useState('');
+  const [type, setType] = useState<'fast' | 'medium' | 'slow'>('medium');
+
+  const selected = withdrawTypes.find(t => t.key === type)!;
+  const numAmount = parseFloat(amount) || 0;
+  const fee = numAmount * selected.fee / 100;
+  const net = numAmount - fee;
+
+  return (
+    <div className="space-y-6 p-4">
+      <h2 className="font-display text-xl font-bold">Prelievo</h2>
+
+      <Card>
+        <CardContent className="space-y-4 p-5">
+          <div className="text-center">
+            <p className="text-sm text-muted-foreground">Saldo disponibile</p>
+            <p className="font-display text-2xl font-bold text-primary">{mockUser.balance.toLocaleString()} USDT</p>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Importo (USDT)</Label>
+            <Input type="number" placeholder="0.00" value={amount} onChange={e => setAmount(e.target.value)} />
+          </div>
+
+          <div className="space-y-2">
+            <Label>Indirizzo Wallet (USDT TRC-20)</Label>
+            <Input placeholder="T..." value={wallet} onChange={e => setWallet(e.target.value)} />
+          </div>
+
+          <div className="space-y-2">
+            <Label>Tipo di Prelievo</Label>
+            <div className="grid grid-cols-3 gap-2">
+              {withdrawTypes.map(t => (
+                <button
+                  key={t.key}
+                  onClick={() => setType(t.key)}
+                  className={cn(
+                    'flex flex-col items-center gap-1 rounded-xl border p-3 transition-colors',
+                    type === t.key ? 'border-primary bg-primary/10' : 'border-border bg-card hover:border-primary/30'
+                  )}
+                >
+                  <t.icon className={cn('h-5 w-5', t.color)} />
+                  <span className="text-sm font-medium text-foreground">{t.label}</span>
+                  <span className="text-xs text-muted-foreground">{t.time} • {t.fee}% fee</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {numAmount > 0 && (
+            <div className="rounded-lg bg-secondary p-3 text-sm">
+              <div className="flex justify-between"><span className="text-muted-foreground">Importo</span><span>{numAmount.toFixed(2)} USDT</span></div>
+              <div className="flex justify-between"><span className="text-muted-foreground">Fee ({selected.fee}%)</span><span className="text-destructive">-{fee.toFixed(2)} USDT</span></div>
+              <div className="mt-1 flex justify-between border-t border-border pt-1 font-semibold"><span>Netto</span><span className="text-primary">{net.toFixed(2)} USDT</span></div>
+            </div>
+          )}
+
+          <Button className="w-full" disabled={numAmount <= 0 || !wallet}>Conferma Prelievo</Button>
+        </CardContent>
+      </Card>
+
+      {/* History */}
+      <div>
+        <h3 className="mb-3 font-display text-lg font-semibold">Storico Prelievi</h3>
+        <Card>
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Data</TableHead>
+                  <TableHead>Importo</TableHead>
+                  <TableHead>Netto</TableHead>
+                  <TableHead>Tipo</TableHead>
+                  <TableHead>Stato</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {mockWithdrawals.map(w => (
+                  <TableRow key={w.id}>
+                    <TableCell className="text-xs">{w.date}</TableCell>
+                    <TableCell>{w.amount} USDT</TableCell>
+                    <TableCell className="text-primary">{w.net} USDT</TableCell>
+                    <TableCell className="text-xs capitalize">{w.type === 'fast' ? 'Veloce' : w.type === 'medium' ? 'Medio' : 'Lento'}</TableCell>
+                    <TableCell>
+                      <Badge variant={w.status === 'completed' ? 'default' : w.status === 'pending' ? 'secondary' : 'destructive'}>
+                        {w.status === 'completed' ? 'Completato' : w.status === 'pending' ? 'In attesa' : 'Fallito'}
+                      </Badge>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        </Card>
+      </div>
+    </div>
+  );
+}
