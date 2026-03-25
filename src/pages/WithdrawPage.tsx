@@ -5,7 +5,11 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
-import { mockWithdrawals, mockUser } from '@/data/mockData';
+import { useProfile } from '@/hooks/useProfile';
+import { useAuth } from '@/contexts/AuthContext';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/hooks/use-toast';
 import { Zap, Clock, Turtle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -19,11 +23,49 @@ export default function WithdrawPage() {
   const [amount, setAmount] = useState('');
   const [wallet, setWallet] = useState('');
   const [type, setType] = useState<'fast' | 'medium' | 'slow'>('medium');
+  const { user } = useAuth();
+  const { data: profile } = useProfile();
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
 
   const selected = withdrawTypes.find(t => t.key === type)!;
   const numAmount = parseFloat(amount) || 0;
   const fee = numAmount * selected.fee / 100;
   const net = numAmount - fee;
+  const balance = Number(profile?.balance ?? 0);
+
+  const { data: withdrawals = [] } = useQuery({
+    queryKey: ['withdrawals', user?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('withdrawals').select('*').eq('user_id', user!.id).order('created_at', { ascending: false });
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!user,
+  });
+
+  const withdrawMutation = useMutation({
+    mutationFn: async () => {
+      if (numAmount > balance) throw new Error('Saldo insufficiente');
+      const { error } = await supabase.from('withdrawals').insert({
+        user_id: user!.id,
+        amount: numAmount,
+        fee,
+        net,
+        wallet_address: wallet,
+        type,
+        status: 'pending',
+      });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['withdrawals'] });
+      toast({ title: 'Prelievo richiesto', description: `${net.toFixed(2)} USDT verranno inviati a ${wallet}` });
+      setAmount('');
+      setWallet('');
+    },
+    onError: (e: Error) => toast({ title: 'Errore', description: e.message, variant: 'destructive' }),
+  });
 
   return (
     <div className="space-y-6 p-4">
@@ -33,7 +75,7 @@ export default function WithdrawPage() {
         <CardContent className="space-y-4 p-5">
           <div className="text-center">
             <p className="text-sm text-muted-foreground">Saldo disponibile</p>
-            <p className="font-display text-2xl font-bold text-primary">{mockUser.balance.toLocaleString()} USDT</p>
+            <p className="font-display text-2xl font-bold text-primary">{balance.toLocaleString()} USDT</p>
           </div>
 
           <div className="space-y-2">
@@ -74,11 +116,12 @@ export default function WithdrawPage() {
             </div>
           )}
 
-          <Button className="w-full" disabled={numAmount <= 0 || !wallet}>Conferma Prelievo</Button>
+          <Button className="w-full" disabled={numAmount <= 0 || !wallet || withdrawMutation.isPending} onClick={() => withdrawMutation.mutate()}>
+            {withdrawMutation.isPending ? 'Elaborazione...' : 'Conferma Prelievo'}
+          </Button>
         </CardContent>
       </Card>
 
-      {/* History */}
       <div>
         <h3 className="mb-3 font-display text-lg font-semibold">Storico Prelievi</h3>
         <Card>
@@ -94,9 +137,11 @@ export default function WithdrawPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {mockWithdrawals.map(w => (
+                {withdrawals.length === 0 ? (
+                  <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground">Nessun prelievo</TableCell></TableRow>
+                ) : withdrawals.map(w => (
                   <TableRow key={w.id}>
-                    <TableCell className="text-xs">{w.date}</TableCell>
+                    <TableCell className="text-xs">{new Date(w.created_at).toLocaleDateString()}</TableCell>
                     <TableCell>{w.amount} USDT</TableCell>
                     <TableCell className="text-primary">{w.net} USDT</TableCell>
                     <TableCell className="text-xs capitalize">{w.type === 'fast' ? 'Veloce' : w.type === 'medium' ? 'Medio' : 'Lento'}</TableCell>

@@ -4,53 +4,95 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
+import { useToast } from '@/hooks/use-toast';
+import { ThemeToggle } from '@/components/ThemeToggle';
 
 export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('');
+  const [referral, setReferral] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { signIn, signUp, user } = useAuth();
+  const { toast } = useToast();
+
+  // Redirect if already logged in
+  if (user) {
+    navigate('/', { replace: true });
+    return null;
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+
+    if (isLogin) {
+      const { error } = await signIn(email, password);
+      if (error) {
+        toast({ title: 'Errore', description: error.message, variant: 'destructive' });
+      } else {
+        navigate('/');
+      }
+    } else {
+      const { error } = await signUp(email, password, username, referral || undefined);
+      if (error) {
+        toast({ title: 'Errore', description: error.message, variant: 'destructive' });
+      } else {
+        toast({ title: 'Registrazione completata!', description: 'Controlla la tua email per confermare l\'account.' });
+      }
+    }
+    setLoading(false);
+  };
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
+      <div className="absolute right-4 top-4">
+        <ThemeToggle />
+      </div>
       <div className="mb-8 text-center">
         <h1 className="font-display text-3xl font-bold">
-          <span className="text-primary">WAY</span> ONE
+          <span className="text-primary">WAY</span> <span className="text-foreground">ONE</span>
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">La piattaforma di investimento crypto</p>
       </div>
 
       <Card className="w-full max-w-sm">
-        <CardContent className="space-y-4 p-6">
-          <h2 className="font-display text-xl font-semibold text-center">{isLogin ? 'Accedi' : 'Registrati'}</h2>
+        <CardContent className="p-6">
+          <h2 className="font-display text-xl font-semibold text-center mb-4">{isLogin ? 'Accedi' : 'Registrati'}</h2>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {!isLogin && (
+              <div className="space-y-2">
+                <Label>Username</Label>
+                <Input placeholder="Il tuo username" value={username} onChange={e => setUsername(e.target.value)} required />
+              </div>
+            )}
 
-          {!isLogin && (
             <div className="space-y-2">
-              <Label>Username</Label>
-              <Input placeholder="Il tuo username" />
+              <Label>Email</Label>
+              <Input type="email" placeholder="email@esempio.com" value={email} onChange={e => setEmail(e.target.value)} required />
             </div>
-          )}
 
-          <div className="space-y-2">
-            <Label>Email</Label>
-            <Input type="email" placeholder="email@esempio.com" />
-          </div>
-
-          <div className="space-y-2">
-            <Label>Password</Label>
-            <Input type="password" placeholder="••••••••" />
-          </div>
-
-          {!isLogin && (
             <div className="space-y-2">
-              <Label>Codice Referral (opzionale)</Label>
-              <Input placeholder="WAY1-XXXXX" />
+              <Label>Password</Label>
+              <Input type="password" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} />
             </div>
-          )}
 
-          <Button className="w-full" onClick={() => navigate('/')}>
-            {isLogin ? 'Accedi' : 'Crea Account'}
-          </Button>
+            {!isLogin && (
+              <div className="space-y-2">
+                <Label>Codice Referral (opzionale)</Label>
+                <Input placeholder="WAY1-XXXXX" value={referral} onChange={e => setReferral(e.target.value)} />
+              </div>
+            )}
 
-          <p className="text-center text-sm text-muted-foreground">
+            <Button className="w-full" type="submit" disabled={loading}>
+              {loading ? 'Caricamento...' : isLogin ? 'Accedi' : 'Crea Account'}
+            </Button>
+          </form>
+
+          <p className="text-center text-sm text-muted-foreground mt-4">
             {isLogin ? 'Non hai un account?' : 'Hai già un account?'}{' '}
             <button onClick={() => setIsLogin(!isLogin)} className="font-medium text-primary hover:underline">
               {isLogin ? 'Registrati' : 'Accedi'}

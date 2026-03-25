@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Wallet, ArrowDownToLine, ClipboardList, UserPlus, ChevronRight, Clock, FileText, HelpCircle, PlayCircle } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { LevelBadge } from '@/components/LevelBadge';
-import { mockUser } from '@/data/mockData';
+import { useProfile } from '@/hooks/useProfile';
 import { getLevelInfo } from '@/lib/levels';
 import { useNavigate } from 'react-router-dom';
 
@@ -20,12 +20,14 @@ const quickActions = [
   { icon: UserPlus, label: 'Invite', path: '/network', color: 'text-way-diamond' },
 ];
 
-function useCountdown(target: string) {
+function useCountdown() {
   const [timeLeft, setTimeLeft] = useState('');
   useEffect(() => {
     const update = () => {
-      const diff = new Date(target).getTime() - Date.now();
-      if (diff <= 0) { setTimeLeft('00:00:00'); return; }
+      const now = new Date();
+      const next = new Date(now);
+      next.setHours(24, 0, 0, 0);
+      const diff = next.getTime() - now.getTime();
       const h = Math.floor(diff / 3600000);
       const m = Math.floor((diff % 3600000) / 60000);
       const s = Math.floor((diff % 60000) / 1000);
@@ -34,24 +36,33 @@ function useCountdown(target: string) {
     update();
     const id = setInterval(update, 1000);
     return () => clearInterval(id);
-  }, [target]);
+  }, []);
   return timeLeft;
 }
 
 export default function HomePage() {
   const [bannerIdx, setBannerIdx] = useState(0);
   const navigate = useNavigate();
-  const countdown = useCountdown(mockUser.nextPayout);
-  const levelInfo = getLevelInfo(mockUser.level);
+  const countdown = useCountdown();
+  const { data: profile, isLoading } = useProfile();
+
+  const level = profile?.level ?? 'PRE';
+  const levelInfo = getLevelInfo(level);
+  const balance = Number(profile?.balance ?? 0);
+  const totalEarned = Number(profile?.total_earned ?? 0);
+  const dailyEarning = balance * (levelInfo.dailyReturn / 100);
 
   useEffect(() => {
     const id = setInterval(() => setBannerIdx(i => (i + 1) % banners.length), 4000);
     return () => clearInterval(id);
   }, []);
 
+  if (isLoading) {
+    return <div className="flex items-center justify-center p-8"><div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" /></div>;
+  }
+
   return (
     <div className="space-y-6 p-4">
-      {/* Banner */}
       <motion.div
         key={bannerIdx}
         initial={{ opacity: 0, x: 20 }}
@@ -62,7 +73,6 @@ export default function HomePage() {
         <p className="mt-1 text-sm text-muted-foreground">{banners[bannerIdx].subtitle}</p>
       </motion.div>
 
-      {/* Quick Actions */}
       <div className="grid grid-cols-4 gap-3">
         {quickActions.map((a) => (
           <button
@@ -78,20 +88,19 @@ export default function HomePage() {
         ))}
       </div>
 
-      {/* Balance Card */}
       <Card className="glow-green border-primary/20">
         <CardContent className="p-5">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-muted-foreground">Saldo Totale</p>
-              <p className="font-display text-3xl font-bold text-foreground">{mockUser.balance.toLocaleString()} <span className="text-lg text-muted-foreground">USDT</span></p>
+              <p className="font-display text-3xl font-bold text-foreground">{balance.toLocaleString()} <span className="text-lg text-muted-foreground">USDT</span></p>
             </div>
-            <LevelBadge level={mockUser.level} />
+            <LevelBadge level={level} />
           </div>
           <div className="mt-4 grid grid-cols-2 gap-4">
             <div className="rounded-lg bg-secondary p-3">
               <p className="text-xs text-muted-foreground">Rendimento Giornaliero</p>
-              <p className="font-display text-lg font-semibold text-primary">+{mockUser.dailyEarning} USDT</p>
+              <p className="font-display text-lg font-semibold text-primary">+{dailyEarning.toFixed(2)} USDT</p>
               <p className="text-xs text-primary/70">{levelInfo.dailyReturn}%/giorno</p>
             </div>
             <div className="rounded-lg bg-secondary p-3">
@@ -105,32 +114,30 @@ export default function HomePage() {
         </CardContent>
       </Card>
 
-      {/* Stats Row */}
       <div className="grid grid-cols-3 gap-3">
         <Card>
           <CardContent className="p-3 text-center">
             <p className="text-xs text-muted-foreground">Guadagnato</p>
-            <p className="font-display text-lg font-bold text-primary">{mockUser.totalEarned}</p>
+            <p className="font-display text-lg font-bold text-primary">{totalEarned.toFixed(2)}</p>
             <p className="text-xs text-muted-foreground">USDT</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-3 text-center">
             <p className="text-xs text-muted-foreground">Referral</p>
-            <p className="font-display text-lg font-bold text-foreground">{mockUser.directReferrals}</p>
+            <p className="font-display text-lg font-bold text-foreground">{profile?.direct_referrals ?? 0}</p>
             <p className="text-xs text-muted-foreground">diretti</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-3 text-center">
             <p className="text-xs text-muted-foreground">Rete</p>
-            <p className="font-display text-lg font-bold text-foreground">{mockUser.totalNetwork}</p>
+            <p className="font-display text-lg font-bold text-foreground">{profile?.total_network ?? 0}</p>
             <p className="text-xs text-muted-foreground">totale</p>
           </CardContent>
         </Card>
       </div>
 
-      {/* Academy */}
       <div>
         <h3 className="mb-3 font-display text-lg font-semibold text-foreground">Academy</h3>
         <div className="space-y-2">

@@ -1,5 +1,4 @@
-import { type LevelName } from '@/data/mockData';
-import { getLevelInfo, getLevelColorClass, getLevelBgClass } from '@/lib/levels';
+import { type LevelName, getLevelInfo, getLevelColorClass, getLevelBgClass } from '@/lib/levels';
 import { cn } from '@/lib/utils';
 import { Shield } from 'lucide-react';
 

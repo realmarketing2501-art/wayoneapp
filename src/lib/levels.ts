@@ -1,6 +1,27 @@
-import { LEVELS, type LevelName } from '@/data/mockData';
+import type { Database } from '@/integrations/supabase/types';
 
-export function getLevelInfo(name: LevelName) {
+export type LevelName = Database['public']['Enums']['level_name'];
+
+export interface LevelInfo {
+  name: LevelName;
+  label: string;
+  dailyReturn: number;
+  directReferrals: number;
+  totalUnits: number;
+  networkBonus: number;
+}
+
+export const LEVELS: LevelInfo[] = [
+  { name: 'PRE', label: 'Pre-Qualifica', dailyReturn: 0.80, directReferrals: 0, totalUnits: 0, networkBonus: 0 },
+  { name: 'BRONZ', label: 'Bronz', dailyReturn: 1.0, directReferrals: 6, totalUnits: 6, networkBonus: 10 },
+  { name: 'SILVER', label: 'Silver', dailyReturn: 2.0, directReferrals: 36, totalUnits: 36, networkBonus: 15 },
+  { name: 'SILVER_ELITE', label: 'Silver Elite', dailyReturn: 3.0, directReferrals: 216, totalUnits: 216, networkBonus: 20 },
+  { name: 'GOLD', label: 'Gold', dailyReturn: 4.0, directReferrals: 1296, totalUnits: 1296, networkBonus: 20 },
+  { name: 'ZAFFIRO', label: 'Zaffiro', dailyReturn: 5.0, directReferrals: 7776, totalUnits: 7776, networkBonus: 25 },
+  { name: 'DIAMANTE', label: 'Diamante', dailyReturn: 6.0, directReferrals: 46656, totalUnits: 46656, networkBonus: 30 },
+];
+
+export function getLevelInfo(name: LevelName): LevelInfo {
   return LEVELS.find(l => l.name === name) || LEVELS[0];
 }
 
