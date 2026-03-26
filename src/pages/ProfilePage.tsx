@@ -12,9 +12,18 @@ import { supabase } from '@/integrations/supabase/client';
 
 export default function ProfilePage() {
   const { data: profile } = useProfile();
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
+
+  const { data: isAdmin } = useQuery({
+    queryKey: ['is_admin', user?.id],
+    queryFn: async () => {
+      const { data } = await supabase.from('user_roles').select('role').eq('user_id', user!.id).eq('role', 'admin');
+      return (data?.length ?? 0) > 0;
+    },
+    enabled: !!user,
+  });
 
   const handleLogout = async () => {
     await signOut();
