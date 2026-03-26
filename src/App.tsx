@@ -16,6 +16,8 @@ import WithdrawPage from "./pages/WithdrawPage";
 import ProfilePage from "./pages/ProfilePage";
 import TaskCenterPage from "./pages/TaskCenterPage";
 import LoginPage from "./pages/LoginPage";
+import DepositPage from "./pages/DepositPage";
+import AdminPage from "./pages/AdminPage";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -40,6 +42,8 @@ const App = () => (
                 <Route path="/withdraw" element={<WithdrawPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/tasks" element={<TaskCenterPage />} />
+                <Route path="/deposit" element={<DepositPage />} />
+                <Route path="/admin" element={<AdminPage />} />
               </Route>
               <Route path="*" element={<NotFound />} />
             </Routes>
