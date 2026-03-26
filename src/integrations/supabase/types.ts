@@ -14,6 +14,107 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_settings: {
+        Row: {
+          description: string | null
+          key: string
+          updated_at: string | null
+          value: string
+        }
+        Insert: {
+          description?: string | null
+          key: string
+          updated_at?: string | null
+          value: string
+        }
+        Update: {
+          description?: string | null
+          key?: string
+          updated_at?: string | null
+          value?: string
+        }
+        Relationships: []
+      }
+      deposits: {
+        Row: {
+          amount: number
+          confirmations: number | null
+          confirmed_at: string | null
+          created_at: string
+          from_address: string | null
+          id: string
+          network: string
+          status: string
+          to_address: string
+          tx_hash: string | null
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          confirmations?: number | null
+          confirmed_at?: string | null
+          created_at?: string
+          from_address?: string | null
+          id?: string
+          network?: string
+          status?: string
+          to_address: string
+          tx_hash?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          confirmations?: number | null
+          confirmed_at?: string | null
+          created_at?: string
+          from_address?: string | null
+          id?: string
+          network?: string
+          status?: string
+          to_address?: string
+          tx_hash?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      fund_investments: {
+        Row: {
+          amount: number
+          created_at: string
+          fund_id: string
+          id: string
+          status: string
+          total_earned: number | null
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          fund_id: string
+          id?: string
+          status?: string
+          total_earned?: number | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          fund_id?: string
+          id?: string
+          status?: string
+          total_earned?: number | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fund_investments_fund_id_fkey"
+            columns: ["fund_id"]
+            isOneToOne: false
+            referencedRelation: "special_funds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       income_records: {
         Row: {
           amount: number
@@ -132,6 +233,102 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      network_tree: {
+        Row: {
+          branch_position: number
+          created_at: string
+          id: string
+          investment_amount: number | null
+          is_active: boolean | null
+          level: number
+          parent_id: string | null
+          user_id: string
+        }
+        Insert: {
+          branch_position: number
+          created_at?: string
+          id?: string
+          investment_amount?: number | null
+          is_active?: boolean | null
+          level?: number
+          parent_id?: string | null
+          user_id: string
+        }
+        Update: {
+          branch_position?: number
+          created_at?: string
+          id?: string
+          investment_amount?: number | null
+          is_active?: boolean | null
+          level?: number
+          parent_id?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          message: string
+          target_audience: string | null
+          title: string
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          message: string
+          target_audience?: string | null
+          title: string
+          type?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          message?: string
+          target_audience?: string | null
+          title?: string
+          type?: string
+        }
+        Relationships: []
+      }
+      popup_notifications: {
+        Row: {
+          created_at: string
+          expires_at: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean | null
+          message: string
+          target_audience: string | null
+          title: string
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          message: string
+          target_audience?: string | null
+          title: string
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          message?: string
+          target_audience?: string | null
+          title?: string
+        }
+        Relationships: []
       }
       profiles: {
         Row: {
@@ -275,6 +472,41 @@ export type Database = {
           type?: string
         }
         Relationships: []
+      }
+      user_notifications: {
+        Row: {
+          created_at: string
+          id: string
+          is_read: boolean | null
+          notification_id: string
+          read_at: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          notification_id: string
+          read_at?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          is_read?: boolean | null
+          notification_id?: string
+          read_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_notifications_notification_id_fkey"
+            columns: ["notification_id"]
+            isOneToOne: false
+            referencedRelation: "notifications"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
