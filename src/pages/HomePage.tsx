@@ -14,7 +14,7 @@ const banners = [
 ];
 
 const quickActions = [
-  { icon: Wallet, label: 'Deposit', path: '/invest', color: 'text-primary' },
+  { icon: Wallet, label: 'Deposit', path: '/deposit', color: 'text-primary' },
   { icon: ArrowDownToLine, label: 'Withdraw', path: '/withdraw', color: 'text-accent' },
   { icon: ClipboardList, label: 'Tasks', path: '/tasks', color: 'text-way-sapphire' },
   { icon: UserPlus, label: 'Invite', path: '/network', color: 'text-way-diamond' },
