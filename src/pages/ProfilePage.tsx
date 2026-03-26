@@ -4,15 +4,26 @@ import { LevelBadge } from '@/components/LevelBadge';
 import { useProfile } from '@/hooks/useProfile';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
-import { User, Shield, Wallet, Globe, LogOut, ChevronRight, FileCheck, Sun, Moon } from 'lucide-react';
+import { User, Shield, Wallet, Globe, LogOut, ChevronRight, FileCheck, Sun, Moon, ShieldCheck } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
 
 export default function ProfilePage() {
   const { data: profile } = useProfile();
-  const { signOut } = useAuth();
+  const { signOut, user } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
+
+  const { data: isAdmin } = useQuery({
+    queryKey: ['is_admin', user?.id],
+    queryFn: async () => {
+      const { data } = await supabase.from('user_roles').select('role').eq('user_id', user!.id).eq('role', 'admin');
+      return (data?.length ?? 0) > 0;
+    },
+    enabled: !!user,
+  });
 
   const handleLogout = async () => {
     await signOut();
@@ -86,6 +97,20 @@ export default function ProfilePage() {
           </button>
         ))}
       </div>
+
+      {isAdmin && (
+        <button
+          onClick={() => navigate('/admin')}
+          className="flex w-full items-center gap-3 rounded-xl border border-primary/40 bg-primary/10 p-4 transition-colors hover:border-primary/60"
+        >
+          <ShieldCheck className="h-5 w-5 text-primary" />
+          <div className="flex-1 text-left">
+            <p className="text-sm font-medium text-foreground">Admin Panel</p>
+            <p className="text-xs text-muted-foreground">Gestione piattaforma</p>
+          </div>
+          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+        </button>
+      )}
 
       <Button variant="destructive" className="w-full gap-2" onClick={handleLogout}>
         <LogOut className="h-4 w-4" /> Logout
