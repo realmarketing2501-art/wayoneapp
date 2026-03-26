@@ -98,6 +98,20 @@ export default function ProfilePage() {
         ))}
       </div>
 
+      {isAdmin && (
+        <button
+          onClick={() => navigate('/admin')}
+          className="flex w-full items-center gap-3 rounded-xl border border-primary/40 bg-primary/10 p-4 transition-colors hover:border-primary/60"
+        >
+          <ShieldCheck className="h-5 w-5 text-primary" />
+          <div className="flex-1 text-left">
+            <p className="text-sm font-medium text-foreground">Admin Panel</p>
+            <p className="text-xs text-muted-foreground">Gestione piattaforma</p>
+          </div>
+          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+        </button>
+      )}
+
       <Button variant="destructive" className="w-full gap-2" onClick={handleLogout}>
         <LogOut className="h-4 w-4" /> Logout
       </Button>
