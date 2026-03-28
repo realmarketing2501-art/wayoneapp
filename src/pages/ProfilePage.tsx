@@ -38,42 +38,44 @@ export default function ProfilePage() {
   ];
 
   return (
-    <div className="space-y-6 p-4">
+    <div className="space-y-4 p-4">
+      {/* Profile header */}
       <Card className="border-primary/20">
-        <CardContent className="flex items-center gap-4 p-5">
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/20">
-            <User className="h-8 w-8 text-primary" />
+        <CardContent className="flex items-center gap-3 p-4 sm:gap-4 sm:p-5">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-primary/20 sm:h-16 sm:w-16">
+            <User className="h-7 w-7 text-primary sm:h-8 sm:w-8" />
           </div>
-          <div className="flex-1">
-            <h2 className="font-display text-xl font-bold text-foreground">{profile?.username ?? '...'}</h2>
+          <div className="min-w-0 flex-1">
+            <h2 className="font-display text-lg font-bold text-foreground truncate sm:text-xl">{profile?.username ?? '...'}</h2>
             <LevelBadge level={profile?.level ?? 'PRE'} size="sm" />
-            <p className="mt-1 text-xs text-muted-foreground">
+            <p className="mt-1 text-[0.65rem] text-muted-foreground sm:text-xs">
               Membro dal {profile?.created_at ? new Date(profile.created_at).toLocaleDateString('it-IT') : '...'}
             </p>
           </div>
         </CardContent>
       </Card>
 
-      <div className="grid grid-cols-2 gap-3">
+      {/* Balance cards */}
+      <div className="grid grid-cols-2 gap-2 sm:gap-3">
         <Card>
-          <CardContent className="p-4 text-center">
-            <p className="text-xs text-muted-foreground">Saldo</p>
-            <p className="font-display text-lg font-bold text-primary">{Number(profile?.balance ?? 0).toLocaleString()}</p>
-            <p className="text-xs text-muted-foreground">USDT</p>
+          <CardContent className="p-3 text-center sm:p-4">
+            <p className="text-[0.65rem] text-muted-foreground sm:text-xs">Disponibile</p>
+            <p className="font-display text-base font-bold text-primary sm:text-lg">{Number(profile?.balance ?? 0).toLocaleString()}</p>
+            <p className="text-[0.6rem] text-muted-foreground">USDT</p>
           </CardContent>
         </Card>
         <Card>
-          <CardContent className="p-4 text-center">
-            <p className="text-xs text-muted-foreground">Guadagnato</p>
-            <p className="font-display text-lg font-bold text-accent">{Number(profile?.total_earned ?? 0).toLocaleString()}</p>
-            <p className="text-xs text-muted-foreground">USDT</p>
+          <CardContent className="p-3 text-center sm:p-4">
+            <p className="text-[0.65rem] text-muted-foreground sm:text-xs">Guadagnato</p>
+            <p className="font-display text-base font-bold text-accent sm:text-lg">{Number(profile?.total_earned ?? 0).toLocaleString()}</p>
+            <p className="text-[0.6rem] text-muted-foreground">USDT</p>
           </CardContent>
         </Card>
       </div>
 
       {/* Theme toggle */}
       <Card>
-        <CardContent className="flex items-center justify-between p-4">
+        <CardContent className="flex items-center justify-between p-3.5 sm:p-4">
           <div className="flex items-center gap-3">
             {theme === 'dark' ? <Moon className="h-5 w-5 text-primary" /> : <Sun className="h-5 w-5 text-primary" />}
             <div>
@@ -85,23 +87,25 @@ export default function ProfilePage() {
         </CardContent>
       </Card>
 
-      <div className="space-y-2">
+      {/* Menu items */}
+      <div className="space-y-1.5">
         {menuItems.map(item => (
-          <button key={item.label} className="flex w-full items-center gap-3 rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/30">
-            <item.icon className="h-5 w-5 text-primary" />
-            <div className="flex-1 text-left">
+          <button key={item.label} className="flex w-full items-center gap-3 rounded-xl border border-border bg-card p-3.5 transition-colors hover:border-primary/30 active:scale-[0.98]">
+            <item.icon className="h-5 w-5 shrink-0 text-primary" />
+            <div className="flex-1 text-left min-w-0">
               <p className="text-sm font-medium text-foreground">{item.label}</p>
               <p className="text-xs text-muted-foreground">{item.desc}</p>
             </div>
-            <ChevronRight className="h-4 w-4 text-muted-foreground" />
+            <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
           </button>
         ))}
       </div>
 
+      {/* Admin link */}
       {isAdmin && (
         <button
           onClick={() => navigate('/admin')}
-          className="flex w-full items-center gap-3 rounded-xl border border-primary/40 bg-primary/10 p-4 transition-colors hover:border-primary/60"
+          className="flex w-full items-center gap-3 rounded-xl border border-primary/40 bg-primary/10 p-3.5 transition-colors hover:border-primary/60 active:scale-[0.98]"
         >
           <ShieldCheck className="h-5 w-5 text-primary" />
           <div className="flex-1 text-left">

@@ -44,6 +44,7 @@ export type Database = {
           from_address: string | null
           id: string
           network: string
+          reviewed_by: string | null
           status: string
           to_address: string
           tx_hash: string | null
@@ -57,6 +58,7 @@ export type Database = {
           from_address?: string | null
           id?: string
           network?: string
+          reviewed_by?: string | null
           status?: string
           to_address: string
           tx_hash?: string | null
@@ -70,6 +72,7 @@ export type Database = {
           from_address?: string | null
           id?: string
           network?: string
+          reviewed_by?: string | null
           status?: string
           to_address?: string
           tx_hash?: string | null
@@ -334,8 +337,11 @@ export type Database = {
         Row: {
           avatar_url: string | null
           balance: number
+          balance_available: number
+          balance_locked: number
           created_at: string
           direct_referrals: number
+          has_confirmed_deposit: boolean
           id: string
           language: string | null
           level: Database["public"]["Enums"]["level_name"]
@@ -351,8 +357,11 @@ export type Database = {
         Insert: {
           avatar_url?: string | null
           balance?: number
+          balance_available?: number
+          balance_locked?: number
           created_at?: string
           direct_referrals?: number
+          has_confirmed_deposit?: boolean
           id?: string
           language?: string | null
           level?: Database["public"]["Enums"]["level_name"]
@@ -368,8 +377,11 @@ export type Database = {
         Update: {
           avatar_url?: string | null
           balance?: number
+          balance_available?: number
+          balance_locked?: number
           created_at?: string
           direct_referrals?: number
+          has_confirmed_deposit?: boolean
           id?: string
           language?: string | null
           level?: Database["public"]["Enums"]["level_name"]
@@ -564,6 +576,51 @@ export type Database = {
           },
         ]
       }
+      wallet_transactions: {
+        Row: {
+          amount: number
+          asset: string
+          balance_after: number | null
+          created_at: string
+          description: string | null
+          direction: string
+          id: string
+          reference_id: string | null
+          reference_type: string | null
+          status: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          asset?: string
+          balance_after?: number | null
+          created_at?: string
+          description?: string | null
+          direction: string
+          id?: string
+          reference_id?: string | null
+          reference_type?: string | null
+          status?: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          asset?: string
+          balance_after?: number | null
+          created_at?: string
+          description?: string | null
+          direction?: string
+          id?: string
+          reference_id?: string | null
+          reference_type?: string | null
+          status?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       wallets: {
         Row: {
           address: string
@@ -598,6 +655,7 @@ export type Database = {
           fee: number
           id: string
           net: number
+          reviewed_by: string | null
           status: string
           tx_hash: string | null
           type: string
@@ -611,6 +669,7 @@ export type Database = {
           fee: number
           id?: string
           net: number
+          reviewed_by?: string | null
           status?: string
           tx_hash?: string | null
           type: string
@@ -624,6 +683,7 @@ export type Database = {
           fee?: number
           id?: string
           net?: number
+          reviewed_by?: string | null
           status?: string
           tx_hash?: string | null
           type?: string

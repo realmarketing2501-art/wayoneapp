@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { ArrowLeft } from 'lucide-react';
 
 export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -19,9 +20,8 @@ export default function LoginPage() {
   const { signIn, signUp, user } = useAuth();
   const { toast } = useToast();
 
-  // Redirect if already logged in
   if (user) {
-    navigate('/', { replace: true });
+    navigate('/home', { replace: true });
     return null;
   }
 
@@ -34,7 +34,7 @@ export default function LoginPage() {
       if (error) {
         toast({ title: 'Errore', description: error.message, variant: 'destructive' });
       } else {
-        navigate('/');
+        navigate('/home');
       }
     } else {
       const { error } = await signUp(email, password, username, referral || undefined);
@@ -48,11 +48,17 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
+    <div className="flex min-h-[100dvh] flex-col items-center justify-center bg-background px-4 py-8">
+      <div className="absolute left-4 top-4 flex items-center gap-2">
+        <Button variant="ghost" size="icon" onClick={() => navigate('/')}>
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
+      </div>
       <div className="absolute right-4 top-4">
         <ThemeToggle />
       </div>
-      <div className="mb-8 text-center">
+
+      <div className="mb-6 text-center">
         <h1 className="font-display text-3xl font-bold">
           <span className="text-primary">WAY</span> <span className="text-foreground">ONE</span>
         </h1>
@@ -60,29 +66,29 @@ export default function LoginPage() {
       </div>
 
       <Card className="w-full max-w-sm">
-        <CardContent className="p-6">
-          <h2 className="font-display text-xl font-semibold text-center mb-4">{isLogin ? 'Accedi' : 'Registrati'}</h2>
-          <form onSubmit={handleSubmit} className="space-y-4">
+        <CardContent className="p-5 sm:p-6">
+          <h2 className="font-display text-lg font-semibold text-center mb-4 sm:text-xl">{isLogin ? 'Accedi' : 'Registrati'}</h2>
+          <form onSubmit={handleSubmit} className="space-y-3.5">
             {!isLogin && (
-              <div className="space-y-2">
-                <Label>Username</Label>
+              <div className="space-y-1.5">
+                <Label className="text-sm">Username</Label>
                 <Input placeholder="Il tuo username" value={username} onChange={e => setUsername(e.target.value)} required />
               </div>
             )}
 
-            <div className="space-y-2">
-              <Label>Email</Label>
+            <div className="space-y-1.5">
+              <Label className="text-sm">Email</Label>
               <Input type="email" placeholder="email@esempio.com" value={email} onChange={e => setEmail(e.target.value)} required />
             </div>
 
-            <div className="space-y-2">
-              <Label>Password</Label>
+            <div className="space-y-1.5">
+              <Label className="text-sm">Password</Label>
               <Input type="password" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} />
             </div>
 
             {!isLogin && (
-              <div className="space-y-2">
-                <Label>Codice Referral (opzionale)</Label>
+              <div className="space-y-1.5">
+                <Label className="text-sm">Codice Referral (opzionale)</Label>
                 <Input placeholder="WAY1-XXXXX" value={referral} onChange={e => setReferral(e.target.value)} />
               </div>
             )}
