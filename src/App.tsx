@@ -8,6 +8,7 @@ import { ThemeProvider } from "./contexts/ThemeContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AppLayout from "./components/AppLayout";
 import PwaInstallPrompt from "./components/PwaInstallPrompt";
+import Index from "./pages/Index";
 import HomePage from "./pages/HomePage";
 import InvestPage from "./pages/InvestPage";
 import NetworkPage from "./pages/NetworkPage";
@@ -33,10 +34,12 @@ const App = () => (
           <PwaInstallPrompt />
           <BrowserRouter>
             <Routes>
+              {/* Landing page - public */}
+              <Route path="/" element={<Index />} />
               <Route path="/login" element={<LoginPage />} />
-              {/* Public routes - viewable without login */}
+              {/* App pages - viewable without login */}
               <Route element={<AppLayout />}>
-                <Route path="/" element={<HomePage />} />
+                <Route path="/home" element={<HomePage />} />
                 <Route path="/invest" element={<InvestPage />} />
                 <Route path="/network" element={<NetworkPage />} />
                 <Route path="/income" element={<IncomePage />} />

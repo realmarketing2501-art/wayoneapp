@@ -4,13 +4,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from '@/components/ui/table';
 import { useProfile } from '@/hooks/useProfile';
 import { useAuth } from '@/contexts/AuthContext';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Zap, Clock, Turtle } from 'lucide-react';
+import { Zap, Clock, Turtle, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const withdrawTypes = [
@@ -47,6 +46,8 @@ export default function WithdrawPage() {
   const withdrawMutation = useMutation({
     mutationFn: async () => {
       if (numAmount > balance) throw new Error('Saldo insufficiente');
+      if (numAmount <= 0) throw new Error('Importo non valido');
+      if (!wallet.trim()) throw new Error('Inserisci un indirizzo wallet');
       const { error } = await supabase.from('withdrawals').insert({
         user_id: user!.id,
         amount: numAmount,
@@ -60,7 +61,7 @@ export default function WithdrawPage() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['withdrawals'] });
-      toast({ title: 'Prelievo richiesto', description: `${net.toFixed(2)} USDT verranno inviati a ${wallet}` });
+      toast({ title: 'Prelievo richiesto', description: `La richiesta di ${net.toFixed(2)} USDT è in attesa di approvazione.` });
       setAmount('');
       setWallet('');
     },
@@ -68,41 +69,49 @@ export default function WithdrawPage() {
   });
 
   return (
-    <div className="space-y-6 p-4">
-      <h2 className="font-display text-xl font-bold">Prelievo</h2>
+    <div className="space-y-5 p-4">
+      <h2 className="font-display text-lg font-bold sm:text-xl">Prelievo</h2>
+
+      {/* Info */}
+      <div className="flex items-start gap-2 rounded-lg border border-primary/20 bg-primary/5 p-3">
+        <Info className="h-4 w-4 shrink-0 text-primary mt-0.5" />
+        <p className="text-xs text-muted-foreground">
+          I prelievi vengono processati dopo approvazione. Il saldo verrà aggiornato alla conferma.
+        </p>
+      </div>
 
       <Card>
-        <CardContent className="space-y-4 p-5">
+        <CardContent className="space-y-4 p-4 sm:p-5">
           <div className="text-center">
-            <p className="text-sm text-muted-foreground">Saldo disponibile</p>
+            <p className="text-xs text-muted-foreground sm:text-sm">Saldo disponibile</p>
             <p className="font-display text-2xl font-bold text-primary">{balance.toLocaleString()} USDT</p>
           </div>
 
-          <div className="space-y-2">
-            <Label>Importo (USDT)</Label>
+          <div className="space-y-1.5">
+            <Label className="text-sm">Importo (USDT)</Label>
             <Input type="number" placeholder="0.00" value={amount} onChange={e => setAmount(e.target.value)} />
           </div>
 
-          <div className="space-y-2">
-            <Label>Indirizzo Wallet (USDT TRC-20)</Label>
+          <div className="space-y-1.5">
+            <Label className="text-sm">Indirizzo Wallet (USDT TRC-20)</Label>
             <Input placeholder="T..." value={wallet} onChange={e => setWallet(e.target.value)} />
           </div>
 
-          <div className="space-y-2">
-            <Label>Tipo di Prelievo</Label>
+          <div className="space-y-1.5">
+            <Label className="text-sm">Tipo di Prelievo</Label>
             <div className="grid grid-cols-3 gap-2">
               {withdrawTypes.map(t => (
                 <button
                   key={t.key}
                   onClick={() => setType(t.key)}
                   className={cn(
-                    'flex flex-col items-center gap-1 rounded-xl border p-3 transition-colors',
+                    'flex flex-col items-center gap-1 rounded-xl border p-2.5 transition-colors',
                     type === t.key ? 'border-primary bg-primary/10' : 'border-border bg-card hover:border-primary/30'
                   )}
                 >
-                  <t.icon className={cn('h-5 w-5', t.color)} />
-                  <span className="text-sm font-medium text-foreground">{t.label}</span>
-                  <span className="text-xs text-muted-foreground">{t.time} • {t.fee}% fee</span>
+                  <t.icon className={cn('h-4 w-4 sm:h-5 sm:w-5', t.color)} />
+                  <span className="text-xs font-medium text-foreground">{t.label}</span>
+                  <span className="text-[0.6rem] text-muted-foreground">{t.time} · {t.fee}%</span>
                 </button>
               ))}
             </div>
@@ -110,9 +119,9 @@ export default function WithdrawPage() {
 
           {numAmount > 0 && (
             <div className="rounded-lg bg-secondary p-3 text-sm">
-              <div className="flex justify-between"><span className="text-muted-foreground">Importo</span><span>{numAmount.toFixed(2)} USDT</span></div>
-              <div className="flex justify-between"><span className="text-muted-foreground">Fee ({selected.fee}%)</span><span className="text-destructive">-{fee.toFixed(2)} USDT</span></div>
-              <div className="mt-1 flex justify-between border-t border-border pt-1 font-semibold"><span>Netto</span><span className="text-primary">{net.toFixed(2)} USDT</span></div>
+              <div className="flex justify-between text-xs"><span className="text-muted-foreground">Importo</span><span>{numAmount.toFixed(2)} USDT</span></div>
+              <div className="flex justify-between text-xs"><span className="text-muted-foreground">Fee ({selected.fee}%)</span><span className="text-destructive">-{fee.toFixed(2)} USDT</span></div>
+              <div className="mt-1 flex justify-between border-t border-border pt-1 text-sm font-semibold"><span>Netto</span><span className="text-primary">{net.toFixed(2)} USDT</span></div>
             </div>
           )}
 
@@ -122,41 +131,31 @@ export default function WithdrawPage() {
         </CardContent>
       </Card>
 
-      <div>
-        <h3 className="mb-3 font-display text-lg font-semibold">Storico Prelievi</h3>
-        <Card>
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Data</TableHead>
-                  <TableHead>Importo</TableHead>
-                  <TableHead>Netto</TableHead>
-                  <TableHead>Tipo</TableHead>
-                  <TableHead>Stato</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {withdrawals.length === 0 ? (
-                  <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground">Nessun prelievo</TableCell></TableRow>
-                ) : withdrawals.map(w => (
-                  <TableRow key={w.id}>
-                    <TableCell className="text-xs">{new Date(w.created_at).toLocaleDateString()}</TableCell>
-                    <TableCell>{w.amount} USDT</TableCell>
-                    <TableCell className="text-primary">{w.net} USDT</TableCell>
-                    <TableCell className="text-xs capitalize">{w.type === 'fast' ? 'Veloce' : w.type === 'medium' ? 'Medio' : 'Lento'}</TableCell>
-                    <TableCell>
-                      <Badge variant={w.status === 'completed' ? 'default' : w.status === 'pending' ? 'secondary' : 'destructive'}>
-                        {w.status === 'completed' ? 'Completato' : w.status === 'pending' ? 'In attesa' : 'Fallito'}
-                      </Badge>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+      {/* History */}
+      {withdrawals.length > 0 && (
+        <div>
+          <h3 className="mb-3 font-display text-sm font-semibold sm:text-base">Storico Prelievi</h3>
+          <div className="space-y-2">
+            {withdrawals.map(w => (
+              <Card key={w.id}>
+                <CardContent className="p-3">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-foreground">{Number(w.amount).toLocaleString()} USDT</p>
+                      <p className="text-[0.65rem] text-muted-foreground truncate">
+                        {w.type === 'fast' ? 'Veloce' : w.type === 'medium' ? 'Medio' : 'Lento'} · Netto: {Number(w.net).toFixed(2)} · {new Date(w.created_at).toLocaleDateString('it-IT')}
+                      </p>
+                    </div>
+                    <Badge variant={w.status === 'completed' ? 'default' : w.status === 'pending' ? 'secondary' : 'destructive'} className="shrink-0 text-[0.6rem]">
+                      {w.status === 'completed' ? 'Completato' : w.status === 'pending' ? 'In attesa' : 'Rifiutato'}
+                    </Badge>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
-        </Card>
-      </div>
+        </div>
+      )}
     </div>
   );
 }
