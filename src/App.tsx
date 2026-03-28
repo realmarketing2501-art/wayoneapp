@@ -7,6 +7,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AppLayout from "./components/AppLayout";
+import PwaInstallPrompt from "./components/PwaInstallPrompt";
 import HomePage from "./pages/HomePage";
 import InvestPage from "./pages/InvestPage";
 import NetworkPage from "./pages/NetworkPage";
@@ -29,15 +30,19 @@ const App = () => (
         <TooltipProvider>
           <Toaster />
           <Sonner />
+          <PwaInstallPrompt />
           <BrowserRouter>
             <Routes>
               <Route path="/login" element={<LoginPage />} />
-              <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
-
+              {/* Public routes - viewable without login */}
+              <Route element={<AppLayout />}>
                 <Route path="/" element={<HomePage />} />
                 <Route path="/invest" element={<InvestPage />} />
                 <Route path="/network" element={<NetworkPage />} />
                 <Route path="/income" element={<IncomePage />} />
+              </Route>
+              {/* Protected routes - require login */}
+              <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>
                 <Route path="/fund" element={<FundPage />} />
                 <Route path="/withdraw" element={<WithdrawPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
