@@ -6,30 +6,31 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { useProfile } from '@/hooks/useProfile';
 import { useAuth } from '@/contexts/AuthContext';
+import { useWithdrawalConfig } from '@/hooks/useCompensationConfig';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Zap, Clock, Turtle, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-const withdrawTypes = [
-  { key: 'fast' as const, label: 'Veloce', time: '24h', fee: 20, icon: Zap, color: 'text-accent' },
-  { key: 'medium' as const, label: 'Medio', time: '48h', fee: 10, icon: Clock, color: 'text-primary' },
-  { key: 'slow' as const, label: 'Lento', time: '72h', fee: 5, icon: Turtle, color: 'text-way-sapphire' },
-];
+const iconMap: Record<string, typeof Zap> = { fast: Zap, medium: Clock, slow: Turtle };
+const colorMap: Record<string, string> = { fast: 'text-accent', medium: 'text-primary', slow: 'text-way-sapphire' };
 
 export default function WithdrawPage() {
   const [amount, setAmount] = useState('');
   const [wallet, setWallet] = useState('');
-  const [type, setType] = useState<'fast' | 'medium' | 'slow'>('medium');
+  const [type, setType] = useState('medium');
   const { user } = useAuth();
   const { data: profile } = useProfile();
+  const { data: withdrawalTypes = [] } = useWithdrawalConfig();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const selected = withdrawTypes.find(t => t.key === type)!;
+  const activeTypes = withdrawalTypes.filter(t => t.active);
+  const selected = activeTypes.find(t => t.key === type) || activeTypes[0];
   const numAmount = parseFloat(amount) || 0;
-  const fee = numAmount * selected.fee / 100;
+  const feePct = selected?.fee_pct ?? 10;
+  const fee = numAmount * feePct / 100;
   const net = numAmount - fee;
   const balance = Number(profile?.balance ?? 0);
 
@@ -54,7 +55,7 @@ export default function WithdrawPage() {
         fee,
         net,
         wallet_address: wallet,
-        type,
+        type: selected?.key ?? 'medium',
         status: 'pending',
       });
       if (error) throw error;
@@ -72,7 +73,6 @@ export default function WithdrawPage() {
     <div className="space-y-5 p-4">
       <h2 className="font-display text-lg font-bold sm:text-xl">Prelievo</h2>
 
-      {/* Info */}
       <div className="flex items-start gap-2 rounded-lg border border-primary/20 bg-primary/5 p-3">
         <Info className="h-4 w-4 shrink-0 text-primary mt-0.5" />
         <p className="text-xs text-muted-foreground">
@@ -100,27 +100,31 @@ export default function WithdrawPage() {
           <div className="space-y-1.5">
             <Label className="text-sm">Tipo di Prelievo</Label>
             <div className="grid grid-cols-3 gap-2">
-              {withdrawTypes.map(t => (
-                <button
-                  key={t.key}
-                  onClick={() => setType(t.key)}
-                  className={cn(
-                    'flex flex-col items-center gap-1 rounded-xl border p-2.5 transition-colors',
-                    type === t.key ? 'border-primary bg-primary/10' : 'border-border bg-card hover:border-primary/30'
-                  )}
-                >
-                  <t.icon className={cn('h-4 w-4 sm:h-5 sm:w-5', t.color)} />
-                  <span className="text-xs font-medium text-foreground">{t.label}</span>
-                  <span className="text-[0.6rem] text-muted-foreground">{t.time} · {t.fee}%</span>
-                </button>
-              ))}
+              {activeTypes.map(t => {
+                const Icon = iconMap[t.key] || Clock;
+                const color = colorMap[t.key] || 'text-primary';
+                return (
+                  <button
+                    key={t.key}
+                    onClick={() => setType(t.key)}
+                    className={cn(
+                      'flex flex-col items-center gap-1 rounded-xl border p-2.5 transition-colors',
+                      type === t.key ? 'border-primary bg-primary/10' : 'border-border bg-card hover:border-primary/30'
+                    )}
+                  >
+                    <Icon className={cn('h-4 w-4 sm:h-5 sm:w-5', color)} />
+                    <span className="text-xs font-medium text-foreground">{t.label}</span>
+                    <span className="text-[0.6rem] text-muted-foreground">{t.hours}h · {t.fee_pct}%</span>
+                  </button>
+                );
+              })}
             </div>
           </div>
 
           {numAmount > 0 && (
             <div className="rounded-lg bg-secondary p-3 text-sm">
               <div className="flex justify-between text-xs"><span className="text-muted-foreground">Importo</span><span>{numAmount.toFixed(2)} USDT</span></div>
-              <div className="flex justify-between text-xs"><span className="text-muted-foreground">Fee ({selected.fee}%)</span><span className="text-destructive">-{fee.toFixed(2)} USDT</span></div>
+              <div className="flex justify-between text-xs"><span className="text-muted-foreground">Fee ({feePct}%)</span><span className="text-destructive">-{fee.toFixed(2)} USDT</span></div>
               <div className="mt-1 flex justify-between border-t border-border pt-1 text-sm font-semibold"><span>Netto</span><span className="text-primary">{net.toFixed(2)} USDT</span></div>
             </div>
           )}
@@ -131,7 +135,6 @@ export default function WithdrawPage() {
         </CardContent>
       </Card>
 
-      {/* History */}
       {withdrawals.length > 0 && (
         <div>
           <h3 className="mb-3 font-display text-sm font-semibold sm:text-base">Storico Prelievi</h3>
@@ -143,7 +146,7 @@ export default function WithdrawPage() {
                     <div className="min-w-0">
                       <p className="text-sm font-medium text-foreground">{Number(w.amount).toLocaleString()} USDT</p>
                       <p className="text-[0.65rem] text-muted-foreground truncate">
-                        {w.type === 'fast' ? 'Veloce' : w.type === 'medium' ? 'Medio' : 'Lento'} · Netto: {Number(w.net).toFixed(2)} · {new Date(w.created_at).toLocaleDateString('it-IT')}
+                        {w.type} · Netto: {Number(w.net).toFixed(2)} · {new Date(w.created_at).toLocaleDateString('it-IT')}
                       </p>
                     </div>
                     <Badge variant={w.status === 'completed' ? 'default' : w.status === 'pending' ? 'secondary' : 'destructive'} className="shrink-0 text-[0.6rem]">

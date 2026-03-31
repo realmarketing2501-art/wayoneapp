@@ -1,27 +1,18 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-const DAILY_RATES: Record<string, number> = {
+// Fallback rates if admin_settings not available
+const DEFAULT_RATES: Record<string, number> = {
   PRE: 0.008,
   BRONZ: 0.01,
   SILVER: 0.02,
   SILVER_ELITE: 0.03,
   GOLD: 0.04,
   ZAFFIRO: 0.05,
-  DIAMANTE: 0.06,
-};
-
-const NETWORK_BONUS: Record<string, number> = {
-  BRONZ: 0.10,
-  SILVER: 0.15,
-  SILVER_ELITE: 0.20,
-  GOLD: 0.20,
-  ZAFFIRO: 0.25,
-  DIAMANTE: 0.30,
+  DIAMANTE: 0.05,
 };
 
 const LEVEL_REQUIREMENTS: { level: string; direct: number; total: number }[] = [
   { level: 'DIAMANTE', direct: 6, total: 46656 },
-  { level: 'ZAFFIRO', direct: 6, total: 7776 },
   { level: 'GOLD', direct: 6, total: 1296 },
   { level: 'SILVER_ELITE', direct: 6, total: 216 },
   { level: 'SILVER', direct: 6, total: 36 },
@@ -35,6 +26,25 @@ Deno.serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
     );
 
+    // Load dynamic rates from admin_settings
+    let rates = { ...DEFAULT_RATES };
+    const { data: levelSetting } = await supabase
+      .from("admin_settings")
+      .select("value")
+      .eq("key", "level_config")
+      .single();
+
+    if (levelSetting?.value) {
+      try {
+        const config = JSON.parse(levelSetting.value) as { name: string; rate: number; active: boolean }[];
+        for (const l of config) {
+          if (l.active) {
+            rates[l.name] = l.rate / 100; // Convert percentage to decimal
+          }
+        }
+      } catch {}
+    }
+
     // 1. Calculate daily returns for active investments
     const { data: investments, error: invErr } = await supabase
       .from("investments")
@@ -46,7 +56,6 @@ Deno.serve(async (req) => {
     let processed = 0;
 
     for (const inv of investments || []) {
-      // Get user level
       const { data: profile } = await supabase
         .from("profiles")
         .select("level")
@@ -54,10 +63,9 @@ Deno.serve(async (req) => {
         .single();
 
       const level = profile?.level || "PRE";
-      const rate = DAILY_RATES[level] || 0.008;
+      const rate = rates[level] || 0.008;
       const dailyReturn = Number(inv.amount) * rate;
 
-      // Update user balance
       const { data: currentProfile } = await supabase
         .from("profiles")
         .select("balance, total_earned")
@@ -74,7 +82,6 @@ Deno.serve(async (req) => {
           .eq("user_id", inv.user_id);
       }
 
-      // Update investment earned
       const { data: currentInv } = await supabase
         .from("investments")
         .select("earned, days_remaining")
@@ -93,7 +100,6 @@ Deno.serve(async (req) => {
           .eq("id", inv.id);
       }
 
-      // Log income
       await supabase.from("income_records").insert({
         user_id: inv.user_id,
         amount: dailyReturn,
