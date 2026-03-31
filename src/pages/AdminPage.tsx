@@ -14,9 +14,10 @@ import { useToast } from '@/hooks/use-toast';
 import {
   Users, DollarSign, TrendingUp, ArrowUpDown,
   CheckCircle, XCircle, Search, Shield, Bell,
-  Settings, Wallet, Eye
+  Settings, Wallet, Eye, Plug
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import IntegrationsTab from '@/components/admin/IntegrationsTab';
 
 function KPICard({ icon: Icon, label, value, color }: { icon: any; label: string; value: string; color: string }) {
   return (
@@ -595,21 +596,25 @@ export default function AdminPage() {
       </div>
 
       <Tabs defaultValue="dashboard">
-        <TabsList className="w-full overflow-x-auto flex">
-          <TabsTrigger value="dashboard" className="text-xs flex-1 min-w-0">KPI</TabsTrigger>
-          <TabsTrigger value="deposits" className="text-xs flex-1 min-w-0">Depositi</TabsTrigger>
-          <TabsTrigger value="withdrawals" className="text-xs flex-1 min-w-0">Prelievi</TabsTrigger>
-          <TabsTrigger value="users" className="text-xs flex-1 min-w-0">Utenti</TabsTrigger>
-          <TabsTrigger value="settings" className="text-xs flex-1 min-w-0">Wallet</TabsTrigger>
-          <TabsTrigger value="ledger" className="text-xs flex-1 min-w-0">Ledger</TabsTrigger>
-          <TabsTrigger value="notifications" className="text-xs flex-1 min-w-0">Notifiche</TabsTrigger>
-        </TabsList>
+        <div className="overflow-x-auto -mx-4 px-4 pb-1">
+          <TabsList className="inline-flex w-auto min-w-full">
+            <TabsTrigger value="dashboard" className="text-xs min-w-[3rem]">KPI</TabsTrigger>
+            <TabsTrigger value="deposits" className="text-xs min-w-[4rem]">Depositi</TabsTrigger>
+            <TabsTrigger value="withdrawals" className="text-xs min-w-[4rem]">Prelievi</TabsTrigger>
+            <TabsTrigger value="users" className="text-xs min-w-[3.5rem]">Utenti</TabsTrigger>
+            <TabsTrigger value="settings" className="text-xs min-w-[3.5rem]">Wallet</TabsTrigger>
+            <TabsTrigger value="ledger" className="text-xs min-w-[3.5rem]">Ledger</TabsTrigger>
+            <TabsTrigger value="integrations" className="text-xs min-w-[2.5rem]">API</TabsTrigger>
+            <TabsTrigger value="notifications" className="text-xs min-w-[4rem]">Notifiche</TabsTrigger>
+          </TabsList>
+        </div>
         <TabsContent value="dashboard"><DashboardTab /></TabsContent>
         <TabsContent value="deposits"><DepositsTab /></TabsContent>
         <TabsContent value="withdrawals"><WithdrawalsTab /></TabsContent>
         <TabsContent value="users"><UsersTab /></TabsContent>
         <TabsContent value="settings"><WalletSettingsTab /></TabsContent>
         <TabsContent value="ledger"><LedgerTab /></TabsContent>
+        <TabsContent value="integrations"><IntegrationsTab /></TabsContent>
         <TabsContent value="notifications"><NotificationsTab /></TabsContent>
       </Tabs>
     </div>
