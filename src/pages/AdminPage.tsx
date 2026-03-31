@@ -14,9 +14,10 @@ import { useToast } from '@/hooks/use-toast';
 import {
   Users, DollarSign, TrendingUp, ArrowUpDown,
   CheckCircle, XCircle, Search, Shield, Bell,
-  Settings, Wallet, Eye
+  Settings, Wallet, Eye, Plug
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import IntegrationsTab from '@/components/admin/IntegrationsTab';
 
 function KPICard({ icon: Icon, label, value, color }: { icon: any; label: string; value: string; color: string }) {
   return (
