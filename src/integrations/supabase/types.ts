@@ -35,6 +35,54 @@ export type Database = {
         }
         Relationships: []
       }
+      api_integrations: {
+        Row: {
+          category: string
+          config: Json
+          created_at: string
+          id: string
+          is_active: boolean
+          last_test_at: string | null
+          last_test_error: string | null
+          last_test_result: string | null
+          notes: string | null
+          service_key: string
+          service_name: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          category?: string
+          config?: Json
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          last_test_at?: string | null
+          last_test_error?: string | null
+          last_test_result?: string | null
+          notes?: string | null
+          service_key: string
+          service_name: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          config?: Json
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          last_test_at?: string | null
+          last_test_error?: string | null
+          last_test_result?: string | null
+          notes?: string | null
+          service_key?: string
+          service_name?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       deposits: {
         Row: {
           amount: number
