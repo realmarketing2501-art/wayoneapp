@@ -616,6 +616,7 @@ export default function AdminPage() {
         <TabsContent value="users"><UsersTab /></TabsContent>
         <TabsContent value="settings"><WalletSettingsTab /></TabsContent>
         <TabsContent value="ledger"><LedgerTab /></TabsContent>
+        <TabsContent value="compensation"><CompensationTab /></TabsContent>
         <TabsContent value="integrations"><IntegrationsTab /></TabsContent>
         <TabsContent value="notifications"><NotificationsTab /></TabsContent>
       </Tabs>
