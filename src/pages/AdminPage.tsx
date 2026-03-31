@@ -605,6 +605,7 @@ export default function AdminPage() {
             <TabsTrigger value="users" className="text-xs min-w-[3.5rem]">Utenti</TabsTrigger>
             <TabsTrigger value="settings" className="text-xs min-w-[3.5rem]">Wallet</TabsTrigger>
             <TabsTrigger value="ledger" className="text-xs min-w-[3.5rem]">Ledger</TabsTrigger>
+            <TabsTrigger value="compensation" className="text-xs min-w-[4rem]">Compensi</TabsTrigger>
             <TabsTrigger value="integrations" className="text-xs min-w-[2.5rem]">API</TabsTrigger>
             <TabsTrigger value="notifications" className="text-xs min-w-[4rem]">Notifiche</TabsTrigger>
           </TabsList>
