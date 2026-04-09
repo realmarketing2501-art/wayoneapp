@@ -83,6 +83,54 @@ export type Database = {
         }
         Relationships: []
       }
+      deposit_intents: {
+        Row: {
+          amount_usd: number
+          amount_usdt: number
+          created_at: string
+          expires_at: string
+          id: string
+          matched_tx_id: string | null
+          network: string
+          package_id: string | null
+          status: string
+          unique_suffix: number
+          updated_at: string
+          user_id: string
+          wallet_address: string
+        }
+        Insert: {
+          amount_usd: number
+          amount_usdt: number
+          created_at?: string
+          expires_at?: string
+          id?: string
+          matched_tx_id?: string | null
+          network?: string
+          package_id?: string | null
+          status?: string
+          unique_suffix?: number
+          updated_at?: string
+          user_id: string
+          wallet_address: string
+        }
+        Update: {
+          amount_usd?: number
+          amount_usdt?: number
+          created_at?: string
+          expires_at?: string
+          id?: string
+          matched_tx_id?: string | null
+          network?: string
+          package_id?: string | null
+          status?: string
+          unique_suffix?: number
+          updated_at?: string
+          user_id?: string
+          wallet_address?: string
+        }
+        Relationships: []
+      }
       deposits: {
         Row: {
           amount: number
@@ -127,6 +175,68 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      detected_transactions: {
+        Row: {
+          amount: number
+          block_number: number | null
+          block_timestamp: string | null
+          confirmations: number
+          created_at: string
+          from_address: string | null
+          id: string
+          matched_intent_id: string | null
+          network: string
+          processing_error: string | null
+          status: string
+          to_address: string
+          token: string
+          tx_hash: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          block_number?: number | null
+          block_timestamp?: string | null
+          confirmations?: number
+          created_at?: string
+          from_address?: string | null
+          id?: string
+          matched_intent_id?: string | null
+          network: string
+          processing_error?: string | null
+          status?: string
+          to_address: string
+          token?: string
+          tx_hash: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          block_number?: number | null
+          block_timestamp?: string | null
+          confirmations?: number
+          created_at?: string
+          from_address?: string | null
+          id?: string
+          matched_intent_id?: string | null
+          network?: string
+          processing_error?: string | null
+          status?: string
+          to_address?: string
+          token?: string
+          tx_hash?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "detected_transactions_matched_intent_id_fkey"
+            columns: ["matched_intent_id"]
+            isOneToOne: false
+            referencedRelation: "deposit_intents"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       fund_investments: {
         Row: {
@@ -696,6 +806,57 @@ export type Database = {
         }
         Relationships: []
       }
+      watcher_state: {
+        Row: {
+          created_at: string
+          id: string
+          last_block_number: number
+          last_block_timestamp: string | null
+          last_error: string | null
+          last_error_at: string | null
+          last_sync_at: string | null
+          network: string
+          status: string
+          total_confirmed: number
+          total_credited: number
+          total_detected: number
+          total_errors: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_block_number?: number
+          last_block_timestamp?: string | null
+          last_error?: string | null
+          last_error_at?: string | null
+          last_sync_at?: string | null
+          network: string
+          status?: string
+          total_confirmed?: number
+          total_credited?: number
+          total_detected?: number
+          total_errors?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_block_number?: number
+          last_block_timestamp?: string | null
+          last_error?: string | null
+          last_error_at?: string | null
+          last_sync_at?: string | null
+          network?: string
+          status?: string
+          total_confirmed?: number
+          total_credited?: number
+          total_detected?: number
+          total_errors?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       withdrawals: {
         Row: {
           amount: number
@@ -746,10 +907,20 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      expire_old_deposit_intents: { Args: never; Returns: number }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
           _user_id: string
+        }
+        Returns: boolean
+      }
+      process_matched_deposit: {
+        Args: {
+          p_amount: number
+          p_intent_id: string
+          p_tx_hash: string
+          p_tx_id: string
         }
         Returns: boolean
       }

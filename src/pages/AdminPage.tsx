@@ -19,6 +19,7 @@ import {
 import { cn } from '@/lib/utils';
 import IntegrationsTab from '@/components/admin/IntegrationsTab';
 import CompensationTab from '@/components/admin/CompensationTab';
+import WatcherTab from '@/components/admin/WatcherTab';
 
 function KPICard({ icon: Icon, label, value, color }: { icon: any; label: string; value: string; color: string }) {
   return (
@@ -606,6 +607,7 @@ export default function AdminPage() {
             <TabsTrigger value="settings" className="text-xs min-w-[3.5rem]">Wallet</TabsTrigger>
             <TabsTrigger value="ledger" className="text-xs min-w-[3.5rem]">Ledger</TabsTrigger>
             <TabsTrigger value="compensation" className="text-xs min-w-[4rem]">Compensi</TabsTrigger>
+            <TabsTrigger value="watcher" className="text-xs min-w-[4rem]">Watcher</TabsTrigger>
             <TabsTrigger value="integrations" className="text-xs min-w-[2.5rem]">API</TabsTrigger>
             <TabsTrigger value="notifications" className="text-xs min-w-[4rem]">Notifiche</TabsTrigger>
           </TabsList>
@@ -617,6 +619,7 @@ export default function AdminPage() {
         <TabsContent value="settings"><WalletSettingsTab /></TabsContent>
         <TabsContent value="ledger"><LedgerTab /></TabsContent>
         <TabsContent value="compensation"><CompensationTab /></TabsContent>
+        <TabsContent value="watcher"><WatcherTab /></TabsContent>
         <TabsContent value="integrations"><IntegrationsTab /></TabsContent>
         <TabsContent value="notifications"><NotificationsTab /></TabsContent>
       </Tabs>
