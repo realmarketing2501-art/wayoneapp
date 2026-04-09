@@ -19,6 +19,7 @@ import {
 import { cn } from '@/lib/utils';
 import IntegrationsTab from '@/components/admin/IntegrationsTab';
 import CompensationTab from '@/components/admin/CompensationTab';
+import WatcherTab from '@/components/admin/WatcherTab';
 
 function KPICard({ icon: Icon, label, value, color }: { icon: any; label: string; value: string; color: string }) {
   return (
