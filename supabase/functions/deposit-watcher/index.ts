@@ -256,31 +256,68 @@ async function matchAndCredit(supabase: any): Promise<number> {
   let matched = 0;
 
   for (const tx of unmatched) {
-    // Find matching pending intent: same network, same wallet, amount within tolerance (±0.99 USDT)
+    // Find matching pending intent with STRICT criteria:
+    // 1. Same network
+    // 2. Same wallet_address (to_address)
+    // 3. Status = pending
+    // 4. Not expired
+    // 5. Amount within tight tolerance (±0.05 USDT — covers rounding, not mismatches)
     const { data: intents } = await supabase
       .from("deposit_intents")
       .select("*")
       .eq("network", tx.network)
+      .eq("wallet_address", tx.to_address)
       .eq("status", "pending")
-      .gte("amount_usdt", tx.amount - 0.99)
-      .lte("amount_usdt", tx.amount + 0.99)
+      .gte("expires_at", new Date().toISOString())
+      .gte("amount_usdt", tx.amount - 0.05)
+      .lte("amount_usdt", tx.amount + 0.05)
       .order("created_at", { ascending: true })
       .limit(5);
 
     if (!intents || intents.length === 0) {
-      // No matching intent — mark for review
+      // Determine specific reason for review
+      let reason = "Nessun deposit intent corrispondente trovato";
+
+      // Check if there's an expired intent that would have matched
+      const { data: expiredMatch } = await supabase
+        .from("deposit_intents")
+        .select("id, expires_at")
+        .eq("network", tx.network)
+        .eq("wallet_address", tx.to_address)
+        .eq("status", "expired")
+        .gte("amount_usdt", tx.amount - 0.05)
+        .lte("amount_usdt", tx.amount + 0.05)
+        .limit(1);
+
+      if (expiredMatch && expiredMatch.length > 0) {
+        reason = `Intent trovato ma scaduto (id: ${expiredMatch[0].id}, scaduto: ${expiredMatch[0].expires_at})`;
+      }
+
+      // Check if amount mismatch with a pending intent on same wallet
+      const { data: amountMismatch } = await supabase
+        .from("deposit_intents")
+        .select("id, amount_usdt")
+        .eq("network", tx.network)
+        .eq("wallet_address", tx.to_address)
+        .eq("status", "pending")
+        .limit(1);
+
+      if (amountMismatch && amountMismatch.length > 0) {
+        reason = `Importo non corrispondente: atteso ${amountMismatch[0].amount_usdt} USDT, ricevuto ${tx.amount} USDT (intent: ${amountMismatch[0].id})`;
+      }
+
       await supabase.from("detected_transactions").update({
         status: "needs_review",
-        processing_error: "Nessun deposit intent corrispondente trovato",
+        processing_error: reason,
       }).eq("id", tx.id);
       continue;
     }
 
-    // Find best match: exact amount match first, then closest
+    // Find best match: exact amount first (within 0.01), then closest
     let bestIntent = intents.find((i: any) => Math.abs(i.amount_usdt - tx.amount) < 0.01);
     if (!bestIntent) bestIntent = intents[0];
 
-    // Process the match using the security definer function
+    // Process the match using the security definer function (atomic, locked)
     const { data: success, error } = await supabase.rpc("process_matched_deposit", {
       p_intent_id: bestIntent.id,
       p_tx_id: tx.id,
@@ -295,12 +332,7 @@ async function matchAndCredit(supabase: any): Promise<number> {
       }).eq("id", tx.id);
     } else if (success) {
       matched++;
-      // Update watcher stats
-      await supabase.from("watcher_state").update({
-        total_confirmed: supabase.rpc ? undefined : 0, // will use raw increment below
-      }).eq("network", tx.network);
-
-      // Increment counters
+      // Increment watcher counters
       const { data: ws } = await supabase.from("watcher_state").select("total_confirmed, total_credited").eq("network", tx.network).single();
       if (ws) {
         await supabase.from("watcher_state").update({
