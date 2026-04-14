@@ -103,6 +103,9 @@ function DashboardTab() {
 
 function UsersTab() {
   const [search, setSearch] = useState('');
+  const { toast } = useToast();
+  const queryClient = useQueryClient();
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
 
   const { data: profiles = [] } = useQuery({
     queryKey: ['admin_profiles'],
@@ -111,6 +114,31 @@ function UsersTab() {
       if (error) throw error;
       return data;
     },
+  });
+
+  const suspendMutation = useMutation({
+    mutationFn: async ({ userId, suspend }: { userId: string; suspend: boolean }) => {
+      const { error } = await supabase.from('profiles').update({ is_suspended: suspend }).eq('user_id', userId);
+      if (error) throw error;
+    },
+    onSuccess: (_, { suspend }) => {
+      queryClient.invalidateQueries({ queryKey: ['admin_profiles'] });
+      toast({ title: suspend ? 'Utente sospeso' : 'Utente riattivato' });
+    },
+    onError: (e: Error) => toast({ title: 'Errore', description: e.message, variant: 'destructive' }),
+  });
+
+  const deleteMutation = useMutation({
+    mutationFn: async (userId: string) => {
+      const { error } = await supabase.rpc('admin_delete_user', { p_user_id: userId });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin_profiles'] });
+      setConfirmDelete(null);
+      toast({ title: 'Utente eliminato', description: 'Tutti i dati associati sono stati rimossi.' });
+    },
+    onError: (e: Error) => toast({ title: 'Errore', description: e.message, variant: 'destructive' }),
   });
 
   const filtered = profiles.filter(p =>
@@ -126,15 +154,45 @@ function UsersTab() {
       </div>
       <div className="space-y-1.5 max-h-[60vh] overflow-y-auto">
         {filtered.map(p => (
-          <Card key={p.id}>
-            <CardContent className="flex items-center justify-between p-3">
-              <div className="min-w-0">
-                <p className="font-medium text-foreground text-sm truncate">{p.username}</p>
-                <p className="text-[0.6rem] text-muted-foreground">{p.referral_code} · {new Date(p.created_at).toLocaleDateString('it-IT')}</p>
+          <Card key={p.id} className={p.is_suspended ? 'opacity-60 border-destructive/30' : ''}>
+            <CardContent className="p-3 space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    <p className="font-medium text-foreground text-sm truncate">{p.username}</p>
+                    {p.is_suspended && <Badge variant="destructive" className="text-[0.55rem]">Sospeso</Badge>}
+                  </div>
+                  <p className="text-[0.6rem] text-muted-foreground">{p.referral_code} · {new Date(p.created_at).toLocaleDateString('it-IT')}</p>
+                </div>
+                <div className="text-right shrink-0">
+                  <Badge variant="outline" className="text-[0.6rem]">{p.level}</Badge>
+                  <p className="text-[0.6rem] text-muted-foreground mt-0.5">{Number(p.balance).toLocaleString()} USDT</p>
+                </div>
               </div>
-              <div className="text-right shrink-0">
-                <Badge variant="outline" className="text-[0.6rem]">{p.level}</Badge>
-                <p className="text-[0.6rem] text-muted-foreground mt-0.5">{Number(p.balance).toLocaleString()} USDT</p>
+              <div className="flex gap-1.5">
+                <Button
+                  size="sm"
+                  variant={p.is_suspended ? 'default' : 'secondary'}
+                  className="flex-1 h-7 text-[0.65rem]"
+                  onClick={() => suspendMutation.mutate({ userId: p.user_id, suspend: !p.is_suspended })}
+                  disabled={suspendMutation.isPending}
+                >
+                  {p.is_suspended ? 'Riattiva' : 'Sospendi'}
+                </Button>
+                {confirmDelete === p.user_id ? (
+                  <>
+                    <Button size="sm" variant="destructive" className="flex-1 h-7 text-[0.65rem]" onClick={() => deleteMutation.mutate(p.user_id)} disabled={deleteMutation.isPending}>
+                      Conferma Elimina
+                    </Button>
+                    <Button size="sm" variant="outline" className="h-7 text-[0.65rem]" onClick={() => setConfirmDelete(null)}>
+                      Annulla
+                    </Button>
+                  </>
+                ) : (
+                  <Button size="sm" variant="destructive" className="flex-1 h-7 text-[0.65rem]" onClick={() => setConfirmDelete(p.user_id)}>
+                    Elimina
+                  </Button>
+                )}
               </div>
             </CardContent>
           </Card>

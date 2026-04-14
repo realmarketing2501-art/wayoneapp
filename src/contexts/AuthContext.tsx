@@ -47,8 +47,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    return { error: error as Error | null };
+    const { data: signInData, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) return { error: error as Error | null };
+
+    // Check if user is suspended
+    if (signInData.user) {
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('is_suspended')
+        .eq('user_id', signInData.user.id)
+        .single();
+      if (profile?.is_suspended) {
+        await supabase.auth.signOut();
+        return { error: new Error('Il tuo account è stato sospeso. Contatta il supporto.') };
+      }
+    }
+
+    return { error: null };
   };
 
   const signOut = async () => {
