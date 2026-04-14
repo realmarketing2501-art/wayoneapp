@@ -46,19 +46,20 @@ export default function InvestPage() {
 
   const investMutation = useMutation({
     mutationFn: async ({ planId, planName, amount, duration }: { planId: string; planName: string; amount: number; duration: number }) => {
-      const { error } = await supabase.from('investments').insert({
-        user_id: user!.id,
-        plan_id: planId,
-        plan_name: planName,
-        amount,
-        days_remaining: duration,
-        status: 'active',
+      const { data, error } = await supabase.rpc('create_investment', {
+        p_user_id: user!.id,
+        p_plan_id: planId,
+        p_plan_name: planName,
+        p_amount: amount,
+        p_duration: duration,
       });
       if (error) throw error;
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['investments'] });
-      toast({ title: 'Investimento creato!', description: 'Il tuo investimento è stato registrato.' });
+      queryClient.invalidateQueries({ queryKey: ['profile'] });
+      toast({ title: 'Investimento creato!', description: 'Il tuo investimento è stato registrato e il saldo aggiornato.' });
       setSelectedPlan(null);
       setInvestAmount('');
     },
@@ -73,6 +74,11 @@ export default function InvestPage() {
     }
     if (!user) {
       toast({ title: 'Accedi per investire', variant: 'destructive' });
+      return;
+    }
+    const available = Number(profile?.balance_available ?? 0);
+    if (amount > available) {
+      toast({ title: 'Saldo insufficiente', description: `Hai ${available.toFixed(2)} USDT disponibili. Deposita prima di investire.`, variant: 'destructive' });
       return;
     }
     investMutation.mutate({ planId: plan.id, planName: plan.name, amount, duration: plan.duration });
