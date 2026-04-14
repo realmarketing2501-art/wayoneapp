@@ -501,6 +501,7 @@ export type Database = {
           direct_referrals: number
           has_confirmed_deposit: boolean
           id: string
+          is_suspended: boolean
           language: string | null
           level: Database["public"]["Enums"]["level_name"]
           network_volume: number
@@ -521,6 +522,7 @@ export type Database = {
           direct_referrals?: number
           has_confirmed_deposit?: boolean
           id?: string
+          is_suspended?: boolean
           language?: string | null
           level?: Database["public"]["Enums"]["level_name"]
           network_volume?: number
@@ -541,6 +543,7 @@ export type Database = {
           direct_referrals?: number
           has_confirmed_deposit?: boolean
           id?: string
+          is_suspended?: boolean
           language?: string | null
           level?: Database["public"]["Enums"]["level_name"]
           network_volume?: number
@@ -907,6 +910,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_delete_user: { Args: { p_user_id: string }; Returns: boolean }
       create_investment: {
         Args: {
           p_amount: number
