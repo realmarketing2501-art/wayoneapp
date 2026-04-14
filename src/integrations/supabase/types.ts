@@ -907,6 +907,16 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_investment: {
+        Args: {
+          p_amount: number
+          p_duration: number
+          p_plan_id: string
+          p_plan_name: string
+          p_user_id: string
+        }
+        Returns: string
+      }
       expire_old_deposit_intents: { Args: never; Returns: number }
       has_role: {
         Args: {
