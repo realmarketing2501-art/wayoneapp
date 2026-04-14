@@ -46,19 +46,20 @@ export default function InvestPage() {
 
   const investMutation = useMutation({
     mutationFn: async ({ planId, planName, amount, duration }: { planId: string; planName: string; amount: number; duration: number }) => {
-      const { error } = await supabase.from('investments').insert({
-        user_id: user!.id,
-        plan_id: planId,
-        plan_name: planName,
-        amount,
-        days_remaining: duration,
-        status: 'active',
+      const { data, error } = await supabase.rpc('create_investment', {
+        p_user_id: user!.id,
+        p_plan_id: planId,
+        p_plan_name: planName,
+        p_amount: amount,
+        p_duration: duration,
       });
       if (error) throw error;
+      return data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['investments'] });
-      toast({ title: 'Investimento creato!', description: 'Il tuo investimento è stato registrato.' });
+      queryClient.invalidateQueries({ queryKey: ['profile'] });
+      toast({ title: 'Investimento creato!', description: 'Il tuo investimento è stato registrato e il saldo aggiornato.' });
       setSelectedPlan(null);
       setInvestAmount('');
     },
