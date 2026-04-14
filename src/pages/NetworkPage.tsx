@@ -12,7 +12,7 @@ export default function NetworkPage() {
   const { data: profile } = useProfile();
 
   const referralCode = profile?.referral_code ?? '...';
-  const referralUrl = `https://wayono.lovable.app/login?ref=${referralCode}`;
+  const referralUrl = `${window.location.origin}/login?ref=${referralCode}`;
 
   const copyLink = () => {
     navigator.clipboard.writeText(referralUrl);

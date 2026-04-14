@@ -75,6 +75,11 @@ export default function InvestPage() {
       toast({ title: 'Accedi per investire', variant: 'destructive' });
       return;
     }
+    const available = Number(profile?.balance_available ?? 0);
+    if (amount > available) {
+      toast({ title: 'Saldo insufficiente', description: `Hai ${available.toFixed(2)} USDT disponibili. Deposita prima di investire.`, variant: 'destructive' });
+      return;
+    }
     investMutation.mutate({ planId: plan.id, planName: plan.name, amount, duration: plan.duration });
   };
 
