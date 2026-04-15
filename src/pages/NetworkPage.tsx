@@ -2,14 +2,74 @@ import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useProfile } from '@/hooks/useProfile';
-import { Copy, QrCode, Users, DollarSign, Award } from 'lucide-react';
+import { useReferralTree, ReferralNode } from '@/hooks/useReferralTree';
+import { Copy, QrCode, Users, DollarSign, Award, ChevronRight, ChevronDown, CircleDot, CheckCircle2, Clock } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useToast } from '@/hooks/use-toast';
+import { Badge } from '@/components/ui/badge';
+import { getLevelInfo, getLevelColorClass } from '@/lib/levels';
+import type { LevelName } from '@/lib/levels';
+
+function TreeNode({ node, depth = 0 }: { node: ReferralNode; depth?: number }) {
+  const [open, setOpen] = useState(depth < 1);
+  const hasChildren = node.children.length > 0;
+  const levelColor = getLevelColorClass(node.level as LevelName);
+  const levelLabel = getLevelInfo(node.level as LevelName).label;
+  const joinDate = new Date(node.created_at).toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' });
+
+  return (
+    <div className={depth > 0 ? 'ml-4 border-l border-border pl-3' : ''}>
+      <div
+        className="flex items-center gap-2 py-2 cursor-pointer hover:bg-muted/50 rounded-md px-2 -mx-2 transition-colors"
+        onClick={() => hasChildren && setOpen(!open)}
+      >
+        {hasChildren ? (
+          open ? <ChevronDown className="h-3.5 w-3.5 text-muted-foreground shrink-0" /> : <ChevronRight className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+        ) : (
+          <CircleDot className="h-3.5 w-3.5 text-muted-foreground/40 shrink-0" />
+        )}
+
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-medium text-foreground truncate">{node.username}</span>
+            <Badge variant="outline" className={`text-[0.6rem] px-1.5 py-0 ${levelColor} border-current`}>
+              {levelLabel}
+            </Badge>
+          </div>
+          <div className="flex items-center gap-2 mt-0.5">
+            {node.has_confirmed_deposit ? (
+              <span className="flex items-center gap-1 text-[0.6rem] text-green-500">
+                <CheckCircle2 className="h-3 w-3" /> Attivo
+              </span>
+            ) : (
+              <span className="flex items-center gap-1 text-[0.6rem] text-amber-500">
+                <Clock className="h-3 w-3" /> In attesa deposito
+              </span>
+            )}
+            <span className="text-[0.6rem] text-muted-foreground">· {joinDate}</span>
+            {node.direct_referrals > 0 && (
+              <span className="text-[0.6rem] text-muted-foreground">· {node.direct_referrals} ref</span>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {open && hasChildren && (
+        <div className="mt-1">
+          {node.children.map((child) => (
+            <TreeNode key={child.id} node={child} depth={depth + 1} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function NetworkPage() {
   const [showQR, setShowQR] = useState(false);
   const { toast } = useToast();
   const { data: profile } = useProfile();
+  const { data: tree, isLoading: treeLoading } = useReferralTree();
 
   const referralCode = profile?.referral_code ?? '...';
   const referralUrl = `${window.location.origin}/login?ref=${referralCode}`;
@@ -60,9 +120,26 @@ export default function NetworkPage() {
         </CardContent>
       </Card>
 
+      {/* Referral Tree */}
       <Card>
-        <CardContent className="p-5 text-center">
-          <p className="text-sm text-muted-foreground">La visualizzazione dell'albero sarà disponibile quando avrai referral nella tua rete.</p>
+        <CardContent className="p-4">
+          <p className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+            <Users className="h-4 w-4 text-primary" />
+            Il tuo Albero Referral
+          </p>
+          {treeLoading ? (
+            <p className="text-sm text-muted-foreground text-center py-4">Caricamento...</p>
+          ) : !tree || tree.length === 0 ? (
+            <p className="text-sm text-muted-foreground text-center py-4">
+              Nessun referral ancora. Condividi il tuo link per far crescere la rete!
+            </p>
+          ) : (
+            <div className="space-y-1">
+              {tree.map((node) => (
+                <TreeNode key={node.id} node={node} />
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
