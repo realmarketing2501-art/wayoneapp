@@ -72,7 +72,10 @@ export default function NetworkPage() {
   const { data: tree, isLoading: treeLoading } = useReferralTree();
 
   const referralCode = profile?.referral_code ?? '...';
-  const referralUrl = `${window.location.origin}/login?ref=${referralCode}`;
+  const baseUrl = window.location.hostname.includes('preview') 
+    ? 'https://wayoneapp.lovable.app' 
+    : window.location.origin;
+  const referralUrl = `${baseUrl}/login?ref=${referralCode}`;
 
   const copyLink = () => {
     navigator.clipboard.writeText(referralUrl);
