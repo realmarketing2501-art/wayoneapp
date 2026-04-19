@@ -150,6 +150,7 @@ Deno.serve(async (req) => {
       JSON.stringify({
         success: true,
         processed_investments: processed,
+        skipped_investments: skipped,
         level_upgrades: upgrades,
         timestamp: new Date().toISOString(),
       }),
