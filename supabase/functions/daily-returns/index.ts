@@ -45,17 +45,29 @@ Deno.serve(async (req) => {
       } catch {}
     }
 
-    // 1. Calculate daily returns for active investments
+    // 1. Calculate daily returns ONLY for investments where >=24h passed since last payout
+    // Each user has their own 24h cycle starting from their investment timestamp
+    const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
     const { data: investments, error: invErr } = await supabase
       .from("investments")
-      .select("id, user_id, amount, plan_name")
-      .eq("status", "active");
+      .select("id, user_id, amount, plan_name, last_payout_at, created_at")
+      .eq("status", "active")
+      .or(`last_payout_at.lte.${cutoff},last_payout_at.is.null`);
 
     if (invErr) throw invErr;
 
     let processed = 0;
+    let skipped = 0;
+    const now = new Date().toISOString();
 
     for (const inv of investments || []) {
+      // Double-check: if last_payout_at is null, use created_at as the reference
+      const lastPayout = inv.last_payout_at || inv.created_at;
+      const hoursSince = (Date.now() - new Date(lastPayout).getTime()) / (1000 * 60 * 60);
+      if (hoursSince < 24) {
+        skipped++;
+        continue;
+      }
       const { data: profile } = await supabase
         .from("profiles")
         .select("level")
