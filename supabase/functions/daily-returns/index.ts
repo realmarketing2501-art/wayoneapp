@@ -108,6 +108,7 @@ Deno.serve(async (req) => {
             earned: Number(currentInv.earned) + dailyReturn,
             days_remaining: newDays,
             status: newDays <= 0 ? "completed" : "active",
+            last_payout_at: now,
           })
           .eq("id", inv.id);
       }
