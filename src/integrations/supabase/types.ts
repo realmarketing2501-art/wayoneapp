@@ -352,6 +352,7 @@ export type Database = {
           days_remaining: number
           earned: number
           id: string
+          last_payout_at: string | null
           plan_id: string
           plan_name: string
           start_date: string
@@ -365,6 +366,7 @@ export type Database = {
           days_remaining: number
           earned?: number
           id?: string
+          last_payout_at?: string | null
           plan_id: string
           plan_name: string
           start_date?: string
@@ -378,6 +380,7 @@ export type Database = {
           days_remaining?: number
           earned?: number
           id?: string
+          last_payout_at?: string | null
           plan_id?: string
           plan_name?: string
           start_date?: string
