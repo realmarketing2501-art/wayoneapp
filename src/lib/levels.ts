@@ -2,51 +2,55 @@ import type { Database } from '@/integrations/supabase/types';
 
 export type LevelName = Database['public']['Enums']['level_name'];
 
-export interface LevelInfo {
-  name: LevelName;
+/**
+ * Static fallback used solo per UI (colori, label) prima che la tabella `levels`
+ * venga caricata. La fonte di verità reale è la tabella `levels` su DB,
+ * letta tramite `useLevels()` hook.
+ */
+export interface LevelStaticInfo {
+  id: LevelName;
   label: string;
-  dailyReturn: number;
-  directReferrals: number;
-  totalUnits: number;
-  networkBonus: number;
 }
 
-// Fallback defaults — the app reads dynamic config from admin_settings via useCompensationConfig
-export const LEVELS: LevelInfo[] = [
-  { name: 'PRE', label: 'Pre-Qualifica', dailyReturn: 0.80, directReferrals: 0, totalUnits: 0, networkBonus: 0 },
-  { name: 'BRONZ', label: 'Bronz', dailyReturn: 1.0, directReferrals: 6, totalUnits: 6, networkBonus: 10 },
-  { name: 'SILVER', label: 'Silver', dailyReturn: 2.0, directReferrals: 36, totalUnits: 36, networkBonus: 15 },
-  { name: 'SILVER_ELITE', label: 'Silver Elite', dailyReturn: 3.0, directReferrals: 216, totalUnits: 216, networkBonus: 20 },
-  { name: 'GOLD', label: 'Gold', dailyReturn: 4.0, directReferrals: 1296, totalUnits: 1296, networkBonus: 20 },
-  { name: 'DIAMANTE', label: 'Diamante', dailyReturn: 5.0, directReferrals: 46656, totalUnits: 46656, networkBonus: 30 },
-];
+export const LEVEL_LABELS: Record<LevelName, string> = {
+  gamma: 'Gamma Investitore',
+  beta: 'Beta Investitore',
+  bronze: 'Bronze Investitore',
+  silver: 'Silver Investitore',
+  silver_elite: 'Silver Elite',
+  gold: 'Gold',
+};
 
-export function getLevelInfo(name: LevelName): LevelInfo {
-  return LEVELS.find(l => l.name === name) || LEVELS[0];
+export const LEVEL_ORDER: LevelName[] = ['gamma', 'beta', 'bronze', 'silver', 'silver_elite', 'gold'];
+
+export function getLevelLabel(name: LevelName): string {
+  return LEVEL_LABELS[name] ?? name;
+}
+
+export function getLevelOrder(name: LevelName): number {
+  return LEVEL_ORDER.indexOf(name) + 1;
 }
 
 export function getLevelColorClass(name: LevelName): string {
   const colorMap: Record<LevelName, string> = {
-    PRE: 'text-muted-foreground',
-    BRONZ: 'text-way-bronze',
-    SILVER: 'text-way-silver',
-    SILVER_ELITE: 'text-way-silver-elite',
-    GOLD: 'text-way-gold',
-    ZAFFIRO: 'text-way-sapphire',
-    DIAMANTE: 'text-way-diamond',
+    gamma: 'text-muted-foreground',
+    beta: 'text-way-sapphire',
+    bronze: 'text-way-bronze',
+    silver: 'text-way-silver',
+    silver_elite: 'text-way-silver-elite',
+    gold: 'text-way-gold',
   };
-  return colorMap[name];
+  return colorMap[name] ?? 'text-muted-foreground';
 }
 
 export function getLevelBgClass(name: LevelName): string {
   const colorMap: Record<LevelName, string> = {
-    PRE: 'bg-muted',
-    BRONZ: 'bg-way-bronze/20 border-way-bronze/30',
-    SILVER: 'bg-way-silver/20 border-way-silver/30',
-    SILVER_ELITE: 'bg-way-silver-elite/20 border-way-silver-elite/30',
-    GOLD: 'bg-way-gold/20 border-way-gold/30',
-    ZAFFIRO: 'bg-way-sapphire/20 border-way-sapphire/30',
-    DIAMANTE: 'bg-way-diamond/20 border-way-diamond/30',
+    gamma: 'bg-muted border-border',
+    beta: 'bg-way-sapphire/20 border-way-sapphire/30',
+    bronze: 'bg-way-bronze/20 border-way-bronze/30',
+    silver: 'bg-way-silver/20 border-way-silver/30',
+    silver_elite: 'bg-way-silver-elite/20 border-way-silver-elite/30',
+    gold: 'bg-way-gold/20 border-way-gold/30',
   };
-  return colorMap[name];
+  return colorMap[name] ?? 'bg-muted';
 }
