@@ -7,14 +7,14 @@ import { Copy, QrCode, Users, DollarSign, Award, ChevronRight, ChevronDown, Circ
 import { QRCodeSVG } from 'qrcode.react';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
-import { getLevelInfo, getLevelColorClass } from '@/lib/levels';
+import { getLevelLabel, getLevelColorClass } from '@/lib/levels';
 import type { LevelName } from '@/lib/levels';
 
 function TreeNode({ node, depth = 0 }: { node: ReferralNode; depth?: number }) {
   const [open, setOpen] = useState(depth < 1);
   const hasChildren = node.children.length > 0;
   const levelColor = getLevelColorClass(node.level as LevelName);
-  const levelLabel = getLevelInfo(node.level as LevelName).label;
+  const levelLabel = getLevelLabel(node.level as LevelName);
   const joinDate = new Date(node.created_at).toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' });
 
   return (

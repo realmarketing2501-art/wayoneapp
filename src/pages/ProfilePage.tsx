@@ -47,7 +47,7 @@ export default function ProfilePage() {
           </div>
           <div className="min-w-0 flex-1">
             <h2 className="font-display text-lg font-bold text-foreground truncate sm:text-xl">{profile?.username ?? '...'}</h2>
-            <LevelBadge level={profile?.level ?? 'PRE'} size="sm" />
+            <LevelBadge level={profile?.level ?? 'gamma'} size="sm" />
             <p className="mt-1 text-[0.65rem] text-muted-foreground sm:text-xs">
               Membro dal {profile?.created_at ? new Date(profile.created_at).toLocaleDateString('it-IT') : '...'}
             </p>
