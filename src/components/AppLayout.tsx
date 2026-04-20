@@ -1,5 +1,5 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { Home, TrendingUp, Users, DollarSign, User, LogIn, Bell } from 'lucide-react';
+import { Home, TrendingUp, Users, DollarSign, User, LogIn, Bell, Award } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ThemeToggle } from './ThemeToggle';
 import { useAuth } from '@/contexts/AuthContext';
@@ -7,6 +7,7 @@ import { useAuth } from '@/contexts/AuthContext';
 const publicTabs = [
   { path: '/home', icon: Home, label: 'Home' },
   { path: '/invest', icon: TrendingUp, label: 'Invest' },
+  { path: '/qualifiche', icon: Award, label: 'Livelli' },
   { path: '/network', icon: Users, label: 'Rete' },
   { path: '/income', icon: DollarSign, label: 'Income' },
 ];
