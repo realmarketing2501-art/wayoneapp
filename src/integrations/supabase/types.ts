@@ -306,11 +306,12 @@ export type Database = {
       investment_plans: {
         Row: {
           created_at: string
-          daily_return: number
+          daily_return: number | null
           duration: number
+          duration_days: number | null
           id: string
-          max_invest: number
-          min_invest: number
+          max_invest: number | null
+          min_invest: number | null
           min_level: Database["public"]["Enums"]["level_name"]
           name: string
           pool_filled: number
@@ -319,11 +320,12 @@ export type Database = {
         }
         Insert: {
           created_at?: string
-          daily_return: number
+          daily_return?: number | null
           duration: number
+          duration_days?: number | null
           id?: string
-          max_invest: number
-          min_invest: number
+          max_invest?: number | null
+          min_invest?: number | null
           min_level?: Database["public"]["Enums"]["level_name"]
           name: string
           pool_filled?: number
@@ -332,11 +334,12 @@ export type Database = {
         }
         Update: {
           created_at?: string
-          daily_return?: number
+          daily_return?: number | null
           duration?: number
+          duration_days?: number | null
           id?: string
-          max_invest?: number
-          min_invest?: number
+          max_invest?: number | null
+          min_invest?: number | null
           min_level?: Database["public"]["Enums"]["level_name"]
           name?: string
           pool_filled?: number
@@ -349,7 +352,9 @@ export type Database = {
         Row: {
           amount: number
           created_at: string
+          daily_rate: number | null
           days_remaining: number
+          duration_days: number | null
           earned: number
           id: string
           last_payout_at: string | null
@@ -363,7 +368,9 @@ export type Database = {
         Insert: {
           amount: number
           created_at?: string
+          daily_rate?: number | null
           days_remaining: number
+          duration_days?: number | null
           earned?: number
           id?: string
           last_payout_at?: string | null
@@ -377,7 +384,9 @@ export type Database = {
         Update: {
           amount?: number
           created_at?: string
+          daily_rate?: number | null
           days_remaining?: number
+          duration_days?: number | null
           earned?: number
           id?: string
           last_payout_at?: string | null
@@ -398,38 +407,70 @@ export type Database = {
           },
         ]
       }
-      network_tree: {
+      levels: {
         Row: {
-          branch_position: number
+          bonus_percentuale: number
+          bonus_valore: number
           created_at: string
+          giornaliero_45: number | null
+          giornaliero_90: number | null
           id: string
-          investment_amount: number | null
-          is_active: boolean | null
-          level: number
-          parent_id: string | null
-          user_id: string
+          investimento_max: number | null
+          investimento_min: number | null
+          name: string
+          note: string | null
+          ordine: number
+          produzione_richiesta: number | null
+          prossimo_livello: string | null
+          rete: boolean
+          unita_richieste: number | null
+          updated_at: string
         }
         Insert: {
-          branch_position: number
+          bonus_percentuale?: number
+          bonus_valore?: number
           created_at?: string
-          id?: string
-          investment_amount?: number | null
-          is_active?: boolean | null
-          level?: number
-          parent_id?: string | null
-          user_id: string
+          giornaliero_45?: number | null
+          giornaliero_90?: number | null
+          id: string
+          investimento_max?: number | null
+          investimento_min?: number | null
+          name: string
+          note?: string | null
+          ordine: number
+          produzione_richiesta?: number | null
+          prossimo_livello?: string | null
+          rete?: boolean
+          unita_richieste?: number | null
+          updated_at?: string
         }
         Update: {
-          branch_position?: number
+          bonus_percentuale?: number
+          bonus_valore?: number
           created_at?: string
+          giornaliero_45?: number | null
+          giornaliero_90?: number | null
           id?: string
-          investment_amount?: number | null
-          is_active?: boolean | null
-          level?: number
-          parent_id?: string | null
-          user_id?: string
+          investimento_max?: number | null
+          investimento_min?: number | null
+          name?: string
+          note?: string | null
+          ordine?: number
+          produzione_richiesta?: number | null
+          prossimo_livello?: string | null
+          rete?: boolean
+          unita_richieste?: number | null
+          updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "levels_prossimo_livello_fkey"
+            columns: ["prossimo_livello"]
+            isOneToOne: false
+            referencedRelation: "levels"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       notifications: {
         Row: {
@@ -508,10 +549,12 @@ export type Database = {
           language: string | null
           level: Database["public"]["Enums"]["level_name"]
           network_volume: number
+          production: number
           referral_code: string
           referred_by: string | null
           total_earned: number
           total_network: number
+          units: number
           updated_at: string
           user_id: string
           username: string
@@ -529,10 +572,12 @@ export type Database = {
           language?: string | null
           level?: Database["public"]["Enums"]["level_name"]
           network_volume?: number
+          production?: number
           referral_code: string
           referred_by?: string | null
           total_earned?: number
           total_network?: number
+          units?: number
           updated_at?: string
           user_id: string
           username: string
@@ -550,10 +595,12 @@ export type Database = {
           language?: string | null
           level?: Database["public"]["Enums"]["level_name"]
           network_volume?: number
+          production?: number
           referral_code?: string
           referred_by?: string | null
           total_earned?: number
           total_network?: number
+          units?: number
           updated_at?: string
           user_id?: string
           username?: string
@@ -941,17 +988,20 @@ export type Database = {
         }
         Returns: boolean
       }
+      recompute_user_metrics: {
+        Args: { p_user_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role: "admin" | "user"
       level_name:
-        | "PRE"
-        | "BRONZ"
-        | "SILVER"
-        | "SILVER_ELITE"
-        | "GOLD"
-        | "ZAFFIRO"
-        | "DIAMANTE"
+        | "gamma"
+        | "beta"
+        | "bronze"
+        | "silver"
+        | "silver_elite"
+        | "gold"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1080,15 +1130,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user"],
-      level_name: [
-        "PRE",
-        "BRONZ",
-        "SILVER",
-        "SILVER_ELITE",
-        "GOLD",
-        "ZAFFIRO",
-        "DIAMANTE",
-      ],
+      level_name: ["gamma", "beta", "bronze", "silver", "silver_elite", "gold"],
     },
   },
 } as const
