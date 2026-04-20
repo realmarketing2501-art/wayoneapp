@@ -1,56 +1,25 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-// Fallback rates if admin_settings not available
-const DEFAULT_RATES: Record<string, number> = {
-  PRE: 0.008,
-  BRONZ: 0.01,
-  SILVER: 0.02,
-  SILVER_ELITE: 0.03,
-  GOLD: 0.04,
-  ZAFFIRO: 0.05,
-  DIAMANTE: 0.05,
-};
+/**
+ * Daily-returns v2 (Way One Qualifiche)
+ * - Usa investments.daily_rate snapshotato al momento della creazione (no più lookup runtime)
+ * - Cicli per-investment: ogni investimento ha la propria finestra di 24h
+ * - Sblocca balance_locked al completamento (status='completed')
+ * - Accredita interessi su balance + balance_available (prelevabili)
+ * - Scrive su wallet_transactions ledger
+ */
 
-const LEVEL_REQUIREMENTS: { level: string; direct: number; total: number }[] = [
-  { level: 'DIAMANTE', direct: 6, total: 46656 },
-  { level: 'GOLD', direct: 6, total: 1296 },
-  { level: 'SILVER_ELITE', direct: 6, total: 216 },
-  { level: 'SILVER', direct: 6, total: 36 },
-  { level: 'BRONZ', direct: 6, total: 6 },
-];
-
-Deno.serve(async (req) => {
+Deno.serve(async () => {
   try {
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!,
     );
 
-    // Load dynamic rates from admin_settings
-    let rates = { ...DEFAULT_RATES };
-    const { data: levelSetting } = await supabase
-      .from("admin_settings")
-      .select("value")
-      .eq("key", "level_config")
-      .single();
-
-    if (levelSetting?.value) {
-      try {
-        const config = JSON.parse(levelSetting.value) as { name: string; rate: number; active: boolean }[];
-        for (const l of config) {
-          if (l.active) {
-            rates[l.name] = l.rate / 100; // Convert percentage to decimal
-          }
-        }
-      } catch {}
-    }
-
-    // 1. Calculate daily returns ONLY for investments where >=24h passed since last payout
-    // Each user has their own 24h cycle starting from their investment timestamp
     const cutoff = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
     const { data: investments, error: invErr } = await supabase
       .from("investments")
-      .select("id, user_id, amount, plan_name, last_payout_at, created_at")
+      .select("id, user_id, amount, plan_name, daily_rate, days_remaining, last_payout_at, created_at, earned")
       .eq("status", "active")
       .or(`last_payout_at.lte.${cutoff},last_payout_at.is.null`);
 
@@ -58,108 +27,104 @@ Deno.serve(async (req) => {
 
     let processed = 0;
     let skipped = 0;
+    let completed = 0;
     const now = new Date().toISOString();
 
-    for (const inv of investments || []) {
-      // Double-check: if last_payout_at is null, use created_at as the reference
-      const lastPayout = inv.last_payout_at || inv.created_at;
-      const hoursSince = (Date.now() - new Date(lastPayout).getTime()) / (1000 * 60 * 60);
-      if (hoursSince < 24) {
-        skipped++;
-        continue;
-      }
-      const { data: profile } = await supabase
+    for (const inv of investments ?? []) {
+      const lastPayout = inv.last_payout_at ?? inv.created_at;
+      const hoursSince = (Date.now() - new Date(lastPayout).getTime()) / 3_600_000;
+      if (hoursSince < 24) { skipped++; continue; }
+
+      const rate = Number(inv.daily_rate ?? 0);
+      if (rate <= 0) { skipped++; continue; }
+
+      const dailyEarn = Number(inv.amount) * (rate / 100);
+      const newDays = inv.days_remaining - 1;
+      const isCompleting = newDays <= 0;
+
+      // Read current balance for ledger snapshot
+      const { data: prof } = await supabase
         .from("profiles")
-        .select("level")
+        .select("balance, balance_available, balance_locked, total_earned")
         .eq("user_id", inv.user_id)
         .single();
 
-      const level = profile?.level || "PRE";
-      const rate = rates[level] || 0.008;
-      const dailyReturn = Number(inv.amount) * rate;
+      if (!prof) { skipped++; continue; }
 
-      const { data: currentProfile } = await supabase
-        .from("profiles")
-        .select("balance, total_earned")
-        .eq("user_id", inv.user_id)
-        .single();
+      const principalUnlock = isCompleting ? Number(inv.amount) : 0;
+      const newBalance = Number(prof.balance) + dailyEarn;
+      const newAvailable = Number(prof.balance_available) + dailyEarn + principalUnlock;
+      const newLocked = Math.max(0, Number(prof.balance_locked) - principalUnlock);
 
-      if (currentProfile) {
-        await supabase
-          .from("profiles")
-          .update({
-            balance: Number(currentProfile.balance) + dailyReturn,
-            total_earned: Number(currentProfile.total_earned) + dailyReturn,
-          })
-          .eq("user_id", inv.user_id);
+      // Update profile (interest credit + optional principal unlock)
+      await supabase.from("profiles").update({
+        balance: newBalance,
+        balance_available: newAvailable,
+        balance_locked: newLocked,
+        total_earned: Number(prof.total_earned) + dailyEarn,
+        updated_at: now,
+      }).eq("user_id", inv.user_id);
+
+      // Update investment
+      await supabase.from("investments").update({
+        earned: Number(inv.earned) + dailyEarn,
+        days_remaining: newDays,
+        status: isCompleting ? "completed" : "active",
+        last_payout_at: now,
+      }).eq("id", inv.id);
+
+      // Ledger: interest
+      await supabase.from("wallet_transactions").insert({
+        user_id: inv.user_id,
+        type: "interest",
+        direction: "in",
+        amount: dailyEarn,
+        asset: "USDT",
+        status: "completed",
+        description: `Interesse giornaliero ${inv.plan_name} - ${rate}%`,
+        reference_id: inv.id,
+        reference_type: "investment",
+        balance_after: newBalance,
+      });
+
+      // Ledger: principal unlock on completion
+      if (isCompleting && principalUnlock > 0) {
+        await supabase.from("wallet_transactions").insert({
+          user_id: inv.user_id,
+          type: "investment_unlock",
+          direction: "in",
+          amount: principalUnlock,
+          asset: "USDT",
+          status: "completed",
+          description: `Sblocco capitale ${inv.plan_name}`,
+          reference_id: inv.id,
+          reference_type: "investment",
+          balance_after: newBalance,
+        });
+        completed++;
       }
 
-      const { data: currentInv } = await supabase
-        .from("investments")
-        .select("earned, days_remaining")
-        .eq("id", inv.id)
-        .single();
-
-      if (currentInv) {
-        const newDays = currentInv.days_remaining - 1;
-        await supabase
-          .from("investments")
-          .update({
-            earned: Number(currentInv.earned) + dailyReturn,
-            days_remaining: newDays,
-            status: newDays <= 0 ? "completed" : "active",
-            last_payout_at: now,
-          })
-          .eq("id", inv.id);
-      }
-
+      // Income record (mantiene lo storico esistente)
       await supabase.from("income_records").insert({
         user_id: inv.user_id,
-        amount: dailyReturn,
+        amount: dailyEarn,
         type: "interest",
       });
 
       processed++;
     }
 
-    // 2. Check qualification upgrades
-    const { data: allProfiles } = await supabase
-      .from("profiles")
-      .select("user_id, level, direct_referrals, total_network");
-
-    let upgrades = 0;
-
-    for (const p of allProfiles || []) {
-      let newLevel = p.level;
-      for (const req of LEVEL_REQUIREMENTS) {
-        if (p.direct_referrals >= req.direct && p.total_network >= req.total) {
-          newLevel = req.level;
-          break;
-        }
-      }
-      if (newLevel !== p.level) {
-        await supabase
-          .from("profiles")
-          .update({ level: newLevel })
-          .eq("user_id", p.user_id);
-        upgrades++;
-      }
-    }
-
-    return new Response(
-      JSON.stringify({
-        success: true,
-        processed_investments: processed,
-        skipped_investments: skipped,
-        level_upgrades: upgrades,
-        timestamp: new Date().toISOString(),
-      }),
-      { headers: { "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({
+      success: true,
+      processed_investments: processed,
+      skipped_investments: skipped,
+      completed_investments: completed,
+      timestamp: new Date().toISOString(),
+    }), { headers: { "Content-Type": "application/json" } });
   } catch (error) {
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      { status: 500, headers: { "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ error: (error as Error).message }), {
+      status: 500,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 });

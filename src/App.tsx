@@ -20,6 +20,7 @@ import TaskCenterPage from "./pages/TaskCenterPage";
 import LoginPage from "./pages/LoginPage";
 import DepositPage from "./pages/DepositPage";
 import AdminPage from "./pages/AdminPage";
+import QualifichePage from "./pages/QualifichePage";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -43,6 +44,7 @@ const App = () => (
                 <Route path="/invest" element={<InvestPage />} />
                 <Route path="/network" element={<NetworkPage />} />
                 <Route path="/income" element={<IncomePage />} />
+                <Route path="/qualifiche" element={<QualifichePage />} />
               </Route>
               {/* Protected routes - require login */}
               <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>

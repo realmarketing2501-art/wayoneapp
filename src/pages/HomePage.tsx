@@ -4,7 +4,7 @@ import { Wallet, ArrowDownToLine, ClipboardList, UserPlus, ChevronRight, Clock, 
 import { Card, CardContent } from '@/components/ui/card';
 import { LevelBadge } from '@/components/LevelBadge';
 import { useProfile } from '@/hooks/useProfile';
-import { getLevelInfo } from '@/lib/levels';
+import { useLevel } from '@/hooks/useLevels';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -48,11 +48,13 @@ export default function HomePage() {
   const { data: profile, isLoading } = useProfile();
   const { user } = useAuth();
 
-  const level = profile?.level ?? 'PRE';
-  const levelInfo = getLevelInfo(level);
+  const level = profile?.level ?? 'gamma';
+  const levelInfo = useLevel(level);
   const balance = Number(profile?.balance ?? 0);
   const totalEarned = Number(profile?.total_earned ?? 0);
-  const dailyEarning = balance * (levelInfo.dailyReturn / 100);
+  // Stima indicativa: rendimento giornaliero ipotetico al tasso 45gg del livello sul saldo disponibile.
+  const indicativeRate = levelInfo?.giornaliero_45 ?? 0;
+  const dailyEarning = balance * (indicativeRate / 100);
 
   useEffect(() => {
     const id = setInterval(() => setBannerIdx(i => (i + 1) % banners.length), 4000);
@@ -109,7 +111,7 @@ export default function HomePage() {
               <div className="rounded-lg bg-secondary p-3">
                 <p className="text-[0.65rem] text-muted-foreground sm:text-xs">Rendimento Giornaliero</p>
                 <p className="font-display text-base font-semibold text-primary sm:text-lg">+{dailyEarning.toFixed(2)} USDT</p>
-                <p className="text-[0.6rem] text-primary/70 sm:text-xs">{levelInfo.dailyReturn}%/giorno</p>
+                <p className="text-[0.6rem] text-primary/70 sm:text-xs">stima al {indicativeRate}%/giorno</p>
               </div>
               <div className="rounded-lg bg-secondary p-3">
                 <p className="text-[0.65rem] text-muted-foreground sm:text-xs">Prossimo Accredito</p>

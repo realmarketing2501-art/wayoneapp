@@ -1,20 +1,23 @@
 import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
 import { useProfile } from '@/hooks/useProfile';
+import { useLevels } from '@/hooks/useLevels';
 import { useReferralTree, ReferralNode } from '@/hooks/useReferralTree';
-import { Copy, QrCode, Users, DollarSign, Award, ChevronRight, ChevronDown, CircleDot, CheckCircle2, Clock } from 'lucide-react';
+import { computeProgress } from '@/lib/calculations';
+import { Copy, QrCode, Users, DollarSign, Award, ChevronRight, ChevronDown, CircleDot, CheckCircle2, Clock, TrendingUp } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
 import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
-import { getLevelInfo, getLevelColorClass } from '@/lib/levels';
+import { getLevelLabel, getLevelColorClass } from '@/lib/levels';
 import type { LevelName } from '@/lib/levels';
 
 function TreeNode({ node, depth = 0 }: { node: ReferralNode; depth?: number }) {
   const [open, setOpen] = useState(depth < 1);
   const hasChildren = node.children.length > 0;
   const levelColor = getLevelColorClass(node.level as LevelName);
-  const levelLabel = getLevelInfo(node.level as LevelName).label;
+  const levelLabel = getLevelLabel(node.level as LevelName);
   const joinDate = new Date(node.created_at).toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' });
 
   return (
@@ -70,10 +73,11 @@ export default function NetworkPage() {
   const { toast } = useToast();
   const { data: profile } = useProfile();
   const { data: tree, isLoading: treeLoading } = useReferralTree();
+  const { data: levels = [] } = useLevels();
 
   const referralCode = profile?.referral_code ?? '...';
-  const baseUrl = window.location.hostname.includes('preview') 
-    ? 'https://wayoneapp.lovable.app' 
+  const baseUrl = window.location.hostname.includes('preview')
+    ? 'https://wayoneapp.lovable.app'
     : window.location.origin;
   const referralUrl = `${baseUrl}/login?ref=${referralCode}`;
 
@@ -82,11 +86,16 @@ export default function NetworkPage() {
     toast({ title: 'Link copiato!', description: 'Il tuo link referral è stato copiato.' });
   };
 
+  const userLevel = (profile?.level ?? 'gamma') as LevelName;
+  const units = profile?.units ?? 0;
+  const production = Number(profile?.production ?? 0);
+  const progress = computeProgress(levels, userLevel, units, production);
+
   const stats = [
+    { icon: Users, label: 'Unità (referral attivi)', value: units },
+    { icon: DollarSign, label: 'Produzione rete', value: `${production.toLocaleString()} USDT` },
     { icon: Users, label: 'Referral Diretti', value: profile?.direct_referrals ?? 0 },
-    { icon: Users, label: 'Rete Totale', value: profile?.total_network ?? 0 },
-    { icon: DollarSign, label: 'Volume Rete', value: `${Number(profile?.network_volume ?? 0).toLocaleString()} USDT` },
-    { icon: Award, label: 'Bonus Rete', value: '0 USDT' },
+    { icon: Award, label: 'Bonus livello', value: `${progress?.current.bonus_valore ?? 0} USDT` },
   ];
 
   return (
