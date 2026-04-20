@@ -114,6 +114,54 @@ export default function NetworkPage() {
         ))}
       </div>
 
+      {/* Progress verso prossimo livello */}
+      {progress && progress.next && (
+        <Card className="border-primary/20">
+          <CardContent className="p-4 space-y-3">
+            <div className="flex items-center justify-between gap-2">
+              <div className="min-w-0">
+                <p className="text-xs text-muted-foreground">Avanzamento qualifica</p>
+                <p className="font-display text-base font-bold text-foreground">
+                  {progress.current.name} → {progress.next.name}
+                </p>
+              </div>
+              <Badge variant="secondary" className="shrink-0 text-[0.65rem]">
+                <TrendingUp className="h-3 w-3 mr-1" />
+                {progress.overallPct.toFixed(0)}%
+              </Badge>
+            </div>
+
+            {/* Units bar */}
+            <div>
+              <div className="flex items-center justify-between text-[0.7rem] mb-1">
+                <span className="text-muted-foreground">Unità (referral attivi)</span>
+                <span className="font-medium text-foreground">
+                  {units} / {progress.next.unita_richieste}
+                  {progress.unitsMissing > 0 && (
+                    <span className="text-muted-foreground ml-1">(-{progress.unitsMissing})</span>
+                  )}
+                </span>
+              </div>
+              <Progress value={progress.unitsPct} className="h-1.5" />
+            </div>
+
+            {/* Production bar */}
+            <div>
+              <div className="flex items-center justify-between text-[0.7rem] mb-1">
+                <span className="text-muted-foreground">Produzione rete</span>
+                <span className="font-medium text-foreground">
+                  {production.toLocaleString()} / {Number(progress.next.produzione_richiesta).toLocaleString()} USDT
+                  {progress.productionMissing > 0 && (
+                    <span className="text-muted-foreground ml-1">(-{progress.productionMissing.toLocaleString()})</span>
+                  )}
+                </span>
+              </div>
+              <Progress value={progress.productionPct} className="h-1.5" />
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       <Card className="border-primary/20">
         <CardContent className="p-4">
           <p className="text-sm font-medium text-foreground">Il tuo Link Referral</p>
