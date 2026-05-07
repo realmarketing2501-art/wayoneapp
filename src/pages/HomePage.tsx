@@ -4,7 +4,9 @@ import { Wallet, ArrowDownToLine, ClipboardList, UserPlus, ChevronRight, Clock, 
 import { Card, CardContent } from '@/components/ui/card';
 import { LevelBadge } from '@/components/LevelBadge';
 import { useProfile } from '@/hooks/useProfile';
-import { useLevel } from '@/hooks/useLevels';
+import { useLevel, useLevels } from '@/hooks/useLevels';
+import { getLevelLabel, getLevelColorClass, getLevelBgClass, type LevelName } from '@/lib/levels';
+import { Crown, TrendingUp } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -50,6 +52,9 @@ export default function HomePage() {
 
   const level = profile?.level ?? 'gamma';
   const levelInfo = useLevel(level);
+  const { data: allLevels = [] } = useLevels();
+  // Mostra solo i 6 livelli operativi sulla home
+  const operationalLevels = allLevels.filter(l => ['bronze','silver','silver_elite','gold','gold_elite','oro_vip'].includes(l.id));
   const balance = Number(profile?.balance ?? 0);
   const totalEarned = Number(profile?.total_earned ?? 0);
   // Rendita giornaliera del piano del livello: settimanale/7, fallback ai vecchi piani 45gg
@@ -169,6 +174,62 @@ export default function HomePage() {
           </CardContent>
         </Card>
       )}
+
+      {/* Panoramica Livelli Way One */}
+      <div>
+        <div className="mb-3 flex items-center justify-between">
+          <h3 className="font-display text-base font-semibold text-foreground sm:text-lg flex items-center gap-2">
+            <Crown className="h-4 w-4 text-primary" />
+            I Livelli Way One
+          </h3>
+          <button onClick={() => navigate('/qualifiche')} className="text-xs text-primary hover:underline">
+            Vedi tutti →
+          </button>
+        </div>
+        <div className="grid grid-cols-2 gap-2 sm:gap-3">
+          {operationalLevels.map((l) => {
+            const isCurrent = l.id === level;
+            return (
+              <Card
+                key={l.id}
+                className={`transition-all ${isCurrent ? 'border-primary ring-1 ring-primary/40' : 'border-border'}`}
+              >
+                <CardContent className="p-3 space-y-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className={`text-[0.7rem] font-bold ${getLevelColorClass(l.id as LevelName)}`}>
+                      {getLevelLabel(l.id as LevelName)}
+                    </span>
+                    {isCurrent && (
+                      <span className="text-[0.55rem] font-semibold uppercase text-primary">Attuale</span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-1.5 text-primary">
+                    <TrendingUp className="h-3 w-3" />
+                    <span className="font-display text-sm font-bold">{Number(l.settimanale ?? 0)}%</span>
+                    <span className="text-[0.6rem] text-muted-foreground">/sett · {l.durata_giorni}gg</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-1 text-[0.6rem]">
+                    <div>
+                      <p className="text-muted-foreground">Invest. min</p>
+                      <p className="font-semibold text-foreground">{Number(l.investimento_min ?? 0)} USDT</p>
+                    </div>
+                    <div>
+                      <p className="text-muted-foreground">Unità</p>
+                      <p className="font-semibold text-foreground">{l.unita_richieste ?? '—'}</p>
+                    </div>
+                  </div>
+                  <div className="rounded-md bg-secondary px-2 py-1.5">
+                    <p className="text-[0.55rem] text-muted-foreground">Bonus rete una-tantum</p>
+                    <p className="font-display text-xs font-bold text-primary">
+                      +{Number(l.bonus_valore).toLocaleString()} USDT
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      </div>
 
       {/* Academy */}
       <div>
