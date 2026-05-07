@@ -29,10 +29,12 @@ const features = [
 ];
 
 const levels = [
-  { name: 'Bronz', rate: '1.0%', color: 'from-amber-700 to-amber-600' },
-  { name: 'Silver', rate: '2.0%', color: 'from-gray-400 to-gray-300' },
-  { name: 'Gold', rate: '4.0%', color: 'from-yellow-500 to-amber-400' },
-  { name: 'Diamante', rate: '6.0%', color: 'from-purple-500 to-violet-400' },
+  { name: 'Bronze', rate: '1%/sett', color: 'from-amber-700 to-amber-600' },
+  { name: 'Silver', rate: '2%/sett', color: 'from-gray-400 to-gray-300' },
+  { name: 'Silver Elite', rate: '3%/sett', color: 'from-slate-300 to-slate-100' },
+  { name: 'Gold', rate: '4%/sett', color: 'from-yellow-500 to-amber-400' },
+  { name: 'Gold Elite', rate: '5%/sett', color: 'from-yellow-400 to-orange-300' },
+  { name: 'Oro VIP', rate: '8%/sett', color: 'from-purple-500 to-violet-400' },
 ];
 
 export default function Index() {
