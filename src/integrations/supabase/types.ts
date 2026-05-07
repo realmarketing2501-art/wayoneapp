@@ -407,11 +407,36 @@ export type Database = {
           },
         ]
       }
+      level_bonus_payouts: {
+        Row: {
+          amount: number
+          id: string
+          level: Database["public"]["Enums"]["level_name"]
+          paid_at: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          id?: string
+          level: Database["public"]["Enums"]["level_name"]
+          paid_at?: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          id?: string
+          level?: Database["public"]["Enums"]["level_name"]
+          paid_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       levels: {
         Row: {
           bonus_percentuale: number
           bonus_valore: number
           created_at: string
+          durata_giorni: number | null
           giornaliero_45: number | null
           giornaliero_90: number | null
           id: string
@@ -423,6 +448,7 @@ export type Database = {
           produzione_richiesta: number | null
           prossimo_livello: string | null
           rete: boolean
+          settimanale: number | null
           unita_richieste: number | null
           updated_at: string
         }
@@ -430,6 +456,7 @@ export type Database = {
           bonus_percentuale?: number
           bonus_valore?: number
           created_at?: string
+          durata_giorni?: number | null
           giornaliero_45?: number | null
           giornaliero_90?: number | null
           id: string
@@ -441,6 +468,7 @@ export type Database = {
           produzione_richiesta?: number | null
           prossimo_livello?: string | null
           rete?: boolean
+          settimanale?: number | null
           unita_richieste?: number | null
           updated_at?: string
         }
@@ -448,6 +476,7 @@ export type Database = {
           bonus_percentuale?: number
           bonus_valore?: number
           created_at?: string
+          durata_giorni?: number | null
           giornaliero_45?: number | null
           giornaliero_90?: number | null
           id?: string
@@ -459,6 +488,7 @@ export type Database = {
           produzione_richiesta?: number | null
           prossimo_livello?: string | null
           rete?: boolean
+          settimanale?: number | null
           unita_richieste?: number | null
           updated_at?: string
         }
@@ -961,6 +991,13 @@ export type Database = {
     }
     Functions: {
       admin_delete_user: { Args: { p_user_id: string }; Returns: boolean }
+      award_level_bonus: {
+        Args: {
+          p_level: Database["public"]["Enums"]["level_name"]
+          p_user_id: string
+        }
+        Returns: boolean
+      }
       create_investment: {
         Args: {
           p_amount: number
@@ -1002,6 +1039,8 @@ export type Database = {
         | "silver"
         | "silver_elite"
         | "gold"
+        | "gold_elite"
+        | "oro_vip"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -1130,7 +1169,16 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "user"],
-      level_name: ["gamma", "beta", "bronze", "silver", "silver_elite", "gold"],
+      level_name: [
+        "gamma",
+        "beta",
+        "bronze",
+        "silver",
+        "silver_elite",
+        "gold",
+        "gold_elite",
+        "oro_vip",
+      ],
     },
   },
 } as const

@@ -18,10 +18,12 @@ export const LEVEL_LABELS: Record<LevelName, string> = {
   bronze: 'Bronze Investitore',
   silver: 'Silver Investitore',
   silver_elite: 'Silver Elite',
-  gold: 'Gold',
+  gold: 'Gold Investitore',
+  gold_elite: 'Gold Elite',
+  oro_vip: 'Oro VIP',
 };
 
-export const LEVEL_ORDER: LevelName[] = ['gamma', 'beta', 'bronze', 'silver', 'silver_elite', 'gold'];
+export const LEVEL_ORDER: LevelName[] = ['gamma', 'beta', 'bronze', 'silver', 'silver_elite', 'gold', 'gold_elite', 'oro_vip'];
 
 export function getLevelLabel(name: LevelName): string {
   return LEVEL_LABELS[name] ?? name;
@@ -39,6 +41,8 @@ export function getLevelColorClass(name: LevelName): string {
     silver: 'text-way-silver',
     silver_elite: 'text-way-silver-elite',
     gold: 'text-way-gold',
+    gold_elite: 'text-way-glow',
+    oro_vip: 'text-way-diamond',
   };
   return colorMap[name] ?? 'text-muted-foreground';
 }
@@ -51,6 +55,8 @@ export function getLevelBgClass(name: LevelName): string {
     silver: 'bg-way-silver/20 border-way-silver/30',
     silver_elite: 'bg-way-silver-elite/20 border-way-silver-elite/30',
     gold: 'bg-way-gold/20 border-way-gold/30',
+    gold_elite: 'bg-way-glow/20 border-way-glow/30',
+    oro_vip: 'bg-way-diamond/20 border-way-diamond/30',
   };
   return colorMap[name] ?? 'bg-muted';
 }
