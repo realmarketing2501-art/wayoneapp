@@ -29,10 +29,12 @@ const features = [
 ];
 
 const levels = [
-  { name: 'Bronz', rate: '1.0%', color: 'from-amber-700 to-amber-600' },
-  { name: 'Silver', rate: '2.0%', color: 'from-gray-400 to-gray-300' },
-  { name: 'Gold', rate: '4.0%', color: 'from-yellow-500 to-amber-400' },
-  { name: 'Diamante', rate: '6.0%', color: 'from-purple-500 to-violet-400' },
+  { name: 'Bronze', rate: '1%/sett', color: 'from-amber-700 to-amber-600' },
+  { name: 'Silver', rate: '2%/sett', color: 'from-gray-400 to-gray-300' },
+  { name: 'Silver Elite', rate: '3%/sett', color: 'from-slate-300 to-slate-100' },
+  { name: 'Gold', rate: '4%/sett', color: 'from-yellow-500 to-amber-400' },
+  { name: 'Gold Elite', rate: '5%/sett', color: 'from-yellow-400 to-orange-300' },
+  { name: 'Oro VIP', rate: '8%/sett', color: 'from-purple-500 to-violet-400' },
 ];
 
 export default function Index() {
@@ -159,7 +161,7 @@ export default function Index() {
             <h3 className="font-display text-2xl font-bold text-foreground sm:text-3xl">Livelli e rendimenti</h3>
             <p className="mt-2 text-muted-foreground">Più cresce la tua rete, più alti sono i tuoi rendimenti.</p>
           </div>
-          <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {levels.map((l, i) => (
               <motion.div
                 key={l.name}
@@ -173,7 +175,7 @@ export default function Index() {
                   <CardContent className="p-4 text-center">
                     <p className="font-display text-sm font-semibold text-muted-foreground">{l.name}</p>
                     <p className="mt-1 font-display text-3xl font-bold text-foreground">{l.rate}</p>
-                    <p className="text-xs text-muted-foreground">al giorno</p>
+                    <p className="text-xs text-muted-foreground">rendimento settimanale</p>
                   </CardContent>
                 </Card>
               </motion.div>
