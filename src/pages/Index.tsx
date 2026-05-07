@@ -161,7 +161,7 @@ export default function Index() {
             <h3 className="font-display text-2xl font-bold text-foreground sm:text-3xl">Livelli e rendimenti</h3>
             <p className="mt-2 text-muted-foreground">Più cresce la tua rete, più alti sono i tuoi rendimenti.</p>
           </div>
-          <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
             {levels.map((l, i) => (
               <motion.div
                 key={l.name}
@@ -175,7 +175,7 @@ export default function Index() {
                   <CardContent className="p-4 text-center">
                     <p className="font-display text-sm font-semibold text-muted-foreground">{l.name}</p>
                     <p className="mt-1 font-display text-3xl font-bold text-foreground">{l.rate}</p>
-                    <p className="text-xs text-muted-foreground">al giorno</p>
+                    <p className="text-xs text-muted-foreground">rendimento settimanale</p>
                   </CardContent>
                 </Card>
               </motion.div>
