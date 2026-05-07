@@ -52,8 +52,10 @@ export default function HomePage() {
   const levelInfo = useLevel(level);
   const balance = Number(profile?.balance ?? 0);
   const totalEarned = Number(profile?.total_earned ?? 0);
-  // Stima indicativa: rendimento giornaliero ipotetico al tasso 45gg del livello sul saldo disponibile.
-  const indicativeRate = levelInfo?.giornaliero_45 ?? 0;
+  // Rendita giornaliera del piano del livello: settimanale/7, fallback ai vecchi piani 45gg
+  const indicativeRate = levelInfo?.settimanale != null
+    ? Number(levelInfo.settimanale) / 7
+    : Number(levelInfo?.giornaliero_45 ?? 0);
   const dailyEarning = balance * (indicativeRate / 100);
 
   useEffect(() => {

@@ -12,6 +12,8 @@ export interface LevelConfig {
   bonus_valore: number;
   giornaliero_45: number | null;
   giornaliero_90: number | null;
+  durata_giorni: number | null;
+  settimanale: number | null;
   investimento_min: number | null;
   investimento_max: number | null;
   rete: boolean;
