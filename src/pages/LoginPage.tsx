@@ -5,7 +5,6 @@ import { Label } from '@/components/ui/label';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
-import { ThemeToggle } from '@/components/ThemeToggle';
 import { ArrowLeft, Eye } from 'lucide-react';
 import { UsdtMonogram } from '@/components/UsdtMonogram';
 import { lovable } from '@/integrations/lovable';
@@ -78,7 +77,6 @@ export default function LoginPage() {
         </Button>
       </div>
       <div className="absolute right-4 top-4">
-        <ThemeToggle />
       </div>
 
       <div className="mb-6 flex flex-col items-center text-center">

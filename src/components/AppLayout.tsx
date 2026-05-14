@@ -1,7 +1,6 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { Home, TrendingUp, Users, Wallet, User, LogIn, Bell } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { ThemeToggle } from './ThemeToggle';
 import HeaderLanguageButton from './HeaderLanguageButton';
 import { useAuth } from '@/contexts/AuthContext';
 import { UsdtMonogram } from './UsdtMonogram';
@@ -45,7 +44,6 @@ export default function AppLayout() {
           </button>
           <div className="flex items-center gap-1">
             <HeaderLanguageButton />
-            <ThemeToggle />
             {user && (
               <button
                 onClick={() => navigate('/income')}
