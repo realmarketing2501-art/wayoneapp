@@ -85,11 +85,11 @@ export function getPirateRank(name: LevelName): PirateRank {
     gamma:        { rank: 1, icon: Anchor,   textClass: 'text-stone-400',  ringClass: 'ring-stone-500/40',  bgClass: 'bg-stone-900/40' },
     beta:         { rank: 2, icon: Sailboat, textClass: 'text-sky-300',    ringClass: 'ring-sky-500/40',    bgClass: 'bg-sky-950/40' },
     bronze:       { rank: 3, icon: Ship,     textClass: 'text-amber-700',  ringClass: 'ring-amber-700/50',  bgClass: 'bg-amber-950/40' },
-    silver:       { rank: 4, icon: Ship,     textClass: 'text-slate-200',  ringClass: 'ring-slate-300/50',  bgClass: 'bg-slate-800/40' },
-    silver_elite: { rank: 5, icon: Compass,  textClass: 'text-amber-200',  ringClass: 'ring-amber-300/60',  bgClass: 'bg-amber-900/30' },
-    gold:         { rank: 6, icon: Compass,  textClass: 'text-amber-300',  ringClass: 'ring-amber-400/70',  bgClass: 'bg-amber-900/40' },
-    gold_elite:   { rank: 7, icon: Crown,    textClass: 'text-amber-300',  ringClass: 'ring-amber-300/80',  bgClass: 'bg-amber-800/40' },
-    oro_vip:      { rank: 8, icon: Skull,    textClass: 'text-fuchsia-300',ringClass: 'ring-fuchsia-400/70',bgClass: 'bg-fuchsia-950/40' },
+    silver:       { rank: 4, icon: Compass,  textClass: 'text-amber-200',  ringClass: 'ring-amber-300/60',  bgClass: 'bg-amber-900/30' },
+    silver_elite: { rank: 4, icon: Compass,  textClass: 'text-amber-200',  ringClass: 'ring-amber-300/60',  bgClass: 'bg-amber-900/30' },
+    gold:         { rank: 5, icon: Crown,    textClass: 'text-amber-300',  ringClass: 'ring-amber-300/80',  bgClass: 'bg-amber-800/40' },
+    gold_elite:   { rank: 5, icon: Crown,    textClass: 'text-amber-300',  ringClass: 'ring-amber-300/80',  bgClass: 'bg-amber-800/40' },
+    oro_vip:      { rank: 6, icon: Skull,    textClass: 'text-fuchsia-300',ringClass: 'ring-fuchsia-400/70',bgClass: 'bg-fuchsia-950/40' },
   };
   return map[name] ?? map.gamma;
 }
