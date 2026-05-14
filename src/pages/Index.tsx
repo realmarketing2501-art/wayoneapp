@@ -54,13 +54,11 @@ const referralLevels = [
   { level: 'L4', label: 'Invitato del tuo L3',  pct: '0,5%', on1000: '+5 USDT' },
 ];
 
-// Bonus & milestone — importi dimezzati
+// Bonus & milestone referral
 const bonuses = [
-  { icon: Gift,   title: 'Benvenuto',         when: 'Registrazione completata',         reward: '50 USDT' },
-  { icon: Users,  title: 'Primo referral',    when: '1° invitato che investe',          reward: '25 USDT' },
-  { icon: Star,   title: 'Super reclutatore', when: '10 referral diretti attivi',       reward: '250 USDT' },
-  { icon: Crown,  title: 'Diamond recruiter', when: '50 referral diretti attivi',       reward: '1.500 USDT' },
-  { icon: Award,  title: 'Fedeltà mensile',   when: 'Account attivo ogni 30 giorni',    reward: '12,5 USDT' },
+  { icon: Users,  title: 'Primo referral',    when: '1° invitato che investe',          reward: '5 USDT' },
+  { icon: Star,   title: 'Super reclutatore', when: '10 referral diretti attivi',       reward: '75 USDT' },
+  { icon: Crown,  title: 'Diamond recruiter', when: '50 referral diretti attivi',       reward: '500 USDT' },
   { icon: Wallet, title: 'Volume 500+',       when: 'Investimento personale > 500',     reward: '15 USDT' },
   { icon: Wallet, title: 'Volume 2.000+',     when: 'Investimento personale > 2.000',   reward: '75 USDT' },
   { icon: Wallet, title: 'Volume 5.000+',     when: 'Investimento personale > 5.000',   reward: '250 USDT' },
