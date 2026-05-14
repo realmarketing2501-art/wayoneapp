@@ -4,7 +4,7 @@ import { LevelBadge } from '@/components/LevelBadge';
 import { useProfile } from '@/hooks/useProfile';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
-import { User, Shield, Wallet, Globe, LogOut, ChevronRight, FileCheck, Sun, Moon, ShieldCheck } from 'lucide-react';
+import { User, Shield, Wallet, Globe, LogOut, ChevronRight, FileCheck, Sun, Moon, ShieldCheck, HelpCircle, Award } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
