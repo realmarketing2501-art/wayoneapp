@@ -37,6 +37,43 @@ const screens = [
   },
 ];
 
+// Piani investimento — percentuali dimezzate (-50%) rispetto al modello originale
+const plans = [
+  { name: 'Starter',  days: 30, daily: '0,40%', roi: '+12%',     min: '20 USDT', max: '500 USDT' },
+  { name: 'Silver',   days: 45, daily: '0,50%', roi: '+22,5%',   min: '20 USDT', max: '2.000 USDT' },
+  { name: 'Gold',     days: 60, daily: '0,60%', roi: '+36%',     min: '20 USDT', max: '5.000 USDT', popular: true },
+  { name: 'Platinum', days: 75, daily: '0,75%', roi: '+56,25%',  min: '20 USDT', max: '10.000 USDT' },
+  { name: 'Diamond',  days: 90, daily: '0,90%', roi: '+81%',     min: '20 USDT', max: 'Illimitato' },
+];
+
+// Referral 4 livelli — commissioni dimezzate (totale 7,5%)
+const referralLevels = [
+  { level: 'L1', label: 'Invitato diretto',     pct: '4%',   on1000: '+40 USDT' },
+  { level: 'L2', label: 'Invitato del tuo L1',  pct: '2%',   on1000: '+20 USDT' },
+  { level: 'L3', label: 'Invitato del tuo L2',  pct: '1%',   on1000: '+10 USDT' },
+  { level: 'L4', label: 'Invitato del tuo L3',  pct: '0,5%', on1000: '+5 USDT' },
+];
+
+// Bonus & milestone — importi dimezzati
+const bonuses = [
+  { icon: Gift,   title: 'Benvenuto',         when: 'Registrazione completata',         reward: '50 USDT' },
+  { icon: Users,  title: 'Primo referral',    when: '1° invitato che investe',          reward: '25 USDT' },
+  { icon: Star,   title: 'Super reclutatore', when: '10 referral diretti attivi',       reward: '250 USDT' },
+  { icon: Crown,  title: 'Diamond recruiter', when: '50 referral diretti attivi',       reward: '1.500 USDT' },
+  { icon: Award,  title: 'Fedeltà mensile',   when: 'Account attivo ogni 30 giorni',    reward: '12,5 USDT' },
+  { icon: Wallet, title: 'Volume 500+',       when: 'Investimento personale > 500',     reward: '15 USDT' },
+  { icon: Wallet, title: 'Volume 2.000+',     when: 'Investimento personale > 2.000',   reward: '75 USDT' },
+  { icon: Wallet, title: 'Volume 5.000+',     when: 'Investimento personale > 5.000',   reward: '250 USDT' },
+];
+
+// Rank VIP — bonus %/giorno dimezzati
+const ranks = [
+  { name: 'Standard', volume: '< 5.000 USDT',     bonus: 'Nessuno',      extra: '—' },
+  { name: 'Gold',     volume: '> 5.000 USDT',     bonus: '+0,5%/giorno', extra: 'Badge + supporto prioritario' },
+  { name: 'Platinum', volume: '> 20.000 USDT',    bonus: '+0,75%/giorno',extra: 'Badge + fee prelievo 0' },
+  { name: 'Diamond',  volume: '> 100.000 USDT',   bonus: '+1,0%/giorno', extra: 'Badge + account manager' },
+];
+
 export default function Index() {
   const navigate = useNavigate();
 
