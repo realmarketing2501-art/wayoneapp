@@ -278,20 +278,21 @@ function RowItem({
 }
 
 function TxRow({ tx }: { tx: any }) {
+  const { t, i18n } = useTranslation();
   const isIn = tx.direction === 'in';
-  const date = new Date(tx.created_at).toLocaleDateString('it-IT', {
+  const date = new Date(tx.created_at).toLocaleDateString(i18n.language, {
     day: '2-digit', month: 'short',
   });
-  const time = new Date(tx.created_at).toLocaleTimeString('it-IT', {
+  const time = new Date(tx.created_at).toLocaleTimeString(i18n.language, {
     hour: '2-digit', minute: '2-digit',
   });
   const labelMap: Record<string, string> = {
-    deposit: 'Deposito',
-    withdraw: 'Prelievo',
-    investment: 'Investimento',
-    interest: 'Rendimento giornaliero',
-    bonus: 'Bonus rete',
-    referral: 'Referral bonus',
+    deposit: t('home.txDeposit'),
+    withdraw: t('home.txWithdraw'),
+    investment: t('home.txInvestment'),
+    interest: t('home.txInterest'),
+    bonus: t('home.txBonus'),
+    referral: t('home.txReferral'),
   };
   return (
     <div className="flex items-center justify-between gap-2 border-b border-border/40 pb-2 last:border-0 last:pb-0">
