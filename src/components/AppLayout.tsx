@@ -1,15 +1,15 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { Home, TrendingUp, Users, DollarSign, User, LogIn, Bell, Award, Anchor } from 'lucide-react';
+import { Home, TrendingUp, Users, Wallet, User, LogIn, Bell } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ThemeToggle } from './ThemeToggle';
 import { useAuth } from '@/contexts/AuthContext';
+import { UsdtMonogram } from './UsdtMonogram';
 
 const publicTabs = [
   { path: '/home', icon: Home, label: 'Home' },
-  { path: '/invest', icon: TrendingUp, label: 'Invest' },
-  { path: '/qualifiche', icon: Award, label: 'Livelli' },
-  { path: '/network', icon: Users, label: 'Rete' },
-  { path: '/income', icon: DollarSign, label: 'Income' },
+  { path: '/fund', icon: Wallet, label: 'Wallet' },
+  { path: '/invest', icon: TrendingUp, label: 'Investi' },
+  { path: '/network', icon: Users, label: 'Referral' },
 ];
 
 export default function AppLayout() {
@@ -20,35 +20,45 @@ export default function AppLayout() {
   const tabs = [
     ...publicTabs,
     user
-      ? { path: '/profile', icon: User, label: 'Me' }
+      ? { path: '/profile', icon: User, label: 'Profilo' }
       : { path: '/login', icon: LogIn, label: 'Accedi' },
   ];
 
   return (
-    <div className="flex min-h-[100dvh] flex-col pirate-theme">
-      <header className="sticky top-0 z-50 flex items-center justify-between pirate-header px-4 py-3 safe-top">
-        <h1 className="pirate-display text-xl font-bold tracking-tight flex items-center gap-2 cursor-pointer" onClick={() => navigate('/home')}>
-          <Anchor className="h-5 w-5" style={{ color: 'hsl(var(--p-gold-bright))' }} />
-          <span style={{ color: 'hsl(var(--p-gold-bright))' }}>WAY</span>
-          <span style={{ color: 'hsl(var(--p-cream))' }}> ONE</span>
-        </h1>
-        <div className="flex items-center gap-1">
-          <ThemeToggle />
-          {user && (
-            <button className="relative rounded-full p-2 transition-colors" style={{ color: 'hsl(var(--p-muted))' }}>
-              <Bell className="h-5 w-5" />
-              <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-[hsl(var(--p-gold))] animate-pulse-glow" />
-            </button>
-          )}
+    <div className="flex min-h-[100dvh] flex-col usdt-bg">
+      <header className="sticky top-0 z-50 usdt-header safe-top">
+        <div className="flex items-center justify-between px-4 py-3">
+          <button
+            onClick={() => navigate('/home')}
+            className="flex items-center gap-2.5"
+          >
+            <UsdtMonogram size={32} letter="U" />
+            <span className="font-display text-xl font-bold tracking-wide usdt-gold-text">
+              USDT
+            </span>
+          </button>
+          <div className="flex items-center gap-1">
+            <ThemeToggle />
+            {user && (
+              <button
+                onClick={() => navigate('/income')}
+                className="relative rounded-full p-2 text-muted-foreground transition-colors hover:text-foreground"
+                aria-label="Notifiche"
+              >
+                <Bell className="h-5 w-5" />
+                <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-primary" />
+              </button>
+            )}
+          </div>
         </div>
       </header>
 
-      <main className="flex-1 overflow-y-auto pb-24" style={{ background: 'hsl(var(--p-ink))' }}>
+      <main className="flex-1 overflow-y-auto pb-24">
         <Outlet />
       </main>
 
-      <nav className="fixed bottom-0 left-0 right-0 z-50 pirate-nav safe-bottom">
-        <div className="mx-auto flex max-w-lg items-center justify-around py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 usdt-nav safe-bottom">
+        <div className="mx-auto flex max-w-lg items-center justify-around px-2 py-2 pb-[max(0.5rem,env(safe-area-inset-bottom))]">
           {tabs.map((tab) => {
             const isActive = location.pathname === tab.path;
             return (
@@ -57,11 +67,11 @@ export default function AppLayout() {
                 onClick={() => navigate(tab.path)}
                 data-active={isActive}
                 className={cn(
-                  'flex flex-col items-center gap-1 px-3 py-2 text-xs min-w-[3.2rem] pirate-nav-item'
+                  'flex flex-1 flex-col items-center gap-1 px-2 py-2 usdt-nav-item',
                 )}
               >
-                <tab.icon className={cn('h-5 w-5 pirate-nav-icon')} />
-                <span className="pirate-nav-label text-[0.6rem]">{tab.label}</span>
+                <tab.icon className="h-5 w-5" />
+                <span className="text-[0.65rem] font-medium">{tab.label}</span>
               </button>
             );
           })}
