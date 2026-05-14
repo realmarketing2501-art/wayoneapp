@@ -12,6 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Badge } from '@/components/ui/badge';
 import { getLevelLabel, getLevelColorClass } from '@/lib/levels';
 import type { LevelName } from '@/lib/levels';
+import ReferralGuide from '@/components/ReferralGuide';
 
 function TreeNode({ node, depth = 0 }: { node: ReferralNode; depth?: number }) {
   const [open, setOpen] = useState(depth < 1);
@@ -177,6 +178,9 @@ export default function NetworkPage() {
           )}
         </CardContent>
       </Card>
+
+      {/* Manuale Referral */}
+      <ReferralGuide url={referralUrl} code={referralCode} />
 
       {/* Referral Tree */}
       <Card>
