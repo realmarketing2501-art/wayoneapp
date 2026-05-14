@@ -13,6 +13,9 @@ import { Badge } from '@/components/ui/badge';
 import { getLevelLabel, getLevelColorClass } from '@/lib/levels';
 import type { LevelName } from '@/lib/levels';
 import ReferralGuide from '@/components/ReferralGuide';
+import { useAuth } from '@/contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { LogIn } from 'lucide-react';
 
 function TreeNode({ node, depth = 0 }: { node: ReferralNode; depth?: number }) {
   const [open, setOpen] = useState(depth < 1);
