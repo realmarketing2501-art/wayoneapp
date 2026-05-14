@@ -278,10 +278,12 @@ export default function HomePage() {
         <div className="mt-3 grid grid-cols-2 gap-2">
           {operationalLevels.map((l, idx) => {
             const isCurrent = l.id === level;
+            const lr = getPirateRank(l.id as LevelName);
+            const LIcon = lr.icon;
             return (
               <div
                 key={l.id}
-                className={`pirate-card relative p-3 ${isCurrent ? 'ring-1 ring-amber-400' : ''}`}
+                className={`pirate-card relative p-3 ${isCurrent ? `ring-2 ${lr.ringClass}` : ''}`}
               >
                 {isCurrent && (
                   <div className="absolute -top-2 left-1/2 -translate-x-1/2 rounded-full border border-amber-400 bg-amber-500 px-2 py-0.5 text-[0.55rem] font-bold uppercase tracking-wider text-black">
@@ -289,13 +291,18 @@ export default function HomePage() {
                   </div>
                 )}
                 <div className="flex items-center gap-2">
-                  <Ship className="h-4 w-4 text-amber-400" />
-                  <div className="pirate-display text-[0.7rem] font-bold text-amber-200">
-                    Liv. {idx + 1} — {getLevelLabel(l.id as LevelName).split(' ')[0]}
+                  <span className={`flex h-7 w-7 items-center justify-center rounded-full ${lr.bgClass} ring-1 ${lr.ringClass}`}>
+                    <LIcon className={`h-4 w-4 ${lr.textClass}`} />
+                  </span>
+                  <div className="min-w-0">
+                    <div className="text-[0.5rem] uppercase tracking-wider text-amber-100/60">Liv. {lr.rank}</div>
+                    <div className={`pirate-display text-[0.7rem] font-bold leading-tight ${lr.textClass}`}>
+                      {getLevelLabel(l.id as LevelName)}
+                    </div>
                   </div>
                 </div>
                 <div className="mt-2 flex items-baseline gap-1">
-                  <span className="pirate-display text-xl font-bold text-amber-300">
+                  <span className={`pirate-display text-xl font-bold ${lr.textClass}`}>
                     {Number(l.settimanale ?? 0)}%
                   </span>
                   <span className="text-[0.55rem] text-amber-100/70">/sett · {l.durata_giorni}gg</span>
