@@ -34,19 +34,19 @@ export function getLevelOrder(name: LevelName): number {
 }
 
 /**
- * Pirate-tier color mapping (Mozzo → Re dei Mari).
+ * Color mapping per livello (Starter → VIP).
  * Usa i token semantici way-* già definiti in tailwind.config.ts.
  */
 export function getLevelColorClass(name: LevelName): string {
   const colorMap: Record<LevelName, string> = {
-    gamma: 'text-muted-foreground',          // Mozzo
-    beta: 'text-way-sapphire',               // Marinaio
-    bronze: 'text-way-bronze',               // Nostromo
-    silver: 'text-way-silver-elite',         // Capitano
-    silver_elite: 'text-way-silver-elite',   // Capitano
-    gold: 'text-way-glow',                   // Ammiraglio
-    gold_elite: 'text-way-glow',             // Ammiraglio
-    oro_vip: 'text-way-diamond',             // Re dei Mari
+    gamma: 'text-muted-foreground',          // Starter
+    beta: 'text-way-sapphire',               // Silver
+    bronze: 'text-way-bronze',               // Gold
+    silver: 'text-way-silver-elite',         // Platinum
+    silver_elite: 'text-way-silver-elite',   // Platinum Elite
+    gold: 'text-way-glow',                   // Diamond
+    gold_elite: 'text-way-glow',             // Diamond Elite
+    oro_vip: 'text-way-diamond',             // VIP
   };
   return colorMap[name] ?? 'text-muted-foreground';
 }
@@ -66,30 +66,31 @@ export function getLevelBgClass(name: LevelName): string {
 }
 
 /**
- * Pirate-tier helpers for the Home redesign.
- * Mappa ogni livello al rango pirata, all'icona Lucide e a una classe colore "ink/pergamena".
+ * Tier helpers per la Home redesign.
+ * Mappa ogni livello al rango, all'icona Lucide e a una classe colore.
  */
 import type { LucideIcon } from 'lucide-react';
-import { Anchor, Sailboat, Ship, Compass, Crown, Skull } from 'lucide-react';
+import { Sparkles, Coins, Gem, Crown, Trophy, Star } from 'lucide-react';
 
-export interface PirateRank {
-  rank: number;        // 1..8
+export interface LevelRank {
+  rank: number;        // 1..6
   icon: LucideIcon;
-  textClass: string;   // amber/gold scale per rank
+  textClass: string;
   ringClass: string;
   bgClass: string;
 }
 
-export function getPirateRank(name: LevelName): PirateRank {
-  const map: Record<LevelName, PirateRank> = {
-    gamma:        { rank: 1, icon: Anchor,   textClass: 'text-stone-400',  ringClass: 'ring-stone-500/40',  bgClass: 'bg-stone-900/40' },
-    beta:         { rank: 2, icon: Sailboat, textClass: 'text-sky-300',    ringClass: 'ring-sky-500/40',    bgClass: 'bg-sky-950/40' },
-    bronze:       { rank: 3, icon: Ship,     textClass: 'text-amber-700',  ringClass: 'ring-amber-700/50',  bgClass: 'bg-amber-950/40' },
-    silver:       { rank: 4, icon: Compass,  textClass: 'text-amber-200',  ringClass: 'ring-amber-300/60',  bgClass: 'bg-amber-900/30' },
-    silver_elite: { rank: 4, icon: Compass,  textClass: 'text-amber-200',  ringClass: 'ring-amber-300/60',  bgClass: 'bg-amber-900/30' },
-    gold:         { rank: 5, icon: Crown,    textClass: 'text-amber-300',  ringClass: 'ring-amber-300/80',  bgClass: 'bg-amber-800/40' },
-    gold_elite:   { rank: 5, icon: Crown,    textClass: 'text-amber-300',  ringClass: 'ring-amber-300/80',  bgClass: 'bg-amber-800/40' },
-    oro_vip:      { rank: 6, icon: Skull,    textClass: 'text-fuchsia-300',ringClass: 'ring-fuchsia-400/70',bgClass: 'bg-fuchsia-950/40' },
+export function getLevelRank(name: LevelName): LevelRank {
+  const map: Record<LevelName, LevelRank> = {
+    gamma:        { rank: 1, icon: Sparkles, textClass: 'text-stone-400',   ringClass: 'ring-stone-500/40',   bgClass: 'bg-stone-900/40' },
+    beta:         { rank: 2, icon: Coins,    textClass: 'text-sky-300',     ringClass: 'ring-sky-500/40',     bgClass: 'bg-sky-950/40' },
+    bronze:       { rank: 3, icon: Trophy,   textClass: 'text-amber-700',   ringClass: 'ring-amber-700/50',   bgClass: 'bg-amber-950/40' },
+    silver:       { rank: 4, icon: Star,     textClass: 'text-amber-200',   ringClass: 'ring-amber-300/60',   bgClass: 'bg-amber-900/30' },
+    silver_elite: { rank: 4, icon: Star,     textClass: 'text-amber-200',   ringClass: 'ring-amber-300/60',   bgClass: 'bg-amber-900/30' },
+    gold:         { rank: 5, icon: Gem,      textClass: 'text-amber-300',   ringClass: 'ring-amber-300/80',   bgClass: 'bg-amber-800/40' },
+    gold_elite:   { rank: 5, icon: Gem,      textClass: 'text-amber-300',   ringClass: 'ring-amber-300/80',   bgClass: 'bg-amber-800/40' },
+    oro_vip:      { rank: 6, icon: Crown,    textClass: 'text-fuchsia-300', ringClass: 'ring-fuchsia-400/70', bgClass: 'bg-fuchsia-950/40' },
   };
   return map[name] ?? map.gamma;
 }
+
