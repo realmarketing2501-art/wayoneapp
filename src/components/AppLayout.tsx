@@ -2,6 +2,7 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { Home, TrendingUp, Users, Wallet, User, LogIn, Bell } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ThemeToggle } from './ThemeToggle';
+import HeaderLanguageButton from './HeaderLanguageButton';
 import { useAuth } from '@/contexts/AuthContext';
 import { UsdtMonogram } from './UsdtMonogram';
 import GuestBanner from './GuestBanner';
