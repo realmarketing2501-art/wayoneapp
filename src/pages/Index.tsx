@@ -30,12 +30,12 @@ const features = [
 ];
 
 const ranks = [
-  { name: 'Mozzo', rate: 'Inizio', icon: Anchor },
-  { name: 'Marinaio', rate: '1%/gg', icon: Sailboat },
-  { name: 'Nostromo', rate: '2%/gg', icon: Ship },
-  { name: 'Capitano', rate: '3%/gg', icon: Compass },
-  { name: 'Ammiraglio', rate: '5%/gg', icon: Crown },
-  { name: 'Re dei Mari', rate: '6%/gg', icon: Skull },
+  { name: 'Mozzo', rate: '1,0% / 1,5%', icon: Anchor },
+  { name: 'Marinaio', rate: '1,5% / 2,0%', icon: Sailboat },
+  { name: 'Nostromo', rate: '—', icon: Ship },
+  { name: 'Capitano', rate: '—', icon: Compass },
+  { name: 'Ammiraglio', rate: '—', icon: Crown },
+  { name: 'Re dei Mari', rate: '—', icon: Skull },
 ];
 
 export default function Index() {
