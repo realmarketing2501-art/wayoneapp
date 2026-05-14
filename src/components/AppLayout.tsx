@@ -1,5 +1,5 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { Home, TrendingUp, Users, DollarSign, User, LogIn, Bell, Award } from 'lucide-react';
+import { Home, TrendingUp, Users, DollarSign, User, LogIn, Bell, Award, Anchor } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ThemeToggle } from './ThemeToggle';
 import { useAuth } from '@/contexts/AuthContext';
@@ -26,17 +26,18 @@ export default function AppLayout() {
 
   return (
     <div className="flex min-h-[100dvh] flex-col bg-background">
-      <header className="sticky top-0 z-50 flex items-center justify-between border-b border-border bg-background/80 px-4 py-3 backdrop-blur-xl safe-top">
-        <h1 className="font-display text-xl font-bold tracking-tight">
-          <span className="text-primary">WAY</span>
-          <span className="text-foreground"> ONE</span>
+      <header className="sticky top-0 z-50 flex items-center justify-between pirate-header px-4 py-3 safe-top">
+        <h1 className="pirate-display text-xl font-bold tracking-tight flex items-center gap-2">
+          <Anchor className="h-5 w-5" style={{ color: 'hsl(var(--p-gold-bright))' }} />
+          <span style={{ color: 'hsl(var(--p-gold-bright))' }}>WAY</span>
+          <span style={{ color: 'hsl(var(--p-cream))' }}> ONE</span>
         </h1>
         <div className="flex items-center gap-1">
           <ThemeToggle />
           {user && (
-            <button className="relative rounded-full p-2 text-muted-foreground transition-colors hover:text-foreground">
+            <button className="relative rounded-full p-2 transition-colors" style={{ color: 'hsl(var(--p-muted))' }}>
               <Bell className="h-5 w-5" />
-              <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-primary" />
+              <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-[hsl(var(--p-gold))]" />
             </button>
           )}
         </div>
@@ -46,7 +47,7 @@ export default function AppLayout() {
         <Outlet />
       </main>
 
-      <nav className="fixed bottom-0 left-0 right-0 z-50 border-t border-border bg-background/90 backdrop-blur-xl safe-bottom">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 pirate-nav safe-bottom">
         <div className="mx-auto flex max-w-lg items-center justify-around py-1.5 pb-[max(0.375rem,env(safe-area-inset-bottom))]">
           {tabs.map((tab) => {
             const isActive = location.pathname === tab.path;
@@ -54,13 +55,15 @@ export default function AppLayout() {
               <button
                 key={tab.path}
                 onClick={() => navigate(tab.path)}
+                data-active={isActive}
                 className={cn(
-                  'flex flex-col items-center gap-0.5 rounded-lg px-3 py-1.5 text-xs transition-colors min-w-[3rem]',
-                  isActive ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
+                  'flex flex-col items-center gap-0.5 rounded-lg px-3 py-1.5 text-xs transition-colors min-w-[3rem] pirate-nav-item',
+                  isActive && 'pirate-nav-item-active'
                 )}
+                style={isActive ? { color: 'hsl(var(--p-gold-bright))', textShadow: '0 0 8px hsl(var(--p-gold) / 0.5)' } : {}}
               >
-                <tab.icon className={cn('h-5 w-5', isActive && 'drop-shadow-[0_0_6px_hsl(145,100%,45%)]')} />
-                <span className="font-medium text-[0.65rem]">{tab.label}</span>
+                <tab.icon className={cn('h-5 w-5')} />
+                <span className="font-medium text-[0.65rem]" style={{ fontFamily: "'Cinzel', serif" }}>{tab.label}</span>
               </button>
             );
           })}
