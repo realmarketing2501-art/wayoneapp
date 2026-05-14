@@ -244,3 +244,23 @@ html, body {
   color: hsl(var(--p-cream));
   border-radius: 4px;
 }
+
+/* Pirate nav / header scoped overrides */
+.pirate-header {
+  background: hsl(var(--p-deep) / 0.95);
+  border-bottom: 1px solid hsl(var(--p-gold-deep) / 0.5);
+  backdrop-filter: blur(12px);
+}
+.pirate-nav {
+  background: hsl(var(--p-deep) / 0.95);
+  border-top: 1px solid hsl(var(--p-gold-deep) / 0.5);
+  backdrop-filter: blur(12px);
+}
+.pirate-nav-item {
+  color: hsl(var(--p-muted));
+  transition: color 0.2s;
+}
+.pirate-nav-item[data-active="true"] {
+  color: hsl(var(--p-gold-bright));
+  text-shadow: 0 0 8px hsl(var(--p-gold) / 0.5);
+}
