@@ -92,7 +92,11 @@ export default function ProfilePage() {
       {/* Menu items */}
       <div className="space-y-1.5">
         {menuItems.map(item => (
-          <button key={item.label} className="flex w-full items-center gap-3 rounded-xl border border-border bg-card p-3.5 transition-colors hover:border-primary/30 active:scale-[0.98]">
+          <button
+            key={item.label}
+            onClick={() => item.path && navigate(item.path)}
+            className="flex w-full items-center gap-3 rounded-xl border border-border bg-card p-3.5 transition-colors hover:border-primary/30 active:scale-[0.98]"
+          >
             <item.icon className="h-5 w-5 shrink-0 text-primary" />
             <div className="flex-1 text-left min-w-0">
               <p className="text-sm font-medium text-foreground">{item.label}</p>
