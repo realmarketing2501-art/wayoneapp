@@ -44,6 +44,7 @@ export default function AppLayout() {
             </span>
           </button>
           <div className="flex items-center gap-1">
+            <HeaderLanguageButton />
             <ThemeToggle />
             {user && (
               <button
