@@ -39,11 +39,11 @@ const screens = [
 
 // Piani investimento — percentuali dimezzate (-50%) rispetto al modello originale
 const plans = [
-  { name: 'Starter',  days: 30, daily: '0,40%', roi: '+12%',     min: '20 USDT', max: '500 USDT' },
-  { name: 'Silver',   days: 45, daily: '0,50%', roi: '+22,5%',   min: '20 USDT', max: '2.000 USDT' },
-  { name: 'Gold',     days: 60, daily: '0,60%', roi: '+36%',     min: '20 USDT', max: '5.000 USDT', popular: true },
-  { name: 'Platinum', days: 75, daily: '0,75%', roi: '+56,25%',  min: '20 USDT', max: '10.000 USDT' },
-  { name: 'Diamond',  days: 90, daily: '0,90%', roi: '+81%',     min: '20 USDT', max: 'Illimitato' },
+  { name: 'Starter',  days: 30, daily: '0,40%', roi: '+12%',     min: '50 USDT', max: '500 USDT' },
+  { name: 'Silver',   days: 45, daily: '0,50%', roi: '+22,5%',   min: '50 USDT', max: '2.000 USDT' },
+  { name: 'Gold',     days: 60, daily: '0,60%', roi: '+36%',     min: '50 USDT', max: '5.000 USDT', popular: true },
+  { name: 'Platinum', days: 75, daily: '0,75%', roi: '+56,25%',  min: '50 USDT', max: '10.000 USDT' },
+  { name: 'Diamond',  days: 90, daily: '0,90%', roi: '+81%',     min: '50 USDT', max: 'Illimitato' },
 ];
 
 // Referral 4 livelli — commissioni dimezzate (totale 7,5%)
