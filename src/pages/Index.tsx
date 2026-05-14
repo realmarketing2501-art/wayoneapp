@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { UsdtMonogram } from '@/components/UsdtMonogram';
+import HeaderLanguageButton from '@/components/HeaderLanguageButton';
 
 const features = [
   { icon: Smartphone, title: 'Mobile-first', desc: 'Esperienza ottimizzata per ogni dispositivo.' },
@@ -84,12 +85,13 @@ export default function Index() {
             <UsdtMonogram size={36} letter="U" />
             <span className="font-display text-2xl font-bold usdt-gold-text">USDT</span>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5">
+            <HeaderLanguageButton />
             <ThemeToggle />
-            <Button size="sm" className="usdt-btn-ghost" onClick={() => navigate('/login')}>
+            <Button size="sm" className="usdt-btn-ghost px-2.5" onClick={() => navigate('/login')}>
               Accedi
             </Button>
-            <Button size="sm" className="usdt-btn-gold" onClick={() => navigate('/login')}>
+            <Button size="sm" className="usdt-btn-gold px-2.5" onClick={() => navigate('/login')}>
               Registrati
             </Button>
           </div>
