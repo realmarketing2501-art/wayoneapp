@@ -16,9 +16,9 @@ export const LEVEL_LABELS: Record<LevelName, string> = {
   gamma: 'Mozzo',
   beta: 'Marinaio',
   bronze: 'Nostromo',
-  silver: 'Quartiermastro',
+  silver: 'Capitano',
   silver_elite: 'Capitano',
-  gold: 'Commodoro',
+  gold: 'Ammiraglio',
   gold_elite: 'Ammiraglio',
   oro_vip: 'Re dei Mari',
 };
