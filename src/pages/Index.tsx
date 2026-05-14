@@ -529,7 +529,7 @@ function PhoneInvest() {
   return (
     <div className="space-y-2">
       <p className="text-center font-display text-[0.6rem] font-bold text-foreground">Scegli il tuo piano</p>
-      {plans.map(([n, d, r], i) => (
+      {phonePlans.map(([n, d, r], i) => (
         <div
           key={n}
           className={`flex items-center justify-between rounded-lg border p-1.5 ${
