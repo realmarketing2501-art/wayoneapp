@@ -75,15 +75,9 @@ export function ReferralGuide({ url, code }: { url: string; code: string }) {
       className: 'bg-[#229ED9]/10 text-[#229ED9] hover:bg-[#229ED9]/20',
     },
     {
-      name: 'X',
-      icon: Share2,
-      href: `https://twitter.com/intent/tweet?text=${encodedText}`,
-      className: 'bg-foreground/10 text-foreground hover:bg-foreground/20',
-    },
-    {
-      name: 'Email',
-      icon: Mail,
-      href: `mailto:?subject=${encodeURIComponent('Ti invito su USDT')}&body=${encodedText}`,
+      name: 'SMS',
+      icon: MessageSquare,
+      href: `sms:?&body=${encodedText}`,
       className: 'bg-primary/10 text-primary hover:bg-primary/20',
     },
   ];
