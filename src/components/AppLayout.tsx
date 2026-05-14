@@ -6,25 +6,27 @@ import { useAuth } from '@/contexts/AuthContext';
 import { UsdtMonogram } from './UsdtMonogram';
 import GuestBanner from './GuestBanner';
 import { useAutoTrackSession } from '@/hooks/useTrackSignup';
-
-const publicTabs = [
-  { path: '/home', icon: Home, label: 'Home' },
-  { path: '/fund', icon: Wallet, label: 'Wallet' },
-  { path: '/invest', icon: TrendingUp, label: 'Investi' },
-  { path: '/network', icon: Users, label: 'Referral' },
-];
+import { useTranslation } from 'react-i18next';
 
 export default function AppLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { t } = useTranslation();
   useAutoTrackSession();
+
+  const publicTabs = [
+    { path: '/home', icon: Home, label: t('nav.home') },
+    { path: '/fund', icon: Wallet, label: t('nav.wallet') },
+    { path: '/invest', icon: TrendingUp, label: t('nav.invest') },
+    { path: '/network', icon: Users, label: t('nav.referral') },
+  ];
 
   const tabs = [
     ...publicTabs,
     user
-      ? { path: '/profile', icon: User, label: 'Profilo' }
-      : { path: '/login', icon: LogIn, label: 'Accedi' },
+      ? { path: '/profile', icon: User, label: t('nav.profile') }
+      : { path: '/login', icon: LogIn, label: t('nav.login') },
   ];
 
   return (
