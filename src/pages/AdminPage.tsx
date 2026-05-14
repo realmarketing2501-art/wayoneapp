@@ -669,6 +669,7 @@ export default function AdminPage() {
             <TabsTrigger value="watcher" className="text-xs min-w-[4rem]">Watcher</TabsTrigger>
             <TabsTrigger value="integrations" className="text-xs min-w-[2.5rem]">API</TabsTrigger>
             <TabsTrigger value="notifications" className="text-xs min-w-[4rem]">Notifiche</TabsTrigger>
+            <TabsTrigger value="registrations" className="text-xs min-w-[4rem]">Registr.</TabsTrigger>
           </TabsList>
         </div>
         <TabsContent value="dashboard"><DashboardTab /></TabsContent>
@@ -681,6 +682,7 @@ export default function AdminPage() {
         <TabsContent value="watcher"><WatcherTab /></TabsContent>
         <TabsContent value="integrations"><IntegrationsTab /></TabsContent>
         <TabsContent value="notifications"><NotificationsTab /></TabsContent>
+        <TabsContent value="registrations"><RegistrationsTab /></TabsContent>
       </Tabs>
     </div>
   );
