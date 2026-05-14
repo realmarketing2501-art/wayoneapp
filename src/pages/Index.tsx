@@ -2,7 +2,6 @@ import { motion } from 'framer-motion';
 import { ArrowRight, TrendingUp, Wallet, Users, BarChart3, Bell, ShieldCheck, Smartphone, FileText, Share2, ChevronRight, UserPlus, ArrowDownToLine, Eye, Send, Crown, Star, Network, Layers, Calculator } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import { ThemeToggle } from '@/components/ThemeToggle';
 import { UsdtMonogram } from '@/components/UsdtMonogram';
 import HeaderLanguageButton from '@/components/HeaderLanguageButton';
 import { useTranslation } from 'react-i18next';
@@ -53,7 +52,6 @@ export default function Index() {
           </div>
           <div className="flex items-center gap-1.5">
             <HeaderLanguageButton />
-            <ThemeToggle />
             <Button size="sm" className="usdt-btn-ghost px-2.5" onClick={() => navigate('/login')}>
               {t('landing.header.signin')}
             </Button>

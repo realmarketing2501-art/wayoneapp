@@ -8,7 +8,6 @@ import { Badge } from '@/components/ui/badge';
 import { Calculator, TrendingUp, Calendar, Coins, ArrowLeft, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { UsdtMonogram } from '@/components/UsdtMonogram';
-import { ThemeToggle } from '@/components/ThemeToggle';
 
 type Plan = {
   id: string;
@@ -70,7 +69,6 @@ export default function SimulatorPage() {
             <UsdtMonogram size={28} letter="U" />
             <span className="font-display text-lg font-bold usdt-gold-text">USDT</span>
           </div>
-          <ThemeToggle />
         </div>
       </header>
 
