@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   Wallet, ArrowDownToLine, ClipboardList, UserPlus, ChevronRight, Clock,
-  Anchor, Compass, Ship, Users, Crown, Coins, Skull, Map as MapIcon, Sword,
+  Anchor, Compass, Users, Coins, Skull, Map as MapIcon, Sword,
 } from 'lucide-react';
 import { useProfile } from '@/hooks/useProfile';
 import { useLevel, useLevels } from '@/hooks/useLevels';
-import { getLevelLabel, type LevelName } from '@/lib/levels';
+import { getLevelLabel, getPirateRank, type LevelName } from '@/lib/levels';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import portHero from '@/assets/wayone-port-hero.jpg';
@@ -59,8 +59,9 @@ export default function HomePage() {
     : Number(levelInfo?.giornaliero_45 ?? 0);
   const dailyEarning = balance * (indicativeRate / 100);
 
-  const levelOrder = operationalLevels.findIndex(l => l.id === level) + 1;
-  const levelTitle = levelOrder > 0 ? `Livello ${levelOrder}` : 'Mozzo';
+  const rank = getPirateRank(level as LevelName);
+  const RankIcon = rank.icon;
+  const levelTitle = getLevelLabel(level as LevelName); // es. "Capitano"
   const captainName = profile?.username ?? 'Capitano';
 
   if (isLoading && user) {
@@ -82,13 +83,16 @@ export default function HomePage() {
           {/* Top bar: avatar + resources */}
           <div className="flex items-start justify-between gap-2">
             <div className="flex items-center gap-2">
-              <div className="relative h-14 w-14 rounded-full border-2 border-amber-500/80 bg-black/60 shadow-lg">
-                <div className="flex h-full w-full items-center justify-center">
-                  <Skull className="h-7 w-7 text-amber-400" />
+              <div className={`relative h-14 w-14 rounded-full border-2 border-amber-500/80 bg-black/60 shadow-lg ring-2 ${rank.ringClass}`}>
+                <div className={`flex h-full w-full items-center justify-center rounded-full ${rank.bgClass}`}>
+                  <RankIcon className={`h-7 w-7 ${rank.textClass}`} />
                 </div>
+                <span className="absolute -bottom-1 -right-1 rounded-full border border-amber-500 bg-black px-1 text-[0.55rem] font-bold text-amber-300">
+                  {rank.rank}
+                </span>
               </div>
               <div className="rounded-md border border-amber-700/50 bg-black/60 px-2 py-1 text-[0.65rem] backdrop-blur-sm">
-                <div className="pirate-display text-amber-300">{levelTitle}</div>
+                <div className={`pirate-display ${rank.textClass}`}>{levelTitle}</div>
                 <div className="text-amber-100/80">Porto di Itaca</div>
               </div>
             </div>
@@ -274,10 +278,12 @@ export default function HomePage() {
         <div className="mt-3 grid grid-cols-2 gap-2">
           {operationalLevels.map((l, idx) => {
             const isCurrent = l.id === level;
+            const lr = getPirateRank(l.id as LevelName);
+            const LIcon = lr.icon;
             return (
               <div
                 key={l.id}
-                className={`pirate-card relative p-3 ${isCurrent ? 'ring-1 ring-amber-400' : ''}`}
+                className={`pirate-card relative p-3 ${isCurrent ? `ring-2 ${lr.ringClass}` : ''}`}
               >
                 {isCurrent && (
                   <div className="absolute -top-2 left-1/2 -translate-x-1/2 rounded-full border border-amber-400 bg-amber-500 px-2 py-0.5 text-[0.55rem] font-bold uppercase tracking-wider text-black">
@@ -285,13 +291,18 @@ export default function HomePage() {
                   </div>
                 )}
                 <div className="flex items-center gap-2">
-                  <Ship className="h-4 w-4 text-amber-400" />
-                  <div className="pirate-display text-[0.7rem] font-bold text-amber-200">
-                    Liv. {idx + 1} — {getLevelLabel(l.id as LevelName).split(' ')[0]}
+                  <span className={`flex h-7 w-7 items-center justify-center rounded-full ${lr.bgClass} ring-1 ${lr.ringClass}`}>
+                    <LIcon className={`h-4 w-4 ${lr.textClass}`} />
+                  </span>
+                  <div className="min-w-0">
+                    <div className="text-[0.5rem] uppercase tracking-wider text-amber-100/60">Liv. {lr.rank}</div>
+                    <div className={`pirate-display text-[0.7rem] font-bold leading-tight ${lr.textClass}`}>
+                      {getLevelLabel(l.id as LevelName)}
+                    </div>
                   </div>
                 </div>
                 <div className="mt-2 flex items-baseline gap-1">
-                  <span className="pirate-display text-xl font-bold text-amber-300">
+                  <span className={`pirate-display text-xl font-bold ${lr.textClass}`}>
                     {Number(l.settimanale ?? 0)}%
                   </span>
                   <span className="text-[0.55rem] text-amber-100/70">/sett · {l.durata_giorni}gg</span>

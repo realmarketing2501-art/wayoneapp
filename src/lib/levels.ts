@@ -33,16 +33,20 @@ export function getLevelOrder(name: LevelName): number {
   return LEVEL_ORDER.indexOf(name) + 1;
 }
 
+/**
+ * Pirate-tier color mapping (Mozzo → Re dei Mari).
+ * Usa i token semantici way-* già definiti in tailwind.config.ts.
+ */
 export function getLevelColorClass(name: LevelName): string {
   const colorMap: Record<LevelName, string> = {
-    gamma: 'text-muted-foreground',
-    beta: 'text-way-sapphire',
-    bronze: 'text-way-bronze',
-    silver: 'text-way-silver',
-    silver_elite: 'text-way-silver-elite',
-    gold: 'text-way-gold',
-    gold_elite: 'text-way-glow',
-    oro_vip: 'text-way-diamond',
+    gamma: 'text-muted-foreground',          // Mozzo
+    beta: 'text-way-sapphire',               // Marinaio
+    bronze: 'text-way-bronze',               // Nostromo
+    silver: 'text-way-silver',               // Quartiermastro
+    silver_elite: 'text-way-silver-elite',   // Capitano
+    gold: 'text-way-gold',                   // Commodoro
+    gold_elite: 'text-way-glow',             // Ammiraglio
+    oro_vip: 'text-way-diamond',             // Re dei Mari
   };
   return colorMap[name] ?? 'text-muted-foreground';
 }
@@ -50,13 +54,42 @@ export function getLevelColorClass(name: LevelName): string {
 export function getLevelBgClass(name: LevelName): string {
   const colorMap: Record<LevelName, string> = {
     gamma: 'bg-muted border-border',
-    beta: 'bg-way-sapphire/20 border-way-sapphire/30',
-    bronze: 'bg-way-bronze/20 border-way-bronze/30',
-    silver: 'bg-way-silver/20 border-way-silver/30',
-    silver_elite: 'bg-way-silver-elite/20 border-way-silver-elite/30',
-    gold: 'bg-way-gold/20 border-way-gold/30',
-    gold_elite: 'bg-way-glow/20 border-way-glow/30',
-    oro_vip: 'bg-way-diamond/20 border-way-diamond/30',
+    beta: 'bg-way-sapphire/20 border-way-sapphire/40',
+    bronze: 'bg-way-bronze/20 border-way-bronze/40',
+    silver: 'bg-way-silver/20 border-way-silver/40',
+    silver_elite: 'bg-way-silver-elite/20 border-way-silver-elite/50',
+    gold: 'bg-way-gold/20 border-way-gold/50',
+    gold_elite: 'bg-way-glow/25 border-way-glow/60',
+    oro_vip: 'bg-way-diamond/25 border-way-diamond/60',
   };
   return colorMap[name] ?? 'bg-muted';
+}
+
+/**
+ * Pirate-tier helpers for the Home redesign.
+ * Mappa ogni livello al rango pirata, all'icona Lucide e a una classe colore "ink/pergamena".
+ */
+import type { LucideIcon } from 'lucide-react';
+import { Anchor, Sailboat, Ship, Compass, Crown, Skull } from 'lucide-react';
+
+export interface PirateRank {
+  rank: number;        // 1..8
+  icon: LucideIcon;
+  textClass: string;   // amber/gold scale per rank
+  ringClass: string;
+  bgClass: string;
+}
+
+export function getPirateRank(name: LevelName): PirateRank {
+  const map: Record<LevelName, PirateRank> = {
+    gamma:        { rank: 1, icon: Anchor,   textClass: 'text-stone-400',  ringClass: 'ring-stone-500/40',  bgClass: 'bg-stone-900/40' },
+    beta:         { rank: 2, icon: Sailboat, textClass: 'text-sky-300',    ringClass: 'ring-sky-500/40',    bgClass: 'bg-sky-950/40' },
+    bronze:       { rank: 3, icon: Ship,     textClass: 'text-amber-700',  ringClass: 'ring-amber-700/50',  bgClass: 'bg-amber-950/40' },
+    silver:       { rank: 4, icon: Ship,     textClass: 'text-slate-200',  ringClass: 'ring-slate-300/50',  bgClass: 'bg-slate-800/40' },
+    silver_elite: { rank: 5, icon: Compass,  textClass: 'text-amber-200',  ringClass: 'ring-amber-300/60',  bgClass: 'bg-amber-900/30' },
+    gold:         { rank: 6, icon: Compass,  textClass: 'text-amber-300',  ringClass: 'ring-amber-400/70',  bgClass: 'bg-amber-900/40' },
+    gold_elite:   { rank: 7, icon: Crown,    textClass: 'text-amber-300',  ringClass: 'ring-amber-300/80',  bgClass: 'bg-amber-800/40' },
+    oro_vip:      { rank: 8, icon: Skull,    textClass: 'text-fuchsia-300',ringClass: 'ring-fuchsia-400/70',bgClass: 'bg-fuchsia-950/40' },
+  };
+  return map[name] ?? map.gamma;
 }
