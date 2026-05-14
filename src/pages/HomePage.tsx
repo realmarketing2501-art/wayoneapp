@@ -13,6 +13,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { UsdtMonogram } from '@/components/UsdtMonogram';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from 'react-i18next';
 
 function useCountdown() {
   const [timeLeft, setTimeLeft] = useState('');
