@@ -16,7 +16,8 @@ const FAQ: FaqDict = {
       { q: "Devo registrarmi per usare l'app?", a: 'Puoi navigare le pagine informative senza account. Per depositare, investire e prelevare devi accedere.' },
     ],
     deposit: [
-      { q: 'Come deposito USDT?', a: 'Vai in Wallet → Deposita, scegli importo, ottieni un indirizzo TRC-20 con un suffisso univoco. Invia esattamente la cifra mostrata: il sistema riconosce la transazione automaticamente.' },
+      { q: 'Qual è il deposito minimo?', a: 'Il deposito minimo è 50 USDT (rapporto 1:1 con USD).' },
+      { q: 'Come deposito USDT?', a: 'Vai in Wallet → Deposita, scegli importo (minimo 50 USDT), ottieni un indirizzo TRC-20 con un suffisso univoco. Invia esattamente la cifra mostrata: il sistema riconosce la transazione automaticamente.' },
       { q: 'Quali reti sono supportate?', a: 'Attualmente USDT su rete TRC-20 (Tron).' },
       { q: 'Quanto tempo serve per accreditare?', a: "L'accredito è automatico dopo le conferme di rete (in genere 2-5 minuti)." },
     ],
@@ -28,7 +29,7 @@ const FAQ: FaqDict = {
     levels: [
       { q: 'Quali sono i livelli?', a: 'Starter, Silver, Gold, Platinum, Diamond, VIP.' },
       { q: 'Come si avanza?', a: 'Soddisfacendo i requisiti di unità dirette e produzione totale di rete.' },
-      { q: 'Cosa sono i bonus una-tantum?', a: 'A ogni promozione ricevi un bonus istantaneo.' },
+      { q: 'Cosa sono i bonus una-tantum?', a: 'A ogni promozione ricevi un bonus istantaneo. Bonus referral: 1 invitato attivo = 5 USDT, 10 = 75 USDT, 50 = 500 USDT.' },
     ],
     network: [
       { q: 'Come invito persone?', a: 'In Rete trovi codice, link e QR.' },
@@ -53,7 +54,8 @@ const FAQ: FaqDict = {
       { q: 'Do I need to register?', a: 'You can browse info pages without an account. Sign in to deposit, invest and withdraw.' },
     ],
     deposit: [
-      { q: 'How do I deposit USDT?', a: 'Go to Wallet → Deposit, choose an amount, get a TRC-20 address with a unique suffix. Send the exact displayed amount: the system credits automatically.' },
+      { q: 'What is the minimum deposit?', a: 'The minimum deposit is 50 USDT (1:1 ratio with USD).' },
+      { q: 'How do I deposit USDT?', a: 'Go to Wallet → Deposit, choose an amount (minimum 50 USDT), get a TRC-20 address with a unique suffix. Send the exact displayed amount: the system credits automatically.' },
       { q: 'Which networks are supported?', a: 'Currently USDT on TRC-20 (Tron).' },
       { q: 'How long does crediting take?', a: 'Automatic after network confirmations (usually 2-5 minutes).' },
     ],
@@ -65,7 +67,7 @@ const FAQ: FaqDict = {
     levels: [
       { q: 'What are the levels?', a: 'Starter, Silver, Gold, Platinum, Diamond, VIP.' },
       { q: 'How do I level up?', a: 'By meeting direct-unit and total network production requirements.' },
-      { q: 'What are one-time bonuses?', a: 'Every promotion grants an instant bonus.' },
+      { q: 'What are one-time bonuses?', a: 'Every milestone grants an instant bonus. Referral bonuses: 1 active invite = 5 USDT, 10 = 75 USDT, 50 = 500 USDT.' },
     ],
     network: [
       { q: 'How do I invite people?', a: 'In Network you find your code, link and QR.' },
@@ -90,7 +92,8 @@ const FAQ: FaqDict = {
       { q: '¿Debo registrarme?', a: 'Puedes navegar las páginas informativas sin cuenta. Para depositar, invertir y retirar debes iniciar sesión.' },
     ],
     deposit: [
-      { q: '¿Cómo depositar USDT?', a: 'Ve a Billetera → Depositar, elige importe, obtén una dirección TRC-20 con sufijo único. Envía el importe exacto mostrado: el sistema acredita automáticamente.' },
+      { q: '¿Cuál es el depósito mínimo?', a: 'El depósito mínimo es 50 USDT (paridad 1:1 con USD).' },
+      { q: '¿Cómo depositar USDT?', a: 'Ve a Billetera → Depositar, elige importe (mínimo 50 USDT), obtén una dirección TRC-20 con sufijo único. Envía el importe exacto mostrado: el sistema acredita automáticamente.' },
       { q: '¿Qué redes se admiten?', a: 'Actualmente USDT en TRC-20 (Tron).' },
       { q: '¿Cuánto tarda el abono?', a: 'Automático tras las confirmaciones (normalmente 2-5 minutos).' },
     ],
@@ -102,7 +105,7 @@ const FAQ: FaqDict = {
     levels: [
       { q: '¿Cuáles son los niveles?', a: 'Starter, Silver, Gold, Platinum, Diamond, VIP.' },
       { q: '¿Cómo subo de nivel?', a: 'Cumpliendo los requisitos de unidades directas y producción total.' },
-      { q: '¿Qué son los bonos únicos?', a: 'Cada promoción otorga un bono instantáneo.' },
+      { q: '¿Qué son los bonos únicos?', a: 'Cada hito otorga un bono instantáneo. Bonos de referidos: 1 activo = 5 USDT, 10 = 75 USDT, 50 = 500 USDT.' },
     ],
     network: [
       { q: '¿Cómo invito personas?', a: 'En Red encuentras código, enlace y QR.' },
@@ -127,7 +130,8 @@ const FAQ: FaqDict = {
       { q: 'Dois-je m\'inscrire ?', a: 'Vous pouvez parcourir les pages informatives sans compte. Pour déposer, investir et retirer, connectez-vous.' },
     ],
     deposit: [
-      { q: 'Comment déposer USDT ?', a: 'Allez dans Portefeuille → Déposer, choisissez un montant, obtenez une adresse TRC-20 avec un suffixe unique. Envoyez le montant exact affiché : le système crédite automatiquement.' },
+      { q: 'Quel est le dépôt minimum ?', a: 'Le dépôt minimum est de 50 USDT (parité 1:1 avec USD).' },
+      { q: 'Comment déposer USDT ?', a: 'Allez dans Portefeuille → Déposer, choisissez un montant (minimum 50 USDT), obtenez une adresse TRC-20 avec un suffixe unique. Envoyez le montant exact affiché : le système crédite automatiquement.' },
       { q: 'Réseaux supportés ?', a: 'Actuellement USDT sur TRC-20 (Tron).' },
       { q: 'Délai de crédit ?', a: 'Automatique après confirmations réseau (généralement 2-5 minutes).' },
     ],
@@ -139,7 +143,7 @@ const FAQ: FaqDict = {
     levels: [
       { q: 'Quels sont les niveaux ?', a: 'Starter, Silver, Gold, Platinum, Diamond, VIP.' },
       { q: 'Comment monter en niveau ?', a: 'En remplissant les exigences d\'unités directes et de production totale du réseau.' },
-      { q: 'Bonus uniques ?', a: 'Chaque promotion accorde un bonus instantané.' },
+      { q: 'Bonus uniques ?', a: 'Chaque palier accorde un bonus instantané. Bonus parrainage : 1 actif = 5 USDT, 10 = 75 USDT, 50 = 500 USDT.' },
     ],
     network: [
       { q: 'Comment inviter ?', a: 'Dans Réseau vous trouvez code, lien et QR.' },
@@ -164,7 +168,8 @@ const FAQ: FaqDict = {
       { q: '需要注册吗？', a: '可以无账户浏览信息页面。充值、投资和提现需要登录。' },
     ],
     deposit: [
-      { q: '如何充值 USDT？', a: '前往 钱包 → 充值，选择金额，获取带有唯一后缀的 TRC-20 地址。发送显示的精确金额：系统自动入账。' },
+      { q: '最低充值金额是多少？', a: '最低充值金额为 50 USDT（与美元 1:1 比例）。' },
+      { q: '如何充值 USDT？', a: '前往 钱包 → 充值，选择金额（最低 50 USDT），获取带有唯一后缀的 TRC-20 地址。发送显示的精确金额：系统自动入账。' },
       { q: '支持哪些网络？', a: '目前为 TRC-20 (Tron) 上的 USDT。' },
       { q: '入账需要多长时间？', a: '网络确认后自动入账（通常 2-5 分钟）。' },
     ],
@@ -176,7 +181,7 @@ const FAQ: FaqDict = {
     levels: [
       { q: '有哪些等级？', a: 'Starter、Silver、Gold、Platinum、Diamond、VIP。' },
       { q: '如何升级？', a: '满足直接单位和网络总产出的要求。' },
-      { q: '一次性奖金是什么？', a: '每次升级都会获得即时奖金。' },
+      { q: '一次性奖金是什么？', a: '每个里程碑都会获得即时奖金。推荐奖金：1 位有效推荐 = 5 USDT，10 位 = 75 USDT，50 位 = 500 USDT。' },
     ],
     network: [
       { q: '如何邀请他人？', a: '在 网络 中可找到您的邀请码、链接和二维码。' },
