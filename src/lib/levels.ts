@@ -13,14 +13,14 @@ export interface LevelStaticInfo {
 }
 
 export const LEVEL_LABELS: Record<LevelName, string> = {
-  gamma: 'Gamma Investitore',
-  beta: 'Beta Investitore',
-  bronze: 'Bronze Investitore',
-  silver: 'Silver Investitore',
-  silver_elite: 'Silver Elite',
-  gold: 'Gold Investitore',
-  gold_elite: 'Gold Elite',
-  oro_vip: 'Oro VIP',
+  gamma: 'Mozzo',
+  beta: 'Marinaio',
+  bronze: 'Nostromo',
+  silver: 'Quartiermastro',
+  silver_elite: 'Capitano',
+  gold: 'Commodoro',
+  gold_elite: 'Ammiraglio',
+  oro_vip: 'Re dei Mari',
 };
 
 export const LEVEL_ORDER: LevelName[] = ['gamma', 'beta', 'bronze', 'silver', 'silver_elite', 'gold', 'gold_elite', 'oro_vip'];
