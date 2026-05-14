@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ArrowRight, TrendingUp, Wallet, Users, BarChart3, Bell, ShieldCheck, Smartphone, FileText, Share2, ChevronRight, UserPlus, ArrowDownToLine, Eye, Send } from 'lucide-react';
+import { ArrowRight, TrendingUp, Wallet, Users, BarChart3, Bell, ShieldCheck, Smartphone, FileText, Share2, ChevronRight, UserPlus, ArrowDownToLine, Eye, Send, Gift, Crown, Award, Star, Network, Layers } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { ThemeToggle } from '@/components/ThemeToggle';
