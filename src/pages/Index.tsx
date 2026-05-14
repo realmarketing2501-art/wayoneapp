@@ -254,41 +254,6 @@ export default function Index() {
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="relative overflow-hidden py-12 sm:py-20">
-        <div className="absolute inset-x-0 top-0 mx-auto h-72 w-72 rounded-full bg-primary/15 blur-[120px]" />
-        <div className="relative mx-auto max-w-3xl px-4 text-center">
-          <UsdtMonogram size={72} letter="U" className="mx-auto mb-4" />
-          <h2 className="font-display text-3xl font-bold sm:text-4xl">
-            Inizia oggi con <span className="usdt-gold-text">USDT</span>
-          </h2>
-          <p className="mt-3 text-muted-foreground">
-            Crea il tuo account, deposita i primi USDT e attiva il tuo piano in pochi minuti.
-          </p>
-          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
-            <Button size="lg" className="gap-2 usdt-btn-gold" onClick={() => navigate('/login')}>
-              Crea account <ArrowRight className="h-4 w-4" />
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="border-t border-primary/15 py-8">
-        <div className="mx-auto max-w-6xl px-4 text-center">
-          <div className="flex items-center justify-center gap-2">
-            <UsdtMonogram size={24} letter="U" />
-            <span className="font-display text-lg font-bold usdt-gold-text">USDT</span>
-          </div>
-          <p className="mt-2 text-xs text-muted-foreground">
-            © {new Date().getFullYear()} USDT. Tutti i diritti riservati.
-          </p>
-        </div>
-      </footer>
-    </div>
-  );
-}
-
       {/* Piani investimento */}
       <div className="usdt-divider mx-auto max-w-6xl" />
       <section className="py-12 sm:py-20">
@@ -454,7 +419,41 @@ export default function Index() {
       </section>
 
       {/* CTA */}
-{/* ---------- Phone mockup ---------- */}
+      <section className="relative overflow-hidden py-12 sm:py-20">
+        <div className="absolute inset-x-0 top-0 mx-auto h-72 w-72 rounded-full bg-primary/15 blur-[120px]" />
+        <div className="relative mx-auto max-w-3xl px-4 text-center">
+          <UsdtMonogram size={72} letter="U" className="mx-auto mb-4" />
+          <h2 className="font-display text-3xl font-bold sm:text-4xl">
+            Inizia oggi con <span className="usdt-gold-text">USDT</span>
+          </h2>
+          <p className="mt-3 text-muted-foreground">
+            Crea il tuo account, deposita i primi USDT e attiva il tuo piano in pochi minuti.
+          </p>
+          <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
+            <Button size="lg" className="gap-2 usdt-btn-gold" onClick={() => navigate('/login')}>
+              Crea account <ArrowRight className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-primary/15 py-8">
+        <div className="mx-auto max-w-6xl px-4 text-center">
+          <div className="flex items-center justify-center gap-2">
+            <UsdtMonogram size={24} letter="U" />
+            <span className="font-display text-lg font-bold usdt-gold-text">USDT</span>
+          </div>
+          <p className="mt-2 text-xs text-muted-foreground">
+            © {new Date().getFullYear()} USDT. Tutti i diritti riservati.
+          </p>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
+/* ---------- Phone mockup ---------- */
 function PhoneFrame({ index }: { index: number }) {
   return (
     <div className="mx-auto w-full max-w-[220px]">
