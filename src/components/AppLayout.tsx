@@ -50,7 +50,7 @@ export default function AppLayout() {
               <button
                 onClick={() => navigate('/income')}
                 className="relative rounded-full p-2 text-muted-foreground transition-colors hover:text-foreground"
-                aria-label="Notifiche"
+                aria-label={t('home.notifications')}
               >
                 <Bell className="h-5 w-5" />
                 <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-primary" />
