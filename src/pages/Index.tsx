@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ArrowRight, TrendingUp, Wallet, Users, BarChart3, Bell, ShieldCheck, Smartphone, FileText, Share2, ChevronRight, UserPlus, ArrowDownToLine, Eye, Send } from 'lucide-react';
+import { ArrowRight, TrendingUp, Wallet, Users, BarChart3, Bell, ShieldCheck, Smartphone, FileText, Share2, ChevronRight, UserPlus, ArrowDownToLine, Eye, Send, Gift, Crown, Award, Star, Network, Layers } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -35,6 +35,43 @@ const screens = [
     title: 'Investi',
     desc: 'Selezione del piano con dettagli chiari su durata e rendimento.',
   },
+];
+
+// Piani investimento — percentuali dimezzate (-50%) rispetto al modello originale
+const plans = [
+  { name: 'Starter',  days: 30, daily: '0,40%', roi: '+12%',     min: '20 USDT', max: '500 USDT' },
+  { name: 'Silver',   days: 45, daily: '0,50%', roi: '+22,5%',   min: '20 USDT', max: '2.000 USDT' },
+  { name: 'Gold',     days: 60, daily: '0,60%', roi: '+36%',     min: '20 USDT', max: '5.000 USDT', popular: true },
+  { name: 'Platinum', days: 75, daily: '0,75%', roi: '+56,25%',  min: '20 USDT', max: '10.000 USDT' },
+  { name: 'Diamond',  days: 90, daily: '0,90%', roi: '+81%',     min: '20 USDT', max: 'Illimitato' },
+];
+
+// Referral 4 livelli — commissioni dimezzate (totale 7,5%)
+const referralLevels = [
+  { level: 'L1', label: 'Invitato diretto',     pct: '4%',   on1000: '+40 USDT' },
+  { level: 'L2', label: 'Invitato del tuo L1',  pct: '2%',   on1000: '+20 USDT' },
+  { level: 'L3', label: 'Invitato del tuo L2',  pct: '1%',   on1000: '+10 USDT' },
+  { level: 'L4', label: 'Invitato del tuo L3',  pct: '0,5%', on1000: '+5 USDT' },
+];
+
+// Bonus & milestone — importi dimezzati
+const bonuses = [
+  { icon: Gift,   title: 'Benvenuto',         when: 'Registrazione completata',         reward: '50 USDT' },
+  { icon: Users,  title: 'Primo referral',    when: '1° invitato che investe',          reward: '25 USDT' },
+  { icon: Star,   title: 'Super reclutatore', when: '10 referral diretti attivi',       reward: '250 USDT' },
+  { icon: Crown,  title: 'Diamond recruiter', when: '50 referral diretti attivi',       reward: '1.500 USDT' },
+  { icon: Award,  title: 'Fedeltà mensile',   when: 'Account attivo ogni 30 giorni',    reward: '12,5 USDT' },
+  { icon: Wallet, title: 'Volume 500+',       when: 'Investimento personale > 500',     reward: '15 USDT' },
+  { icon: Wallet, title: 'Volume 2.000+',     when: 'Investimento personale > 2.000',   reward: '75 USDT' },
+  { icon: Wallet, title: 'Volume 5.000+',     when: 'Investimento personale > 5.000',   reward: '250 USDT' },
+];
+
+// Rank VIP — bonus %/giorno dimezzati
+const ranks = [
+  { name: 'Standard', volume: '< 5.000 USDT',     bonus: 'Nessuno',      extra: '—' },
+  { name: 'Gold',     volume: '> 5.000 USDT',     bonus: '+0,5%/giorno', extra: 'Badge + supporto prioritario' },
+  { name: 'Platinum', volume: '> 20.000 USDT',    bonus: '+0,75%/giorno',extra: 'Badge + fee prelievo 0' },
+  { name: 'Diamond',  volume: '> 100.000 USDT',   bonus: '+1,0%/giorno', extra: 'Badge + account manager' },
 ];
 
 export default function Index() {
@@ -217,6 +254,170 @@ export default function Index() {
         </div>
       </section>
 
+      {/* Piani investimento */}
+      <div className="usdt-divider mx-auto max-w-6xl" />
+      <section className="py-12 sm:py-20">
+        <div className="mx-auto max-w-6xl px-4">
+          <div className="text-center">
+            <h2 className="font-display text-3xl font-bold sm:text-4xl">
+              Piani di <span className="usdt-gold-text">investimento</span>
+            </h2>
+            <p className="mx-auto mt-3 max-w-xl text-sm text-muted-foreground sm:text-base">
+              Cinque piani a durata fissa con rendimento giornaliero. Capitale e profitti rilasciati a scadenza.
+            </p>
+          </div>
+
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+            {plans.map((p, i) => (
+              <motion.div
+                key={p.name}
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.06 }}
+                className={`relative rounded-2xl p-5 ${p.popular ? 'usdt-card-gold border-2 border-primary' : 'usdt-card'}`}
+              >
+                {p.popular && (
+                  <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-0.5 text-[0.6rem] font-bold uppercase tracking-wide text-primary-foreground">
+                    Popolare
+                  </span>
+                )}
+                <h3 className="font-display text-xl font-bold usdt-gold-text">{p.name}</h3>
+                <p className="mt-1 text-xs text-muted-foreground">{p.days} giorni</p>
+                <div className="mt-4">
+                  <p className="font-display text-3xl font-bold text-foreground">{p.daily}</p>
+                  <p className="text-[0.7rem] text-muted-foreground">al giorno</p>
+                </div>
+                <div className="mt-3 inline-flex rounded-full bg-primary/15 px-2.5 py-0.5 text-[0.7rem] font-bold text-primary">
+                  ROI {p.roi}
+                </div>
+                <div className="mt-4 space-y-1 text-xs text-muted-foreground">
+                  <p>Min: <span className="text-foreground">{p.min}</span></p>
+                  <p>Max: <span className="text-foreground">{p.max}</span></p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+          <p className="mt-6 text-center text-[0.7rem] text-muted-foreground">
+            Profitti calcolati ogni 24h. Multi-piano illimitati. Reinvestimento automatico opzionale.
+          </p>
+        </div>
+      </section>
+
+      {/* Referral 4 livelli */}
+      <div className="usdt-divider mx-auto max-w-6xl" />
+      <section className="py-12 sm:py-20">
+        <div className="mx-auto max-w-6xl px-4">
+          <div className="text-center">
+            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-3 py-1 text-xs text-primary">
+              <Network className="h-3.5 w-3.5" /> Sistema referral
+            </div>
+            <h2 className="font-display text-3xl font-bold sm:text-4xl">
+              Rete a <span className="usdt-gold-text">4 livelli</span>
+            </h2>
+            <p className="mx-auto mt-3 max-w-xl text-sm text-muted-foreground sm:text-base">
+              Commissioni accreditate istantaneamente all'attivazione di ogni piano nella tua rete.
+            </p>
+          </div>
+
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {referralLevels.map((r, i) => (
+              <motion.div
+                key={r.level}
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08 }}
+                className="usdt-card p-5 text-center"
+              >
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/15 text-primary">
+                  <Layers className="h-5 w-5" />
+                </div>
+                <p className="mt-3 font-display text-sm font-bold text-foreground">{r.level}</p>
+                <p className="text-xs text-muted-foreground">{r.label}</p>
+                <p className="mt-3 font-display text-3xl font-bold usdt-gold-text">{r.pct}</p>
+                <p className="mt-1 text-[0.7rem] text-muted-foreground">su 1.000 USDT: <span className="text-primary font-semibold">{r.on1000}</span></p>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="mt-6 rounded-xl border border-primary/30 bg-primary/5 p-4 text-center">
+            <p className="text-sm text-muted-foreground">
+              Totale cumulativo 4 livelli: <span className="font-display text-lg font-bold usdt-gold-text">7,5%</span> su ogni deposito della tua rete
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Bonus & Milestone */}
+      <div className="usdt-divider mx-auto max-w-6xl" />
+      <section className="py-12 sm:py-20">
+        <div className="mx-auto max-w-6xl px-4">
+          <h2 className="text-center font-display text-3xl font-bold sm:text-4xl">
+            Bonus & <span className="usdt-gold-text">Milestone</span>
+          </h2>
+          <p className="mx-auto mt-3 max-w-xl text-center text-sm text-muted-foreground sm:text-base">
+            Premi per ogni traguardo: dalla registrazione alla crescita della rete.
+          </p>
+
+          <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {bonuses.map((b, i) => (
+              <motion.div
+                key={b.title}
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.05 }}
+                className="usdt-card flex flex-col p-4"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/15 text-primary">
+                    <b.icon className="h-5 w-5" />
+                  </div>
+                  <h3 className="font-display text-sm font-bold text-foreground">{b.title}</h3>
+                </div>
+                <p className="mt-2 text-xs text-muted-foreground">{b.when}</p>
+                <p className="mt-3 font-display text-lg font-bold usdt-gold-text">{b.reward}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Rank VIP */}
+      <div className="usdt-divider mx-auto max-w-6xl" />
+      <section className="py-12 sm:py-20">
+        <div className="mx-auto max-w-6xl px-4">
+          <h2 className="text-center font-display text-3xl font-bold sm:text-4xl">
+            Rank <span className="usdt-gold-text">VIP</span>
+          </h2>
+          <p className="mx-auto mt-3 max-w-xl text-center text-sm text-muted-foreground sm:text-base">
+            Più cresce la tua rete (L1+L2), più aumenta il bonus giornaliero su tutti i piani.
+          </p>
+
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {ranks.map((r, i) => (
+              <motion.div
+                key={r.name}
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08 }}
+                className={`rounded-2xl p-5 ${i === 3 ? 'usdt-card-gold border-2 border-primary' : 'usdt-card'}`}
+              >
+                <div className="flex items-center gap-2">
+                  <Crown className={`h-5 w-5 ${i === 0 ? 'text-muted-foreground' : 'text-primary'}`} />
+                  <h3 className="font-display text-lg font-bold text-foreground">{r.name}</h3>
+                </div>
+                <p className="mt-2 text-xs text-muted-foreground">Volume rete: <span className="text-foreground">{r.volume}</span></p>
+                <p className="mt-4 font-display text-xl font-bold usdt-gold-text">{r.bonus}</p>
+                <p className="mt-1 text-[0.7rem] text-muted-foreground">{r.extra}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="relative overflow-hidden py-12 sm:py-20">
         <div className="absolute inset-x-0 top-0 mx-auto h-72 w-72 rounded-full bg-primary/15 blur-[120px]" />
@@ -304,7 +505,7 @@ function PhoneDashboard() {
       <div className="space-y-1 rounded-lg border border-primary/15 p-1.5">
         <p className="text-[0.5rem] font-bold text-foreground">Panoramica</p>
         {[
-          ['Rendimento', '1,2%'],
+          ['Rendimento', '0,60%'],
           ['Piano attivo', 'Gold'],
           ['Scadenza', 'G. 60'],
         ].map(([l, v]) => (
@@ -319,16 +520,16 @@ function PhoneDashboard() {
 }
 
 function PhoneInvest() {
-  const plans = [
-    ['Silver', '45 gg', '1,0%'],
-    ['Gold', '90 gg', '1,5%'],
-    ['Platinum', '90 gg', '2,0%'],
-    ['Diamond', '90 gg', '2,5%'],
+  const phonePlans = [
+    ['Silver',   '45 gg', '0,50%'],
+    ['Gold',     '60 gg', '0,60%'],
+    ['Platinum', '75 gg', '0,75%'],
+    ['Diamond',  '90 gg', '0,90%'],
   ];
   return (
     <div className="space-y-2">
       <p className="text-center font-display text-[0.6rem] font-bold text-foreground">Scegli il tuo piano</p>
-      {plans.map(([n, d, r], i) => (
+      {phonePlans.map(([n, d, r], i) => (
         <div
           key={n}
           className={`flex items-center justify-between rounded-lg border p-1.5 ${
