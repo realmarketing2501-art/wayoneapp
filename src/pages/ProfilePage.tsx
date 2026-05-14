@@ -31,10 +31,12 @@ export default function ProfilePage() {
   };
 
   const menuItems = [
-    { icon: FileCheck, label: 'KYC Verification', desc: 'Verifica la tua identità' },
-    { icon: Shield, label: 'Security Center', desc: 'Password, 2FA' },
-    { icon: Wallet, label: 'Wallet Collegati', desc: 'Gestisci indirizzi USDT' },
-    { icon: Globe, label: 'Lingua', desc: 'Italiano' },
+    { icon: FileCheck, label: 'KYC Verification', desc: 'Verifica la tua identità', path: null },
+    { icon: Shield, label: 'Security Center', desc: 'Password, 2FA', path: null },
+    { icon: Wallet, label: 'Wallet Collegati', desc: 'Gestisci indirizzi USDT', path: null },
+    { icon: Award, label: 'Qualifiche e Livelli', desc: 'Requisiti e progressi', path: '/qualifiche' },
+    { icon: HelpCircle, label: 'FAQ & Supporto', desc: 'Domande frequenti', path: '/faq' },
+    { icon: Globe, label: 'Lingua', desc: 'Italiano', path: null },
   ];
 
   return (
