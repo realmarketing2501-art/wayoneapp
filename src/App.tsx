@@ -22,6 +22,7 @@ import DepositPage from "./pages/DepositPage";
 import AdminPage from "./pages/AdminPage";
 import QualifichePage from "./pages/QualifichePage";
 import SimulatorPage from "./pages/SimulatorPage";
+import FaqPage from "./pages/FaqPage";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -47,6 +48,7 @@ const App = () => (
                 <Route path="/network" element={<NetworkPage />} />
                 <Route path="/income" element={<IncomePage />} />
                 <Route path="/qualifiche" element={<QualifichePage />} />
+                <Route path="/faq" element={<FaqPage />} />
               </Route>
               {/* Protected routes - require login */}
               <Route element={<ProtectedRoute><AppLayout /></ProtectedRoute>}>

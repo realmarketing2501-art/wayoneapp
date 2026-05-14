@@ -4,7 +4,7 @@ import { LevelBadge } from '@/components/LevelBadge';
 import { useProfile } from '@/hooks/useProfile';
 import { useAuth } from '@/contexts/AuthContext';
 import { useTheme } from '@/contexts/ThemeContext';
-import { User, Shield, Wallet, Globe, LogOut, ChevronRight, FileCheck, Sun, Moon, ShieldCheck } from 'lucide-react';
+import { User, Shield, Wallet, Globe, LogOut, ChevronRight, FileCheck, Sun, Moon, ShieldCheck, HelpCircle, Award } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -31,10 +31,12 @@ export default function ProfilePage() {
   };
 
   const menuItems = [
-    { icon: FileCheck, label: 'KYC Verification', desc: 'Verifica la tua identità' },
-    { icon: Shield, label: 'Security Center', desc: 'Password, 2FA' },
-    { icon: Wallet, label: 'Wallet Collegati', desc: 'Gestisci indirizzi USDT' },
-    { icon: Globe, label: 'Lingua', desc: 'Italiano' },
+    { icon: FileCheck, label: 'KYC Verification', desc: 'Verifica la tua identità', path: null },
+    { icon: Shield, label: 'Security Center', desc: 'Password, 2FA', path: null },
+    { icon: Wallet, label: 'Wallet Collegati', desc: 'Gestisci indirizzi USDT', path: null },
+    { icon: Award, label: 'Qualifiche e Livelli', desc: 'Requisiti e progressi', path: '/qualifiche' },
+    { icon: HelpCircle, label: 'FAQ & Supporto', desc: 'Domande frequenti', path: '/faq' },
+    { icon: Globe, label: 'Lingua', desc: 'Italiano', path: null },
   ];
 
   return (
@@ -90,7 +92,11 @@ export default function ProfilePage() {
       {/* Menu items */}
       <div className="space-y-1.5">
         {menuItems.map(item => (
-          <button key={item.label} className="flex w-full items-center gap-3 rounded-xl border border-border bg-card p-3.5 transition-colors hover:border-primary/30 active:scale-[0.98]">
+          <button
+            key={item.label}
+            onClick={() => item.path && navigate(item.path)}
+            className="flex w-full items-center gap-3 rounded-xl border border-border bg-card p-3.5 transition-colors hover:border-primary/30 active:scale-[0.98]"
+          >
             <item.icon className="h-5 w-5 shrink-0 text-primary" />
             <div className="flex-1 text-left min-w-0">
               <p className="text-sm font-medium text-foreground">{item.label}</p>
