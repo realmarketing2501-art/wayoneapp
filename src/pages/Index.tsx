@@ -505,7 +505,7 @@ function PhoneDashboard() {
       <div className="space-y-1 rounded-lg border border-primary/15 p-1.5">
         <p className="text-[0.5rem] font-bold text-foreground">Panoramica</p>
         {[
-          ['Rendimento', '1,2%'],
+          ['Rendimento', '0,60%'],
           ['Piano attivo', 'Gold'],
           ['Scadenza', 'G. 60'],
         ].map(([l, v]) => (
