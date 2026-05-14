@@ -1126,6 +1126,19 @@ export type Database = {
         Returns: undefined
       }
       record_signup_event: { Args: { p_payload: Json }; Returns: string }
+      system_consistency_check: {
+        Args: never
+        Returns: {
+          actual: number
+          details: string
+          diff: number
+          expected: number
+          issue_type: string
+          severity: string
+          user_id: string
+          username: string
+        }[]
+      }
     }
     Enums: {
       app_role: "admin" | "user"
