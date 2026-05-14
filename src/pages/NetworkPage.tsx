@@ -75,9 +75,32 @@ function TreeNode({ node, depth = 0 }: { node: ReferralNode; depth?: number }) {
 export default function NetworkPage() {
   const [showQR, setShowQR] = useState(false);
   const { toast } = useToast();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const { data: profile } = useProfile();
   const { data: tree, isLoading: treeLoading } = useReferralTree();
   const { data: levels = [] } = useLevels();
+
+  if (!user) {
+    return (
+      <div className="p-4">
+        <Card className="border-primary/20">
+          <CardContent className="p-6 text-center space-y-4">
+            <Users className="h-10 w-10 text-primary mx-auto" />
+            <div>
+              <p className="font-display text-lg font-bold text-foreground">Accedi per vedere la tua rete</p>
+              <p className="text-sm text-muted-foreground mt-1">
+                Il tuo codice e link referral sono disponibili solo dopo il login.
+              </p>
+            </div>
+            <Button className="usdt-btn-gold w-full" onClick={() => navigate('/login')}>
+              <LogIn className="h-4 w-4 mr-2" /> Accedi o registrati
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   const referralCode = profile?.referral_code ?? '...';
   // Always use the published domain for referral links so they work outside preview
