@@ -59,8 +59,9 @@ export default function HomePage() {
     : Number(levelInfo?.giornaliero_45 ?? 0);
   const dailyEarning = balance * (indicativeRate / 100);
 
-  const levelOrder = operationalLevels.findIndex(l => l.id === level) + 1;
-  const levelTitle = levelOrder > 0 ? `Livello ${levelOrder}` : 'Mozzo';
+  const rank = getPirateRank(level as LevelName);
+  const RankIcon = rank.icon;
+  const levelTitle = getLevelLabel(level as LevelName); // es. "Capitano"
   const captainName = profile?.username ?? 'Capitano';
 
   if (isLoading && user) {
@@ -82,13 +83,16 @@ export default function HomePage() {
           {/* Top bar: avatar + resources */}
           <div className="flex items-start justify-between gap-2">
             <div className="flex items-center gap-2">
-              <div className="relative h-14 w-14 rounded-full border-2 border-amber-500/80 bg-black/60 shadow-lg">
-                <div className="flex h-full w-full items-center justify-center">
-                  <Skull className="h-7 w-7 text-amber-400" />
+              <div className={`relative h-14 w-14 rounded-full border-2 border-amber-500/80 bg-black/60 shadow-lg ring-2 ${rank.ringClass}`}>
+                <div className={`flex h-full w-full items-center justify-center rounded-full ${rank.bgClass}`}>
+                  <RankIcon className={`h-7 w-7 ${rank.textClass}`} />
                 </div>
+                <span className="absolute -bottom-1 -right-1 rounded-full border border-amber-500 bg-black px-1 text-[0.55rem] font-bold text-amber-300">
+                  {rank.rank}
+                </span>
               </div>
               <div className="rounded-md border border-amber-700/50 bg-black/60 px-2 py-1 text-[0.65rem] backdrop-blur-sm">
-                <div className="pirate-display text-amber-300">{levelTitle}</div>
+                <div className={`pirate-display ${rank.textClass}`}>{levelTitle}</div>
                 <div className="text-amber-100/80">Porto di Itaca</div>
               </div>
             </div>
