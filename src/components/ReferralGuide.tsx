@@ -128,8 +128,14 @@ export function ReferralGuide({ url, code }: { url: string; code: string }) {
                 id="referral-qr-svg"
                 value={url}
                 size={140}
-                level="M"
+                level="H"
                 includeMargin={false}
+                imageSettings={{
+                  src: '/icons/icon-192.png',
+                  height: 32,
+                  width: 32,
+                  excavate: true,
+                }}
               />
             </div>
 
