@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import {
   MessageCircle,
   Send,
-  Mail,
+  MessageSquare,
   Share2,
   UserPlus,
   Wallet,
