@@ -21,6 +21,7 @@ import LoginPage from "./pages/LoginPage";
 import DepositPage from "./pages/DepositPage";
 import AdminPage from "./pages/AdminPage";
 import QualifichePage from "./pages/QualifichePage";
+import SimulatorPage from "./pages/SimulatorPage";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -38,6 +39,7 @@ const App = () => (
               {/* Landing page - public */}
               <Route path="/" element={<Index />} />
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/simulator" element={<SimulatorPage />} />
               {/* App pages - viewable without login */}
               <Route element={<AppLayout />}>
                 <Route path="/home" element={<HomePage />} />

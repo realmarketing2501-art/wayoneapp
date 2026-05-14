@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { ArrowRight, TrendingUp, Wallet, Users, BarChart3, Bell, ShieldCheck, Smartphone, FileText, Share2, ChevronRight, UserPlus, ArrowDownToLine, Eye, Send, Gift, Crown, Award, Star, Network, Layers } from 'lucide-react';
+import { ArrowRight, TrendingUp, Wallet, Users, BarChart3, Bell, ShieldCheck, Smartphone, FileText, Share2, ChevronRight, UserPlus, ArrowDownToLine, Eye, Send, Gift, Crown, Award, Star, Network, Layers, Calculator } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { ThemeToggle } from '@/components/ThemeToggle';
@@ -135,7 +135,10 @@ export default function Index() {
             <Button size="lg" className="w-full gap-2 sm:w-auto usdt-btn-gold" onClick={() => navigate('/login')}>
               Registrati ora <ArrowRight className="h-4 w-4" />
             </Button>
-            <Button size="lg" className="w-full gap-2 sm:w-auto usdt-btn-ghost" onClick={() => navigate('/home')}>
+            <Button size="lg" className="w-full gap-2 sm:w-auto usdt-btn-ghost" onClick={() => navigate('/simulator')}>
+              Simula investimento <Calculator className="h-4 w-4" />
+            </Button>
+            <Button size="lg" variant="ghost" className="w-full gap-2 sm:w-auto" onClick={() => navigate('/home')}>
               Esplora l'app <ChevronRight className="h-4 w-4" />
             </Button>
           </motion.div>
