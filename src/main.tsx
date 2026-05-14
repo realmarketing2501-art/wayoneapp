@@ -1,6 +1,7 @@
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
+import "./i18n";
 
 // Unregister service workers in iframe/preview contexts to avoid caching issues
 const isInIframe = (() => {
