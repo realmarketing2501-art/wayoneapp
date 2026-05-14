@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import {
   MessageCircle,
   Send,
-  Mail,
+  MessageSquare,
   Share2,
   UserPlus,
   Wallet,
@@ -75,15 +75,9 @@ export function ReferralGuide({ url, code }: { url: string; code: string }) {
       className: 'bg-[#229ED9]/10 text-[#229ED9] hover:bg-[#229ED9]/20',
     },
     {
-      name: 'X',
-      icon: Share2,
-      href: `https://twitter.com/intent/tweet?text=${encodedText}`,
-      className: 'bg-foreground/10 text-foreground hover:bg-foreground/20',
-    },
-    {
-      name: 'Email',
-      icon: Mail,
-      href: `mailto:?subject=${encodeURIComponent('Ti invito su USDT')}&body=${encodedText}`,
+      name: 'SMS',
+      icon: MessageSquare,
+      href: `sms:?&body=${encodedText}`,
       className: 'bg-primary/10 text-primary hover:bg-primary/20',
     },
   ];
@@ -134,8 +128,14 @@ export function ReferralGuide({ url, code }: { url: string; code: string }) {
                 id="referral-qr-svg"
                 value={url}
                 size={140}
-                level="M"
+                level="H"
                 includeMargin={false}
+                imageSettings={{
+                  src: '/icons/icon-192.png',
+                  height: 32,
+                  width: 32,
+                  excavate: true,
+                }}
               />
             </div>
 
