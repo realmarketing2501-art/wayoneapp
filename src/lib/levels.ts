@@ -42,9 +42,9 @@ export function getLevelColorClass(name: LevelName): string {
     gamma: 'text-muted-foreground',          // Mozzo
     beta: 'text-way-sapphire',               // Marinaio
     bronze: 'text-way-bronze',               // Nostromo
-    silver: 'text-way-silver',               // Quartiermastro
+    silver: 'text-way-silver-elite',         // Capitano
     silver_elite: 'text-way-silver-elite',   // Capitano
-    gold: 'text-way-gold',                   // Commodoro
+    gold: 'text-way-glow',                   // Ammiraglio
     gold_elite: 'text-way-glow',             // Ammiraglio
     oro_vip: 'text-way-diamond',             // Re dei Mari
   };
@@ -56,9 +56,9 @@ export function getLevelBgClass(name: LevelName): string {
     gamma: 'bg-muted border-border',
     beta: 'bg-way-sapphire/20 border-way-sapphire/40',
     bronze: 'bg-way-bronze/20 border-way-bronze/40',
-    silver: 'bg-way-silver/20 border-way-silver/40',
+    silver: 'bg-way-silver-elite/20 border-way-silver-elite/50',
     silver_elite: 'bg-way-silver-elite/20 border-way-silver-elite/50',
-    gold: 'bg-way-gold/20 border-way-gold/50',
+    gold: 'bg-way-glow/25 border-way-glow/60',
     gold_elite: 'bg-way-glow/25 border-way-glow/60',
     oro_vip: 'bg-way-diamond/25 border-way-diamond/60',
   };
