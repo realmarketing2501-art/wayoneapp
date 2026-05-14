@@ -4,6 +4,8 @@ import { cn } from '@/lib/utils';
 import { ThemeToggle } from './ThemeToggle';
 import { useAuth } from '@/contexts/AuthContext';
 import { UsdtMonogram } from './UsdtMonogram';
+import GuestBanner from './GuestBanner';
+import { useAutoTrackSession } from '@/hooks/useTrackSignup';
 
 const publicTabs = [
   { path: '/home', icon: Home, label: 'Home' },
@@ -16,6 +18,7 @@ export default function AppLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
+  useAutoTrackSession();
 
   const tabs = [
     ...publicTabs,
@@ -54,6 +57,7 @@ export default function AppLayout() {
       </header>
 
       <main className="flex-1 overflow-y-auto pb-24">
+        <GuestBanner />
         <Outlet />
       </main>
 

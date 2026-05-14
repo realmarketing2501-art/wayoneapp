@@ -14,6 +14,45 @@ export type Database = {
   }
   public: {
     Tables: {
+      account_anomalies: {
+        Row: {
+          created_at: string
+          details: Json | null
+          id: string
+          match_user_id: string | null
+          resolved: boolean
+          resolved_at: string | null
+          resolved_by: string | null
+          severity: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          details?: Json | null
+          id?: string
+          match_user_id?: string | null
+          resolved?: boolean
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: string
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          details?: Json | null
+          id?: string
+          match_user_id?: string | null
+          resolved?: boolean
+          resolved_at?: string | null
+          resolved_by?: string | null
+          severity?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       admin_settings: {
         Row: {
           description: string | null
@@ -645,6 +684,63 @@ export type Database = {
           },
         ]
       }
+      signup_events: {
+        Row: {
+          created_at: string
+          device_type: string | null
+          email: string | null
+          event_type: string
+          fingerprint_hash: string | null
+          google_sub: string | null
+          id: string
+          ip: string | null
+          language: string | null
+          os: string | null
+          provider: string
+          raw: Json | null
+          screen: string | null
+          timezone: string | null
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          device_type?: string | null
+          email?: string | null
+          event_type?: string
+          fingerprint_hash?: string | null
+          google_sub?: string | null
+          id?: string
+          ip?: string | null
+          language?: string | null
+          os?: string | null
+          provider?: string
+          raw?: Json | null
+          screen?: string | null
+          timezone?: string | null
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          device_type?: string | null
+          email?: string | null
+          event_type?: string
+          fingerprint_hash?: string | null
+          google_sub?: string | null
+          id?: string
+          ip?: string | null
+          language?: string | null
+          os?: string | null
+          provider?: string
+          raw?: Json | null
+          screen?: string | null
+          timezone?: string | null
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       special_funds: {
         Row: {
           badge: string
@@ -1029,6 +1125,7 @@ export type Database = {
         Args: { p_user_id: string }
         Returns: undefined
       }
+      record_signup_event: { Args: { p_payload: Json }; Returns: string }
     }
     Enums: {
       app_role: "admin" | "user"
