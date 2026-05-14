@@ -1,17 +1,18 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
-  Wallet, ArrowDownToLine, ClipboardList, UserPlus, ChevronRight, Clock,
-  Anchor, Compass, Users, Coins, Skull, Map as MapIcon, Sword,
+  Wallet, ArrowDownToLine, TrendingUp, Users, Bell, Clock, ChevronRight,
+  ArrowUpRight, ArrowDownLeft,
 } from 'lucide-react';
 import { useProfile } from '@/hooks/useProfile';
-import { useLevel, useLevels } from '@/hooks/useLevels';
-import { getLevelLabel, getPirateRank, type LevelName } from '@/lib/levels';
+import { useLevel } from '@/hooks/useLevels';
+import { getLevelLabel, type LevelName } from '@/lib/levels';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-import portHero from '@/assets/wayone-port-hero.jpg';
-import fleetSafe from '@/assets/wayone-fleet-safe.jpg';
-import fleetRisk from '@/assets/wayone-fleet-risk.jpg';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { UsdtMonogram } from '@/components/UsdtMonogram';
+import { Button } from '@/components/ui/button';
 
 function useCountdown() {
   const [timeLeft, setTimeLeft] = useState('');
@@ -34,10 +35,10 @@ function useCountdown() {
 }
 
 const quickActions = [
-  { icon: Wallet, label: 'Deposita', path: '/deposit' },
-  { icon: ArrowDownToLine, label: 'Preleva', path: '/withdraw' },
-  { icon: ClipboardList, label: 'Missioni', path: '/tasks' },
-  { icon: UserPlus, label: 'Recluta', path: '/network' },
+  { icon: TrendingUp, label: 'Investi', path: '/invest' },
+  { icon: Users, label: 'Referral', path: '/network' },
+  { icon: Wallet, label: 'Wallet', path: '/fund' },
+  { icon: Bell, label: 'Notifiche', path: '/income' },
 ];
 
 export default function HomePage() {
@@ -46,395 +47,261 @@ export default function HomePage() {
   const { data: profile, isLoading } = useProfile();
   const { user } = useAuth();
 
-  const level = profile?.level ?? 'gamma';
+  const level = (profile?.level ?? 'gamma') as LevelName;
   const levelInfo = useLevel(level);
-  const { data: allLevels = [] } = useLevels();
-  const operationalLevels = allLevels.filter(l =>
-    ['bronze', 'silver', 'silver_elite', 'gold', 'gold_elite', 'oro_vip'].includes(l.id),
-  );
   const balance = Number(profile?.balance ?? 0);
   const totalEarned = Number(profile?.total_earned ?? 0);
-  const indicativeRate = levelInfo?.settimanale != null
-    ? Number(levelInfo.settimanale) / 7
-    : Number(levelInfo?.giornaliero_45 ?? 0);
+  const indicativeRate = Number(levelInfo?.giornaliero_45 ?? 0);
   const dailyEarning = balance * (indicativeRate / 100);
 
-  const rank = getPirateRank(level as LevelName);
-  const RankIcon = rank.icon;
-  const levelTitle = getLevelLabel(level as LevelName); // es. "Capitano"
-  const captainName = profile?.username ?? 'Capitano';
+  const { data: activeInvestment } = useQuery({
+    queryKey: ['active_investment', user?.id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('investments')
+        .select('*')
+        .eq('user_id', user!.id)
+        .eq('status', 'active')
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      return data;
+    },
+    enabled: !!user,
+  });
+
+  const { data: recentTx = [] } = useQuery({
+    queryKey: ['recent_tx', user?.id],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('wallet_transactions')
+        .select('*')
+        .eq('user_id', user!.id)
+        .order('created_at', { ascending: false })
+        .limit(5);
+      return data ?? [];
+    },
+    enabled: !!user,
+  });
 
   if (isLoading && user) {
-    return <div className="flex items-center justify-center p-8"><div className="h-8 w-8 animate-spin rounded-full border-2 border-amber-500 border-t-transparent" /></div>;
+    return (
+      <div className="flex items-center justify-center p-12">
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+      </div>
+    );
+  }
+
+  // Guest landing card
+  if (!user) {
+    return (
+      <div className="space-y-6 p-4">
+        <div className="usdt-card-gold relative overflow-hidden p-8 text-center">
+          <UsdtMonogram size={88} letter="U" className="mx-auto mb-4" />
+          <h1 className="font-display text-2xl font-bold usdt-gold-text">Benvenuto in USDT</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Investi in modo intelligente.<br />Costruisci il tuo futuro.
+          </p>
+          <div className="mt-6 space-y-2">
+            <Button className="usdt-btn-gold w-full" size="lg" onClick={() => navigate('/login')}>
+              Registrati
+            </Button>
+            <Button className="usdt-btn-ghost w-full" size="lg" onClick={() => navigate('/login')}>
+              Accedi
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div className="pirate-theme -mx-px min-h-screen">
-      {/* ========= HERO ========= */}
-      <section className="relative overflow-hidden">
-        <img
-          src={portHero}
-          alt="Way One — porto al tramonto"
-          className="absolute inset-0 h-full w-full object-cover opacity-90"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black" />
-
-        <div className="relative px-4 pt-6 pb-10">
-          {/* Top bar: avatar + resources */}
-          <div className="flex items-start justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <div className={`relative h-14 w-14 rounded-full border-2 border-amber-500/80 bg-black/60 shadow-lg ring-2 ${rank.ringClass}`}>
-                <div className={`flex h-full w-full items-center justify-center rounded-full ${rank.bgClass}`}>
-                  <RankIcon className={`h-7 w-7 ${rank.textClass}`} />
-                </div>
-                <span className="absolute -bottom-1 -right-1 rounded-full border border-amber-500 bg-black px-1 text-[0.55rem] font-bold text-amber-300">
-                  {rank.rank}
-                </span>
-              </div>
-              <div className="rounded-md border border-amber-700/50 bg-black/60 px-2 py-1 text-[0.65rem] backdrop-blur-sm">
-                <div className={`pirate-display ${rank.textClass}`}>{levelTitle}</div>
-                <div className="text-amber-100/80">Porto di Itaca</div>
-              </div>
-            </div>
-
-            <div className="space-y-1 rounded-md border border-amber-700/40 bg-black/70 p-1.5 backdrop-blur-sm">
-              <ResourceChip icon={<Coins className="h-3 w-3" />} value={balance.toLocaleString()} color="text-amber-300" />
-              <ResourceChip icon={<div className="h-3 w-3 rotate-45 bg-sky-300" />} value={profile?.direct_referrals ?? 0} color="text-sky-200" />
-              <ResourceChip icon={<div className="h-3 w-3 rounded-full bg-rose-400" />} value={profile?.total_network ?? 0} color="text-rose-200" />
-            </div>
+    <div className="space-y-4 p-4">
+      {/* Hero saldo */}
+      <motion.section
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="usdt-card-gold relative overflow-hidden p-5"
+      >
+        <div className="absolute -top-8 -right-8 h-40 w-40 rounded-full bg-primary/10 blur-2xl" />
+        <div className="relative flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <p className="text-xs uppercase tracking-wider text-muted-foreground">Saldo USDT</p>
+            <p className="font-display mt-1 text-4xl font-bold usdt-gold-text">
+              {balance.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </p>
+            <p className="mt-0.5 text-xs text-muted-foreground">
+              ≈ ${balance.toLocaleString()} USD
+            </p>
           </div>
-
-          {/* Title plate */}
-          <div className="mt-8 text-center">
-            <div className="pirate-display text-3xl font-black tracking-[0.2em] text-amber-200 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] sm:text-4xl">
-              WAY <span className="text-amber-400">⚓</span> ONE
-            </div>
-            <div className="mt-1 inline-block border-y border-amber-500/60 px-4 py-1 text-[0.65rem] uppercase tracking-[0.3em] text-amber-200">
-              {levelTitle} · La nostra flotta cresce
-            </div>
-          </div>
-
-          {/* Achievement banner */}
-          <div className="relative mt-6">
-            <div className="pirate-card-ornate p-4 text-center">
-              <p className="pirate-display text-base font-bold text-amber-300">
-                {user ? 'NUOVO TRAGUARDO RAGGIUNTO!' : 'BENVENUTO A BORDO'}
-              </p>
-              <p className="mt-2 font-serif text-sm leading-snug text-amber-50/90">
-                {user
-                  ? <>Grazie all'impegno dei tuoi marinai, la flotta si espande<br />e i guadagni aumentano.</>
-                  : <>Arruolati nell'equipaggio di Way One e<br />salpa verso la tua fortuna.</>}
-              </p>
-              {user && (
-                <p className="mt-2 font-serif text-sm text-amber-100/90">
-                  Il capitano premia l'equipaggio con{' '}
-                  <span className="pirate-gold-text font-bold">+{dailyEarning.toFixed(2)} USDT</span> al giorno
-                </p>
-              )}
-            </div>
-          </div>
-
-          {/* Invite badge floating */}
-          {user && (
-            <button
-              onClick={() => navigate('/network')}
-              className="mx-auto mt-4 flex items-center gap-2 rounded-full border border-amber-500/60 bg-black/60 px-4 py-1.5 text-xs text-amber-200 backdrop-blur-sm"
-            >
-              <UserPlus className="h-3.5 w-3.5" /> Invita marinai
-            </button>
-          )}
+          <UsdtMonogram size={56} letter="U" />
         </div>
+
+        <div className="usdt-divider my-4" />
+
+        <div className="grid grid-cols-2 gap-3 text-center">
+          <div>
+            <p className="text-[0.65rem] uppercase tracking-wider text-muted-foreground">Guadagnato</p>
+            <p className="font-display mt-0.5 text-base font-bold text-foreground">
+              +{totalEarned.toFixed(2)} <span className="text-xs text-muted-foreground">USDT</span>
+            </p>
+          </div>
+          <div>
+            <p className="text-[0.65rem] uppercase tracking-wider text-muted-foreground">Livello</p>
+            <p className="font-display mt-0.5 text-base font-bold usdt-gold-text">
+              {getLevelLabel(level)}
+            </p>
+          </div>
+        </div>
+      </motion.section>
+
+      {/* Quick actions */}
+      <section className="grid grid-cols-4 gap-2">
+        {quickActions.map((a) => (
+          <button
+            key={a.label}
+            onClick={() => navigate(a.path)}
+            className="usdt-card flex flex-col items-center gap-1.5 p-3 transition-all active:scale-95 hover:border-primary/40"
+          >
+            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/15 text-primary">
+              <a.icon className="h-4 w-4" />
+            </div>
+            <span className="text-[0.65rem] font-medium text-foreground">{a.label}</span>
+          </button>
+        ))}
       </section>
 
-      {/* ========= STATS FLOTTA ========= */}
-      <section className="px-4 pt-4">
-        <div className="grid grid-cols-2 gap-3">
-          <StatBlock
-            icon={<Users className="h-5 w-5 text-amber-300" />}
-            label="LA TUA FLOTTA"
-            value={profile?.total_network ?? 0}
-            unit="MARINAI"
-            tagline="Insieme siamo più forti!"
+      {/* Panoramica */}
+      <section className="usdt-card p-4">
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="font-display text-base font-bold">Panoramica</h2>
+          <button
+            onClick={() => navigate('/income')}
+            className="flex items-center gap-0.5 text-xs text-primary"
+          >
+            Dettagli <ChevronRight className="h-3 w-3" />
+          </button>
+        </div>
+        <div className="space-y-2.5">
+          <RowItem
+            icon={<TrendingUp className="h-4 w-4" />}
+            label="Rendimento giornaliero"
+            value={`${indicativeRate.toFixed(2)}%`}
+            sub={`+${dailyEarning.toFixed(2)} USDT/g stimati`}
           />
-          <StatBlock
-            icon={<Coins className="h-5 w-5 text-amber-300" />}
-            label="BOTTINO TOTALE"
-            value={totalEarned.toFixed(0)}
-            unit="USDT"
-            tagline="Per il tuo impegno e dedizione!"
+          <RowItem
+            icon={<Wallet className="h-4 w-4" />}
+            label="Piano attivo"
+            value={activeInvestment?.plan_name ?? 'Nessuno'}
+            sub={
+              activeInvestment
+                ? `${Number(activeInvestment.amount).toFixed(0)} USDT · ${activeInvestment.duration_days}gg`
+                : 'Inizia a investire'
+            }
+          />
+          <RowItem
+            icon={<Clock className="h-4 w-4" />}
+            label="Prossimo accredito"
+            value={countdown}
+            sub="Ogni 24h alle 02:00 UTC"
           />
         </div>
       </section>
 
-      {/* ========= AZIONI RAPIDE ========= */}
-      {user && (
-        <section className="px-4 pt-4">
-          <div className="grid grid-cols-4 gap-2">
-            {quickActions.map(a => (
-              <button
-                key={a.label}
-                onClick={() => navigate(a.path)}
-                className="pirate-card flex flex-col items-center gap-1.5 p-3 transition-transform active:scale-95"
-              >
-                <a.icon className="h-5 w-5 text-amber-300" />
-                <span className="pirate-display text-[0.6rem] text-amber-100">{a.label}</span>
-              </button>
+      {/* Azioni deposito/prelievo */}
+      <section className="grid grid-cols-2 gap-3">
+        <Button
+          className="usdt-btn-gold h-12 gap-2"
+          onClick={() => navigate('/deposit')}
+        >
+          <ArrowDownToLine className="h-4 w-4" /> Deposita
+        </Button>
+        <Button
+          className="usdt-btn-ghost h-12 gap-2"
+          onClick={() => navigate('/withdraw')}
+        >
+          <ArrowUpRight className="h-4 w-4" /> Preleva
+        </Button>
+      </section>
+
+      {/* Cronologia movimenti */}
+      <section className="usdt-card p-4">
+        <div className="mb-3 flex items-center justify-between">
+          <h2 className="font-display text-base font-bold">Cronologia movimenti</h2>
+          <button
+            onClick={() => navigate('/fund')}
+            className="flex items-center gap-0.5 text-xs text-primary"
+          >
+            Tutti <ChevronRight className="h-3 w-3" />
+          </button>
+        </div>
+        {recentTx.length === 0 ? (
+          <p className="py-4 text-center text-sm text-muted-foreground">Nessun movimento ancora</p>
+        ) : (
+          <div className="space-y-2">
+            {recentTx.map((tx: any) => (
+              <TxRow key={tx.id} tx={tx} />
             ))}
           </div>
-        </section>
-      )}
-
-      {/* ========= COFFRE: SALDO + COUNTDOWN ========= */}
-      {user && (
-        <section className="px-4 pt-4">
-          <div className="pirate-card pirate-corner-ornament p-4">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <p className="text-[0.65rem] uppercase tracking-[0.2em] text-amber-200/70">Forziere disponibile</p>
-                <p className="pirate-display mt-1 text-2xl font-bold text-amber-200">
-                  {balance.toLocaleString()} <span className="text-sm text-amber-300/70">USDT</span>
-                </p>
-              </div>
-              <Anchor className="h-10 w-10 text-amber-500/40" />
-            </div>
-            <div className="my-3 pirate-divider" />
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <p className="text-[0.6rem] uppercase tracking-wider text-amber-200/60">Bottino giornaliero</p>
-                <p className="pirate-display text-lg font-bold text-amber-300">+{dailyEarning.toFixed(2)}</p>
-                <p className="text-[0.6rem] text-amber-100/60">stima al {indicativeRate.toFixed(2)}%/g</p>
-              </div>
-              <div>
-                <p className="text-[0.6rem] uppercase tracking-wider text-amber-200/60">Prossimo accredito</p>
-                <p className="pirate-display flex items-center gap-1 text-lg font-bold text-amber-300">
-                  <Clock className="h-4 w-4" /> {countdown}
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
-      {/* ========= SCEGLI IL TUO VIAGGIO ========= */}
-      <section className="px-4 pt-6">
-        <div className="text-center">
-          <div className="pirate-display text-base font-bold text-amber-300">SCEGLI IL TUO VIAGGIO</div>
-          <div className="mx-auto mt-1 h-px w-32 bg-gradient-to-r from-transparent via-amber-500 to-transparent" />
-        </div>
-
-        <div className="mt-3 grid grid-cols-2 gap-2">
-          <VoyageCard
-            image={fleetSafe}
-            label="VIAGGIO DA"
-            duration="45 GIORNI"
-            risk="Basso"
-            riskColor="text-emerald-400"
-            estimate="2.800"
-            cta="ROTTA SICURA"
-            onClick={() => navigate('/invest')}
-          />
-          <VoyageCard
-            image={fleetRisk}
-            label="VIAGGIO DA"
-            duration="90 GIORNI"
-            risk="Medio"
-            riskColor="text-rose-400"
-            estimate="4.200"
-            cta="ROTTA REDDITIZIA"
-            onClick={() => navigate('/invest')}
-          />
-        </div>
-
-        {/* footer ribbon */}
-        <div className="mt-3 grid grid-cols-3 gap-2">
-          <MiniInfo
-            icon={<Sword className="h-4 w-4 text-amber-300" />}
-            title="PAGA MARINAI"
-            text="1.000 USDT al giorno per ogni marinaio a bordo."
-          />
-          <MiniInfo
-            icon={<Coins className="h-4 w-4 text-amber-300" />}
-            title={`GUADAGNO ${levelTitle.toUpperCase()}`}
-            text="Bonus fisso per il capitano"
-            highlight={`+${Number(levelInfo?.bonus_valore ?? 0).toLocaleString()}`}
-          />
-          <MiniInfo
-            icon={<Compass className="h-4 w-4 text-amber-300" />}
-            title="OBIETTIVO"
-            text="Espandi la flotta, raggiungi nuovi porti e aumenta i tuoi profitti!"
-          />
-        </div>
+        )}
       </section>
-
-      {/* ========= LIVELLI WAY ONE — CARTA NAUTICA ========= */}
-      <section className="px-4 pt-6">
-        <div className="text-center">
-          <div className="pirate-display text-base font-bold text-amber-300 flex items-center justify-center gap-2">
-            <MapIcon className="h-4 w-4" /> ROTTE & QUALIFICHE
-          </div>
-          <div className="mx-auto mt-1 h-px w-32 bg-gradient-to-r from-transparent via-amber-500 to-transparent" />
-        </div>
-
-        <div className="mt-3 grid grid-cols-2 gap-2">
-          {operationalLevels.map((l, idx) => {
-            const isCurrent = l.id === level;
-            const lr = getPirateRank(l.id as LevelName);
-            const LIcon = lr.icon;
-            return (
-              <div
-                key={l.id}
-                className={`pirate-card relative p-3 ${isCurrent ? `ring-2 ${lr.ringClass}` : ''}`}
-              >
-                {isCurrent && (
-                  <div className="absolute -top-2 left-1/2 -translate-x-1/2 rounded-full border border-amber-400 bg-amber-500 px-2 py-0.5 text-[0.55rem] font-bold uppercase tracking-wider text-black">
-                    Attuale
-                  </div>
-                )}
-                <div className="flex items-center gap-2">
-                  <span className={`flex h-7 w-7 items-center justify-center rounded-full ${lr.bgClass} ring-1 ${lr.ringClass}`}>
-                    <LIcon className={`h-4 w-4 ${lr.textClass}`} />
-                  </span>
-                  <div className="min-w-0">
-                    <div className="text-[0.5rem] uppercase tracking-wider text-amber-100/60">Liv. {lr.rank}</div>
-                    <div className={`pirate-display text-[0.7rem] font-bold leading-tight ${lr.textClass}`}>
-                      {getLevelLabel(l.id as LevelName)}
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-2 flex items-baseline gap-1">
-                  <span className={`pirate-display text-xl font-bold ${lr.textClass}`}>
-                    {Number(l.settimanale ?? 0)}%
-                  </span>
-                  <span className="text-[0.55rem] text-amber-100/70">/sett · {l.durata_giorni}gg</span>
-                </div>
-                <div className="my-2 pirate-divider" />
-                <div className="grid grid-cols-2 gap-1 text-[0.55rem]">
-                  <div>
-                    <p className="text-amber-100/60">Min</p>
-                    <p className="font-semibold text-amber-100">{Number(l.investimento_min ?? 0)} U</p>
-                  </div>
-                  <div>
-                    <p className="text-amber-100/60">Marinai</p>
-                    <p className="font-semibold text-amber-100">{l.unita_richieste ?? '—'}</p>
-                  </div>
-                </div>
-                <div className="mt-2 rounded border border-amber-700/40 bg-black/40 px-2 py-1.5 text-center">
-                  <p className="text-[0.5rem] uppercase tracking-wider text-amber-100/60">Bonus capitano</p>
-                  <p className="pirate-display text-xs font-bold text-amber-300">
-                    +{Number(l.bonus_valore).toLocaleString()} USDT
-                  </p>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* ========= LEGEND BANNER ========= */}
-      <section className="px-4 pt-6">
-        <div className="pirate-card-ornate p-4 text-center">
-          <Compass className="mx-auto mb-1 h-6 w-6 text-amber-400" />
-          <p className="pirate-display text-sm font-bold text-amber-300">LA TUA LEGGENDA CONTINUA!</p>
-          <p className="mt-1 font-serif text-xs italic text-amber-100/70">
-            "Ogni viaggio ci rende più forti."
-          </p>
-        </div>
-      </section>
-
-      {/* CTA non loggato */}
-      {!user && (
-        <section className="px-4 pt-4 pb-4">
-          <button
-            onClick={() => navigate('/login')}
-            className="pirate-btn-gold flex w-full items-center justify-center gap-2 rounded px-4 py-3 text-sm"
-          >
-            ARRUOLATI ORA <ChevronRight className="h-4 w-4" />
-          </button>
-        </section>
-      )}
-
-      {/* spacer per bottom nav */}
-      <div className="h-8" />
     </div>
   );
 }
 
-/* ---------- subcomponents ---------- */
-
-function ResourceChip({ icon, value, color }: { icon: React.ReactNode; value: React.ReactNode; color: string }) {
-  return (
-    <div className="flex items-center gap-1.5 rounded border border-amber-700/30 bg-black/40 px-1.5 py-0.5 text-[0.65rem]">
-      {icon}
-      <span className={`pirate-display font-bold ${color}`}>{value}</span>
-    </div>
-  );
-}
-
-function StatBlock({
-  icon, label, value, unit, tagline,
-}: { icon: React.ReactNode; label: string; value: React.ReactNode; unit: string; tagline: string }) {
-  return (
-    <div className="pirate-card p-3 text-center">
-      <div className="flex items-center justify-center gap-1.5">
-        {icon}
-        <span className="pirate-display text-[0.6rem] font-bold tracking-widest text-amber-200">{label}</span>
-      </div>
-      <p className="pirate-display mt-1 text-xl font-bold text-amber-300">
-        {value} <span className="text-[0.65rem] text-amber-100/70">{unit}</span>
-      </p>
-      <p className="mt-0.5 font-serif text-[0.6rem] italic text-amber-100/60">{tagline}</p>
-    </div>
-  );
-}
-
-function VoyageCard({
-  image, label, duration, risk, riskColor, estimate, cta, onClick,
+function RowItem({
+  icon, label, value, sub,
 }: {
-  image: string; label: string; duration: string; risk: string; riskColor: string;
-  estimate: string; cta: string; onClick: () => void;
+  icon: React.ReactNode; label: string; value: React.ReactNode; sub?: string;
 }) {
   return (
-    <button onClick={onClick} className="pirate-card overflow-hidden p-0 text-left transition-transform active:scale-[0.98]">
-      <div className="relative h-20 overflow-hidden">
-        <img src={image} alt={duration} className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent" />
-        <div className="absolute bottom-1 left-2">
-          <p className="text-[0.55rem] uppercase tracking-wider text-amber-100/80">{label}</p>
-          <p className="pirate-display text-base font-bold text-amber-200 leading-tight">{duration}</p>
-        </div>
+    <div className="flex items-center gap-3">
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-primary/15 text-primary">
+        {icon}
       </div>
-      <div className="p-2 space-y-1">
-        <div className="flex items-center gap-1 text-[0.6rem]">
-          <Clock className="h-3 w-3 text-amber-300" />
-          <span className="text-amber-100/70">Durata:</span>
-          <span className="text-amber-100">{duration.replace('GIORNI', 'gg')}</span>
-        </div>
-        <div className="flex items-center gap-1 text-[0.6rem]">
-          <Skull className="h-3 w-3 text-amber-300" />
-          <span className="text-amber-100/70">Rischio:</span>
-          <span className={riskColor}>{risk}</span>
-        </div>
-        <div className="text-[0.6rem]">
-          <p className="text-amber-100/70">Guadagno stimato:</p>
-          <p className="pirate-display text-base font-bold text-amber-300">{estimate}</p>
-        </div>
-        <div className="mt-1 rounded border border-amber-500/50 bg-amber-500/10 px-2 py-1 text-center">
-          <span className="pirate-display text-[0.6rem] font-bold text-amber-300">{cta}</span>
-        </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-xs text-muted-foreground">{label}</p>
+        {sub && <p className="text-[0.65rem] text-muted-foreground/80">{sub}</p>}
       </div>
-    </button>
+      <p className="font-display text-sm font-bold text-foreground">{value}</p>
+    </div>
   );
 }
 
-function MiniInfo({
-  icon, title, text, highlight,
-}: { icon: React.ReactNode; title: string; text: string; highlight?: string }) {
+function TxRow({ tx }: { tx: any }) {
+  const isIn = tx.direction === 'in';
+  const date = new Date(tx.created_at).toLocaleDateString('it-IT', {
+    day: '2-digit', month: 'short',
+  });
+  const time = new Date(tx.created_at).toLocaleTimeString('it-IT', {
+    hour: '2-digit', minute: '2-digit',
+  });
+  const labelMap: Record<string, string> = {
+    deposit: 'Deposito',
+    withdraw: 'Prelievo',
+    investment: 'Investimento',
+    interest: 'Rendimento giornaliero',
+    bonus: 'Bonus rete',
+    referral: 'Referral bonus',
+  };
   return (
-    <div className="pirate-card p-2 text-center">
-      <div className="flex items-center justify-center">{icon}</div>
-      <p className="pirate-display mt-1 text-[0.55rem] font-bold text-amber-200">{title}</p>
-      <p className="mt-0.5 font-serif text-[0.55rem] leading-tight text-amber-100/70">{text}</p>
-      {highlight && <p className="pirate-display mt-1 text-xs font-bold text-emerald-300">{highlight}</p>}
+    <div className="flex items-center justify-between gap-2 border-b border-border/40 pb-2 last:border-0 last:pb-0">
+      <div className="flex items-center gap-2.5">
+        <div
+          className={`flex h-8 w-8 items-center justify-center rounded-full ${
+            isIn ? 'bg-emerald-500/15 text-emerald-400' : 'bg-rose-500/15 text-rose-400'
+          }`}
+        >
+          {isIn ? <ArrowDownLeft className="h-3.5 w-3.5" /> : <ArrowUpRight className="h-3.5 w-3.5" />}
+        </div>
+        <div className="min-w-0">
+          <p className="text-xs font-medium text-foreground">{labelMap[tx.type] ?? tx.type}</p>
+          <p className="text-[0.6rem] text-muted-foreground">{date} · {time}</p>
+        </div>
+      </div>
+      <p className={`font-display text-sm font-bold ${isIn ? 'text-emerald-400' : 'text-rose-400'}`}>
+        {isIn ? '+' : '-'}{Number(tx.amount).toFixed(2)} USDT
+      </p>
     </div>
   );
 }
