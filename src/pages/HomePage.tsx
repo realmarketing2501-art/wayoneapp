@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import {
   Wallet, ArrowDownToLine, ClipboardList, UserPlus, ChevronRight, Clock,
-  Anchor, Compass, Ship, Users, Crown, Coins, Skull, Map as MapIcon, Sword,
+  Anchor, Compass, Users, Coins, Skull, Map as MapIcon, Sword,
 } from 'lucide-react';
 import { useProfile } from '@/hooks/useProfile';
 import { useLevel, useLevels } from '@/hooks/useLevels';
