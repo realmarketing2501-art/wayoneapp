@@ -5,6 +5,7 @@ import HeaderLanguageButton from './HeaderLanguageButton';
 import { useAuth } from '@/contexts/AuthContext';
 import { UsdtMonogram } from './UsdtMonogram';
 import GuestBanner from './GuestBanner';
+import CryptoTicker from './CryptoTicker';
 import { useAutoTrackSession } from '@/hooks/useTrackSignup';
 import { useTranslation } from 'react-i18next';
 
@@ -56,6 +57,7 @@ export default function AppLayout() {
             )}
           </div>
         </div>
+        <CryptoTicker />
       </header>
 
       <main className="flex-1 overflow-y-auto pb-24">
