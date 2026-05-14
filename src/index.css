@@ -257,10 +257,68 @@ html, body {
   backdrop-filter: blur(12px);
 }
 .pirate-nav-item {
+  position: relative;
   color: hsl(var(--p-muted));
-  transition: color 0.2s;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border-radius: 8px;
+  border: 1px solid transparent;
+}
+.pirate-nav-item:hover {
+  color: hsl(var(--p-cream));
+  background: hsl(var(--p-gold) / 0.08);
+  border-color: hsl(var(--p-gold) / 0.25);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px hsl(var(--p-ink) / 0.5), inset 0 1px 0 hsl(var(--p-gold) / 0.15);
+}
+.pirate-nav-item:active {
+  transform: translateY(0) scale(0.96);
 }
 .pirate-nav-item[data-active="true"] {
   color: hsl(var(--p-gold-bright));
-  text-shadow: 0 0 8px hsl(var(--p-gold) / 0.5);
+  background: hsl(var(--p-gold) / 0.1);
+  border-color: hsl(var(--p-gold) / 0.4);
+  box-shadow: 0 0 16px hsl(var(--p-gold) / 0.2), inset 0 1px 0 hsl(var(--p-gold) / 0.2);
+}
+.pirate-nav-item[data-active="true"]::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 20px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, hsl(var(--p-gold-bright)), transparent);
+  border-radius: 2px;
+}
+.pirate-nav-item[data-active="true"]::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  background: hsl(var(--p-gold-bright));
+  border-radius: 50%;
+  box-shadow: 0 0 8px hsl(var(--p-gold) / 0.6);
+}
+.pirate-nav-icon {
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.pirate-nav-item:hover .pirate-nav-icon {
+  transform: scale(1.15);
+}
+.pirate-nav-item[data-active="true"] .pirate-nav-icon {
+  filter: drop-shadow(0 0 4px hsl(var(--p-gold) / 0.6));
+}
+.pirate-nav-label {
+  font-family: 'Cinzel', serif;
+  letter-spacing: 0.06em;
+  transition: all 0.25s ease;
+}
+.pirate-nav-item:hover .pirate-nav-label {
+  color: hsl(var(--p-cream));
+}
+.pirate-nav-item[data-active="true"] .pirate-nav-label {
+  color: hsl(var(--p-gold-bright));
 }
