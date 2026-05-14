@@ -2,29 +2,32 @@ import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { Home, TrendingUp, Users, Wallet, User, LogIn, Bell } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { ThemeToggle } from './ThemeToggle';
+import HeaderLanguageButton from './HeaderLanguageButton';
 import { useAuth } from '@/contexts/AuthContext';
 import { UsdtMonogram } from './UsdtMonogram';
 import GuestBanner from './GuestBanner';
 import { useAutoTrackSession } from '@/hooks/useTrackSignup';
-
-const publicTabs = [
-  { path: '/home', icon: Home, label: 'Home' },
-  { path: '/fund', icon: Wallet, label: 'Wallet' },
-  { path: '/invest', icon: TrendingUp, label: 'Investi' },
-  { path: '/network', icon: Users, label: 'Referral' },
-];
+import { useTranslation } from 'react-i18next';
 
 export default function AppLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { t } = useTranslation();
   useAutoTrackSession();
+
+  const publicTabs = [
+    { path: '/home', icon: Home, label: t('nav.home') },
+    { path: '/fund', icon: Wallet, label: t('nav.wallet') },
+    { path: '/invest', icon: TrendingUp, label: t('nav.invest') },
+    { path: '/network', icon: Users, label: t('nav.referral') },
+  ];
 
   const tabs = [
     ...publicTabs,
     user
-      ? { path: '/profile', icon: User, label: 'Profilo' }
-      : { path: '/login', icon: LogIn, label: 'Accedi' },
+      ? { path: '/profile', icon: User, label: t('nav.profile') }
+      : { path: '/login', icon: LogIn, label: t('nav.login') },
   ];
 
   return (
@@ -41,12 +44,13 @@ export default function AppLayout() {
             </span>
           </button>
           <div className="flex items-center gap-1">
+            <HeaderLanguageButton />
             <ThemeToggle />
             {user && (
               <button
                 onClick={() => navigate('/income')}
                 className="relative rounded-full p-2 text-muted-foreground transition-colors hover:text-foreground"
-                aria-label="Notifiche"
+                aria-label={t('home.notifications')}
               >
                 <Bell className="h-5 w-5" />
                 <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-primary" />

@@ -13,6 +13,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { UsdtMonogram } from '@/components/UsdtMonogram';
 import { Button } from '@/components/ui/button';
+import { useTranslation } from 'react-i18next';
 
 function useCountdown() {
   const [timeLeft, setTimeLeft] = useState('');
@@ -46,6 +47,14 @@ export default function HomePage() {
   const countdown = useCountdown();
   const { data: profile, isLoading } = useProfile();
   const { user } = useAuth();
+  const { t } = useTranslation();
+
+  const quickActions = [
+    { icon: TrendingUp, label: t('nav.invest'), path: '/invest' },
+    { icon: Users, label: t('nav.referral'), path: '/network' },
+    { icon: Wallet, label: t('nav.wallet'), path: '/fund' },
+    { icon: Bell, label: t('home.notifications'), path: '/income' },
+  ];
 
   const level = (profile?.level ?? 'gamma') as LevelName;
   const levelInfo = useLevel(level);
@@ -98,16 +107,16 @@ export default function HomePage() {
       <div className="space-y-6 p-4">
         <div className="usdt-card-gold relative overflow-hidden p-8 text-center">
           <UsdtMonogram size={88} letter="U" className="mx-auto mb-4" />
-          <h1 className="font-display text-2xl font-bold usdt-gold-text">Benvenuto in USDT</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Investi in modo intelligente.<br />Costruisci il tuo futuro.
+          <h1 className="font-display text-2xl font-bold usdt-gold-text">{t('home.welcome')}</h1>
+          <p className="mt-2 whitespace-pre-line text-sm text-muted-foreground">
+            {t('home.tagline')}
           </p>
           <div className="mt-6 space-y-2">
             <Button className="usdt-btn-gold w-full" size="lg" onClick={() => navigate('/login')}>
-              Registrati
+              {t('home.register')}
             </Button>
             <Button className="usdt-btn-ghost w-full" size="lg" onClick={() => navigate('/login')}>
-              Accedi
+              {t('home.signIn')}
             </Button>
           </div>
         </div>
@@ -126,9 +135,9 @@ export default function HomePage() {
         <div className="absolute -top-8 -right-8 h-40 w-40 rounded-full bg-primary/10 blur-2xl" />
         <div className="relative flex items-start justify-between gap-3">
           <div className="min-w-0">
-            <p className="text-xs uppercase tracking-wider text-muted-foreground">Saldo USDT</p>
+            <p className="text-xs uppercase tracking-wider text-muted-foreground">{t('home.balanceUsdt')}</p>
             <p className="font-display mt-1 text-4xl font-bold usdt-gold-text">
-              {balance.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              {balance.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
             </p>
             <p className="mt-0.5 text-xs text-muted-foreground">
               ≈ ${balance.toLocaleString()} USD
@@ -141,13 +150,13 @@ export default function HomePage() {
 
         <div className="grid grid-cols-2 gap-3 text-center">
           <div>
-            <p className="text-[0.65rem] uppercase tracking-wider text-muted-foreground">Guadagnato</p>
+            <p className="text-[0.65rem] uppercase tracking-wider text-muted-foreground">{t('home.earned')}</p>
             <p className="font-display mt-0.5 text-base font-bold text-foreground">
               +{totalEarned.toFixed(2)} <span className="text-xs text-muted-foreground">USDT</span>
             </p>
           </div>
           <div>
-            <p className="text-[0.65rem] uppercase tracking-wider text-muted-foreground">Livello</p>
+            <p className="text-[0.65rem] uppercase tracking-wider text-muted-foreground">{t('home.level')}</p>
             <p className="font-display mt-0.5 text-base font-bold usdt-gold-text">
               {getLevelLabel(level)}
             </p>
@@ -174,36 +183,36 @@ export default function HomePage() {
       {/* Panoramica */}
       <section className="usdt-card p-4">
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="font-display text-base font-bold">Panoramica</h2>
+          <h2 className="font-display text-base font-bold">{t('home.overview')}</h2>
           <button
             onClick={() => navigate('/income')}
             className="flex items-center gap-0.5 text-xs text-primary"
           >
-            Dettagli <ChevronRight className="h-3 w-3" />
+            {t('common.details')} <ChevronRight className="h-3 w-3" />
           </button>
         </div>
         <div className="space-y-2.5">
           <RowItem
             icon={<TrendingUp className="h-4 w-4" />}
-            label="Rendimento giornaliero"
+            label={t('home.dailyReturn')}
             value={`${indicativeRate.toFixed(2)}%`}
-            sub={`+${dailyEarning.toFixed(2)} USDT/g stimati`}
+            sub={t('home.dailyReturnSub', { amount: dailyEarning.toFixed(2) })}
           />
           <RowItem
             icon={<Wallet className="h-4 w-4" />}
-            label="Piano attivo"
-            value={activeInvestment?.plan_name ?? 'Nessuno'}
+            label={t('home.activePlan')}
+            value={activeInvestment?.plan_name ?? t('common.none')}
             sub={
               activeInvestment
-                ? `${Number(activeInvestment.amount).toFixed(0)} USDT · ${activeInvestment.duration_days}gg`
-                : 'Inizia a investire'
+                ? `${Number(activeInvestment.amount).toFixed(0)} USDT · ${activeInvestment.duration_days}d`
+                : t('home.startInvesting')
             }
           />
           <RowItem
             icon={<Clock className="h-4 w-4" />}
-            label="Prossimo accredito"
+            label={t('home.nextCredit')}
             value={countdown}
-            sub="Ogni 24h alle 02:00 UTC"
+            sub={t('home.nextCreditSub')}
           />
         </div>
       </section>
@@ -214,29 +223,29 @@ export default function HomePage() {
           className="usdt-btn-gold h-12 gap-2"
           onClick={() => navigate('/deposit')}
         >
-          <ArrowDownToLine className="h-4 w-4" /> Deposita
+          <ArrowDownToLine className="h-4 w-4" /> {t('home.deposit')}
         </Button>
         <Button
           className="usdt-btn-ghost h-12 gap-2"
           onClick={() => navigate('/withdraw')}
         >
-          <ArrowUpRight className="h-4 w-4" /> Preleva
+          <ArrowUpRight className="h-4 w-4" /> {t('home.withdraw')}
         </Button>
       </section>
 
       {/* Cronologia movimenti */}
       <section className="usdt-card p-4">
         <div className="mb-3 flex items-center justify-between">
-          <h2 className="font-display text-base font-bold">Cronologia movimenti</h2>
+          <h2 className="font-display text-base font-bold">{t('home.txHistory')}</h2>
           <button
             onClick={() => navigate('/fund')}
             className="flex items-center gap-0.5 text-xs text-primary"
           >
-            Tutti <ChevronRight className="h-3 w-3" />
+            {t('common.all')} <ChevronRight className="h-3 w-3" />
           </button>
         </div>
         {recentTx.length === 0 ? (
-          <p className="py-4 text-center text-sm text-muted-foreground">Nessun movimento ancora</p>
+          <p className="py-4 text-center text-sm text-muted-foreground">{t('home.noTx')}</p>
         ) : (
           <div className="space-y-2">
             {recentTx.map((tx: any) => (
@@ -269,20 +278,21 @@ function RowItem({
 }
 
 function TxRow({ tx }: { tx: any }) {
+  const { t, i18n } = useTranslation();
   const isIn = tx.direction === 'in';
-  const date = new Date(tx.created_at).toLocaleDateString('it-IT', {
+  const date = new Date(tx.created_at).toLocaleDateString(i18n.language, {
     day: '2-digit', month: 'short',
   });
-  const time = new Date(tx.created_at).toLocaleTimeString('it-IT', {
+  const time = new Date(tx.created_at).toLocaleTimeString(i18n.language, {
     hour: '2-digit', minute: '2-digit',
   });
   const labelMap: Record<string, string> = {
-    deposit: 'Deposito',
-    withdraw: 'Prelievo',
-    investment: 'Investimento',
-    interest: 'Rendimento giornaliero',
-    bonus: 'Bonus rete',
-    referral: 'Referral bonus',
+    deposit: t('home.txDeposit'),
+    withdraw: t('home.txWithdraw'),
+    investment: t('home.txInvestment'),
+    interest: t('home.txInterest'),
+    bonus: t('home.txBonus'),
+    referral: t('home.txReferral'),
   };
   return (
     <div className="flex items-center justify-between gap-2 border-b border-border/40 pb-2 last:border-0 last:pb-0">

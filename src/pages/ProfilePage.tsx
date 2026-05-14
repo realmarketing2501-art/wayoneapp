@@ -9,12 +9,15 @@ import { Switch } from '@/components/ui/switch';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useTranslation } from 'react-i18next';
+import LanguageSelector from '@/components/LanguageSelector';
 
 export default function ProfilePage() {
   const { data: profile } = useProfile();
   const { signOut, user } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const { data: isAdmin } = useQuery({
     queryKey: ['is_admin', user?.id],
@@ -31,12 +34,11 @@ export default function ProfilePage() {
   };
 
   const menuItems = [
-    { icon: FileCheck, label: 'KYC Verification', desc: 'Verifica la tua identità', path: null },
-    { icon: Shield, label: 'Security Center', desc: 'Password, 2FA', path: null },
-    { icon: Wallet, label: 'Wallet Collegati', desc: 'Gestisci indirizzi USDT', path: null },
-    { icon: Award, label: 'Qualifiche e Livelli', desc: 'Requisiti e progressi', path: '/qualifiche' },
-    { icon: HelpCircle, label: 'FAQ & Supporto', desc: 'Domande frequenti', path: '/faq' },
-    { icon: Globe, label: 'Lingua', desc: 'Italiano', path: null },
+    { icon: FileCheck, label: t('profile.kyc'), desc: t('profile.kycDesc'), path: null },
+    { icon: Shield, label: t('profile.security'), desc: t('profile.securityDesc'), path: null },
+    { icon: Wallet, label: t('profile.wallets'), desc: t('profile.walletsDesc'), path: null },
+    { icon: Award, label: t('profile.levels'), desc: t('profile.levelsDesc'), path: '/qualifiche' },
+    { icon: HelpCircle, label: t('profile.faq'), desc: t('profile.faqDesc'), path: '/faq' },
   ];
 
   return (
@@ -51,7 +53,7 @@ export default function ProfilePage() {
             <h2 className="font-display text-lg font-bold text-foreground truncate sm:text-xl">{profile?.username ?? '...'}</h2>
             <LevelBadge level={profile?.level ?? 'gamma'} size="sm" />
             <p className="mt-1 text-[0.65rem] text-muted-foreground sm:text-xs">
-              Membro dal {profile?.created_at ? new Date(profile.created_at).toLocaleDateString('it-IT') : '...'}
+              {t('profile.memberSince')} {profile?.created_at ? new Date(profile.created_at).toLocaleDateString() : '...'}
             </p>
           </div>
         </CardContent>
@@ -61,14 +63,14 @@ export default function ProfilePage() {
       <div className="grid grid-cols-2 gap-2 sm:gap-3">
         <Card>
           <CardContent className="p-3 text-center sm:p-4">
-            <p className="text-[0.65rem] text-muted-foreground sm:text-xs">Disponibile</p>
+            <p className="text-[0.65rem] text-muted-foreground sm:text-xs">{t('profile.available')}</p>
             <p className="font-display text-base font-bold text-primary sm:text-lg">{Number(profile?.balance ?? 0).toLocaleString()}</p>
             <p className="text-[0.6rem] text-muted-foreground">USDT</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-3 text-center sm:p-4">
-            <p className="text-[0.65rem] text-muted-foreground sm:text-xs">Guadagnato</p>
+            <p className="text-[0.65rem] text-muted-foreground sm:text-xs">{t('profile.earned')}</p>
             <p className="font-display text-base font-bold text-accent sm:text-lg">{Number(profile?.total_earned ?? 0).toLocaleString()}</p>
             <p className="text-[0.6rem] text-muted-foreground">USDT</p>
           </CardContent>
@@ -81,11 +83,25 @@ export default function ProfilePage() {
           <div className="flex items-center gap-3">
             {theme === 'dark' ? <Moon className="h-5 w-5 text-primary" /> : <Sun className="h-5 w-5 text-primary" />}
             <div>
-              <p className="text-sm font-medium text-foreground">Tema</p>
-              <p className="text-xs text-muted-foreground">{theme === 'dark' ? 'Scuro' : 'Chiaro'}</p>
+              <p className="text-sm font-medium text-foreground">{t('profile.theme')}</p>
+              <p className="text-xs text-muted-foreground">{theme === 'dark' ? t('profile.dark') : t('profile.light')}</p>
             </div>
           </div>
           <Switch checked={theme === 'dark'} onCheckedChange={toggleTheme} />
+        </CardContent>
+      </Card>
+
+      {/* Language selector */}
+      <Card>
+        <CardContent className="p-3.5 sm:p-4">
+          <div className="mb-2 flex items-center gap-3">
+            <Globe className="h-5 w-5 text-primary" />
+            <div className="flex-1">
+              <p className="text-sm font-medium text-foreground">{t('profile.language')}</p>
+              <p className="text-xs text-muted-foreground">{t('profile.languageDesc')}</p>
+            </div>
+          </div>
+          <LanguageSelector compact />
         </CardContent>
       </Card>
 
@@ -115,15 +131,15 @@ export default function ProfilePage() {
         >
           <ShieldCheck className="h-5 w-5 text-primary" />
           <div className="flex-1 text-left">
-            <p className="text-sm font-medium text-foreground">Admin Panel</p>
-            <p className="text-xs text-muted-foreground">Gestione piattaforma</p>
+            <p className="text-sm font-medium text-foreground">{t('profile.admin')}</p>
+            <p className="text-xs text-muted-foreground">{t('profile.adminDesc')}</p>
           </div>
           <ChevronRight className="h-4 w-4 text-muted-foreground" />
         </button>
       )}
 
       <Button variant="destructive" className="w-full gap-2" onClick={handleLogout}>
-        <LogOut className="h-4 w-4" /> Logout
+        <LogOut className="h-4 w-4" /> {t('profile.logout')}
       </Button>
     </div>
   );
