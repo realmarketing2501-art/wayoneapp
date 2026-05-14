@@ -6,7 +6,7 @@ import {
 } from 'lucide-react';
 import { useProfile } from '@/hooks/useProfile';
 import { useLevel, useLevels } from '@/hooks/useLevels';
-import { getLevelLabel, type LevelName } from '@/lib/levels';
+import { getLevelLabel, getPirateRank, type LevelName } from '@/lib/levels';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import portHero from '@/assets/wayone-port-hero.jpg';
