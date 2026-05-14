@@ -289,7 +289,172 @@ export default function Index() {
   );
 }
 
-/* ---------- Phone mockup ---------- */
+      {/* Piani investimento */}
+      <div className="usdt-divider mx-auto max-w-6xl" />
+      <section className="py-12 sm:py-20">
+        <div className="mx-auto max-w-6xl px-4">
+          <div className="text-center">
+            <h2 className="font-display text-3xl font-bold sm:text-4xl">
+              Piani di <span className="usdt-gold-text">investimento</span>
+            </h2>
+            <p className="mx-auto mt-3 max-w-xl text-sm text-muted-foreground sm:text-base">
+              Cinque piani a durata fissa con rendimento giornaliero. Capitale e profitti rilasciati a scadenza.
+            </p>
+          </div>
+
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+            {plans.map((p, i) => (
+              <motion.div
+                key={p.name}
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.06 }}
+                className={`relative rounded-2xl p-5 ${p.popular ? 'usdt-card-gold border-2 border-primary' : 'usdt-card'}`}
+              >
+                {p.popular && (
+                  <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-0.5 text-[0.6rem] font-bold uppercase tracking-wide text-primary-foreground">
+                    Popolare
+                  </span>
+                )}
+                <h3 className="font-display text-xl font-bold usdt-gold-text">{p.name}</h3>
+                <p className="mt-1 text-xs text-muted-foreground">{p.days} giorni</p>
+                <div className="mt-4">
+                  <p className="font-display text-3xl font-bold text-foreground">{p.daily}</p>
+                  <p className="text-[0.7rem] text-muted-foreground">al giorno</p>
+                </div>
+                <div className="mt-3 inline-flex rounded-full bg-primary/15 px-2.5 py-0.5 text-[0.7rem] font-bold text-primary">
+                  ROI {p.roi}
+                </div>
+                <div className="mt-4 space-y-1 text-xs text-muted-foreground">
+                  <p>Min: <span className="text-foreground">{p.min}</span></p>
+                  <p>Max: <span className="text-foreground">{p.max}</span></p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+          <p className="mt-6 text-center text-[0.7rem] text-muted-foreground">
+            Profitti calcolati ogni 24h. Multi-piano illimitati. Reinvestimento automatico opzionale.
+          </p>
+        </div>
+      </section>
+
+      {/* Referral 4 livelli */}
+      <div className="usdt-divider mx-auto max-w-6xl" />
+      <section className="py-12 sm:py-20">
+        <div className="mx-auto max-w-6xl px-4">
+          <div className="text-center">
+            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-3 py-1 text-xs text-primary">
+              <Network className="h-3.5 w-3.5" /> Sistema referral
+            </div>
+            <h2 className="font-display text-3xl font-bold sm:text-4xl">
+              Rete a <span className="usdt-gold-text">4 livelli</span>
+            </h2>
+            <p className="mx-auto mt-3 max-w-xl text-sm text-muted-foreground sm:text-base">
+              Commissioni accreditate istantaneamente all'attivazione di ogni piano nella tua rete.
+            </p>
+          </div>
+
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {referralLevels.map((r, i) => (
+              <motion.div
+                key={r.level}
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08 }}
+                className="usdt-card p-5 text-center"
+              >
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/15 text-primary">
+                  <Layers className="h-5 w-5" />
+                </div>
+                <p className="mt-3 font-display text-sm font-bold text-foreground">{r.level}</p>
+                <p className="text-xs text-muted-foreground">{r.label}</p>
+                <p className="mt-3 font-display text-3xl font-bold usdt-gold-text">{r.pct}</p>
+                <p className="mt-1 text-[0.7rem] text-muted-foreground">su 1.000 USDT: <span className="text-primary font-semibold">{r.on1000}</span></p>
+              </motion.div>
+            ))}
+          </div>
+
+          <div className="mt-6 rounded-xl border border-primary/30 bg-primary/5 p-4 text-center">
+            <p className="text-sm text-muted-foreground">
+              Totale cumulativo 4 livelli: <span className="font-display text-lg font-bold usdt-gold-text">7,5%</span> su ogni deposito della tua rete
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Bonus & Milestone */}
+      <div className="usdt-divider mx-auto max-w-6xl" />
+      <section className="py-12 sm:py-20">
+        <div className="mx-auto max-w-6xl px-4">
+          <h2 className="text-center font-display text-3xl font-bold sm:text-4xl">
+            Bonus & <span className="usdt-gold-text">Milestone</span>
+          </h2>
+          <p className="mx-auto mt-3 max-w-xl text-center text-sm text-muted-foreground sm:text-base">
+            Premi per ogni traguardo: dalla registrazione alla crescita della rete.
+          </p>
+
+          <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {bonuses.map((b, i) => (
+              <motion.div
+                key={b.title}
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.05 }}
+                className="usdt-card flex flex-col p-4"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/15 text-primary">
+                    <b.icon className="h-5 w-5" />
+                  </div>
+                  <h3 className="font-display text-sm font-bold text-foreground">{b.title}</h3>
+                </div>
+                <p className="mt-2 text-xs text-muted-foreground">{b.when}</p>
+                <p className="mt-3 font-display text-lg font-bold usdt-gold-text">{b.reward}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Rank VIP */}
+      <div className="usdt-divider mx-auto max-w-6xl" />
+      <section className="py-12 sm:py-20">
+        <div className="mx-auto max-w-6xl px-4">
+          <h2 className="text-center font-display text-3xl font-bold sm:text-4xl">
+            Rank <span className="usdt-gold-text">VIP</span>
+          </h2>
+          <p className="mx-auto mt-3 max-w-xl text-center text-sm text-muted-foreground sm:text-base">
+            Più cresce la tua rete (L1+L2), più aumenta il bonus giornaliero su tutti i piani.
+          </p>
+
+          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {ranks.map((r, i) => (
+              <motion.div
+                key={r.name}
+                initial={{ opacity: 0, y: 15 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08 }}
+                className={`rounded-2xl p-5 ${i === 3 ? 'usdt-card-gold border-2 border-primary' : 'usdt-card'}`}
+              >
+                <div className="flex items-center gap-2">
+                  <Crown className={`h-5 w-5 ${i === 0 ? 'text-muted-foreground' : 'text-primary'}`} />
+                  <h3 className="font-display text-lg font-bold text-foreground">{r.name}</h3>
+                </div>
+                <p className="mt-2 text-xs text-muted-foreground">Volume rete: <span className="text-foreground">{r.volume}</span></p>
+                <p className="mt-4 font-display text-xl font-bold usdt-gold-text">{r.bonus}</p>
+                <p className="mt-1 text-[0.7rem] text-muted-foreground">{r.extra}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+{/* ---------- Phone mockup ---------- */}
 function PhoneFrame({ index }: { index: number }) {
   return (
     <div className="mx-auto w-full max-w-[220px]">
