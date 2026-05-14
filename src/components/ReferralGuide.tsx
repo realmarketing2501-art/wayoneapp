@@ -12,8 +12,11 @@ import {
   TrendingUp,
   Gift,
   HelpCircle,
+  Copy,
+  Download,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { QRCodeSVG } from 'qrcode.react';
 
 const COMMISSIONS = [
   { level: 'L1', label: 'Diretti', pct: 4, color: 'from-amber-400 to-yellow-500' },
@@ -120,7 +123,90 @@ export function ReferralGuide({ url, code }: { url: string; code: string }) {
         </CardContent>
       </Card>
 
-      {/* Commissioni per livello */}
+      {/* Codice & QR Invito */}
+      <Card>
+        <CardContent className="p-4">
+          <p className="mb-3 text-sm font-semibold text-foreground">Codice e QR invito</p>
+
+          <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-stretch">
+            <div className="flex shrink-0 items-center justify-center rounded-xl bg-white p-3 ring-1 ring-border">
+              <QRCodeSVG
+                id="referral-qr-svg"
+                value={url}
+                size={140}
+                level="M"
+                includeMargin={false}
+              />
+            </div>
+
+            <div className="flex flex-1 flex-col gap-2">
+              <div>
+                <p className="text-[0.65rem] uppercase tracking-wider text-muted-foreground">
+                  Codice referral
+                </p>
+                <div className="mt-1 flex items-center gap-2">
+                  <code className="flex-1 rounded-lg bg-secondary px-3 py-2 font-mono text-sm font-semibold tracking-wider text-foreground">
+                    {code}
+                  </code>
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    onClick={() => {
+                      navigator.clipboard.writeText(code);
+                      toast.success('Codice copiato');
+                    }}
+                    aria-label="Copia codice"
+                  >
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+
+              <div>
+                <p className="text-[0.65rem] uppercase tracking-wider text-muted-foreground">
+                  Link invito
+                </p>
+                <div className="mt-1 flex items-center gap-2">
+                  <div className="flex-1 truncate rounded-lg bg-secondary px-3 py-2 font-mono text-[0.65rem] text-muted-foreground">
+                    {url}
+                  </div>
+                  <Button
+                    size="icon"
+                    variant="outline"
+                    onClick={() => {
+                      navigator.clipboard.writeText(url);
+                      toast.success('Link copiato');
+                    }}
+                    aria-label="Copia link"
+                  >
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+
+              <Button
+                variant="outline"
+                size="sm"
+                className="mt-1 gap-2"
+                onClick={() => {
+                  const svg = document.getElementById('referral-qr-svg');
+                  if (!svg) return;
+                  const xml = new XMLSerializer().serializeToString(svg);
+                  const blob = new Blob([xml], { type: 'image/svg+xml' });
+                  const link = document.createElement('a');
+                  link.href = URL.createObjectURL(blob);
+                  link.download = `usdt-referral-${code}.svg`;
+                  link.click();
+                  URL.revokeObjectURL(link.href);
+                }}
+              >
+                <Download className="h-4 w-4" />
+                Scarica QR
+              </Button>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
       <Card>
         <CardContent className="p-4">
           <p className="mb-3 flex items-center gap-2 text-sm font-semibold text-foreground">
