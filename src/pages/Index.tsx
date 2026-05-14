@@ -5,80 +5,46 @@ import { useNavigate } from 'react-router-dom';
 import { ThemeToggle } from '@/components/ThemeToggle';
 import { UsdtMonogram } from '@/components/UsdtMonogram';
 import HeaderLanguageButton from '@/components/HeaderLanguageButton';
+import { useTranslation } from 'react-i18next';
 
-const features = [
-  { icon: Smartphone, title: 'Mobile-first', desc: 'Esperienza ottimizzata per ogni dispositivo.' },
-  { icon: BarChart3, title: 'Dashboard real-time', desc: 'Dati aggiornati in tempo reale per decisioni rapide.' },
-  { icon: FileText, title: 'Piani chiari', desc: 'Informazioni trasparenti su durata e rendimenti.' },
-  { icon: Share2, title: 'Referral semplificato', desc: 'Condivisione immediata e tracciamento intuitivo.' },
-  { icon: Bell, title: 'Notifiche intelligenti', desc: 'Alert personalizzati per ogni evento importante.' },
-  { icon: ShieldCheck, title: 'Sicurezza e controllo', desc: 'Protezione dei fondi e gestione in piena sicurezza.' },
-];
+const featureIcons = [Smartphone, BarChart3, FileText, Share2, Bell, ShieldCheck];
+const flowIcons = [UserPlus, Wallet, TrendingUp, ArrowDownToLine];
+const bonusIcons = [Users, Star, Crown, Wallet, Wallet, Wallet];
 
-const flow = [
-  { icon: UserPlus, title: 'Registrati', desc: 'Crea il tuo account in pochi secondi.' },
-  { icon: Wallet, title: 'Deposita', desc: 'Aggiungi fondi in modo sicuro e veloce.' },
-  { icon: Eye, title: 'Monitora', desc: 'Segui rendimenti e stato del tuo piano.' },
-  { icon: Send, title: 'Condividi', desc: 'Invita nuovi utenti e guadagna di più.' },
-  { icon: ArrowDownToLine, title: 'Preleva', desc: 'Richiedi il prelievo e ricevi i tuoi fondi.' },
-];
-
-const screens = [
-  {
-    title: 'Landing & Onboarding',
-    desc: 'Accesso rapido e onboarding semplice e guidato.',
-  },
-  {
-    title: 'Dashboard',
-    desc: 'Panoramica completa di saldo, rendimenti e stato del piano.',
-  },
-  {
-    title: 'Investi',
-    desc: 'Selezione del piano con dettagli chiari su durata e rendimento.',
-  },
-];
-
-// Piani investimento — percentuali dimezzate (-50%) rispetto al modello originale
+// Numeric/structural plan data (text labels via i18n)
 const plans = [
-  { name: 'Starter',  days: 30, daily: '0,40%', roi: '+12%',     min: '50 USDT', max: '500 USDT' },
-  { name: 'Silver',   days: 45, daily: '0,50%', roi: '+22,5%',   min: '50 USDT', max: '2.000 USDT' },
-  { name: 'Gold',     days: 60, daily: '0,60%', roi: '+36%',     min: '50 USDT', max: '5.000 USDT', popular: true },
-  { name: 'Platinum', days: 75, daily: '0,75%', roi: '+56,25%',  min: '50 USDT', max: '10.000 USDT' },
-  { name: 'Diamond',  days: 90, daily: '0,90%', roi: '+81%',     min: '50 USDT', max: 'Illimitato' },
+  { name: 'Starter',  days: 30, daily: '0,40%', roi: '+12%',     min: 50, max: '500' },
+  { name: 'Silver',   days: 45, daily: '0,50%', roi: '+22,5%',   min: 50, max: '2.000' },
+  { name: 'Gold',     days: 60, daily: '0,60%', roi: '+36%',     min: 50, max: '5.000', popular: true },
+  { name: 'Platinum', days: 75, daily: '0,75%', roi: '+56,25%',  min: 50, max: '10.000' },
+  { name: 'Diamond',  days: 90, daily: '0,90%', roi: '+81%',     min: 50, max: '__UNLIMITED__' },
 ];
 
-// Referral 4 livelli — commissioni dimezzate (totale 7,5%)
 const referralLevels = [
-  { level: 'L1', label: 'Invitato diretto',     pct: '4%',   on1000: '+40 USDT' },
-  { level: 'L2', label: 'Invitato del tuo L1',  pct: '2%',   on1000: '+20 USDT' },
-  { level: 'L3', label: 'Invitato del tuo L2',  pct: '1%',   on1000: '+10 USDT' },
-  { level: 'L4', label: 'Invitato del tuo L3',  pct: '0,5%', on1000: '+5 USDT' },
+  { level: 'L1', pct: '4%',   on1000: '+40 USDT' },
+  { level: 'L2', pct: '2%',   on1000: '+20 USDT' },
+  { level: 'L3', pct: '1%',   on1000: '+10 USDT' },
+  { level: 'L4', pct: '0,5%', on1000: '+5 USDT' },
 ];
 
-// Bonus & milestone referral
-const bonuses = [
-  { icon: Users,  title: 'Primo referral',    when: '1° invitato che investe',          reward: '5 USDT' },
-  { icon: Star,   title: 'Super reclutatore', when: '10 referral diretti attivi',       reward: '75 USDT' },
-  { icon: Crown,  title: 'Diamond recruiter', when: '50 referral diretti attivi',       reward: '500 USDT' },
-  { icon: Wallet, title: 'Volume 500+',       when: 'Investimento personale > 500',     reward: '15 USDT' },
-  { icon: Wallet, title: 'Volume 2.000+',     when: 'Investimento personale > 2.000',   reward: '75 USDT' },
-  { icon: Wallet, title: 'Volume 5.000+',     when: 'Investimento personale > 5.000',   reward: '250 USDT' },
-];
-
-// Rank VIP — bonus %/giorno dimezzati
-const ranks = [
-  { name: 'Standard', volume: '< 5.000 USDT',     bonus: 'Nessuno',      extra: '—' },
-  { name: 'Gold',     volume: '> 5.000 USDT',     bonus: '+0,5%/giorno', extra: 'Badge + supporto prioritario' },
-  { name: 'Platinum', volume: '> 20.000 USDT',    bonus: '+0,75%/giorno',extra: 'Badge + fee prelievo 0' },
-  { name: 'Diamond',  volume: '> 100.000 USDT',   bonus: '+1,0%/giorno', extra: 'Badge + account manager' },
-];
+type Item = { title: string; desc: string };
+type BonusItem = { title: string; when: string; reward: string };
+type RankItem = { name: string; volume: string; bonus: string; extra: string };
+type LevelLabel = { label: string };
 
 export default function Index() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
+
+  const features = t('landing.features.items', { returnObjects: true }) as Item[];
+  const flow = t('landing.flow.items', { returnObjects: true }) as Item[];
+  const screens = t('landing.screens.items', { returnObjects: true }) as Item[];
+  const bonuses = t('landing.bonuses.items', { returnObjects: true }) as BonusItem[];
+  const ranks = t('landing.ranks.items', { returnObjects: true }) as RankItem[];
+  const refLabels = t('landing.referral.levels', { returnObjects: true }) as LevelLabel[];
 
   return (
     <div className="min-h-screen usdt-bg">
-      {/* Header */}
       <header className="sticky top-0 z-50 usdt-header">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2.5">
@@ -89,10 +55,10 @@ export default function Index() {
             <HeaderLanguageButton />
             <ThemeToggle />
             <Button size="sm" className="usdt-btn-ghost px-2.5" onClick={() => navigate('/login')}>
-              Accedi
+              {t('landing.header.signin')}
             </Button>
             <Button size="sm" className="usdt-btn-gold px-2.5" onClick={() => navigate('/login')}>
-              Registrati
+              {t('landing.header.signup')}
             </Button>
           </div>
         </div>
@@ -102,56 +68,44 @@ export default function Index() {
       <section className="relative overflow-hidden">
         <div className="absolute top-20 left-1/2 -translate-x-1/2 h-72 w-72 rounded-full bg-primary/10 blur-[140px]" />
         <div className="relative mx-auto max-w-6xl px-4 pb-12 pt-12 sm:pt-20 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}>
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-4 py-1.5 text-xs font-medium text-primary">
               <TrendingUp className="h-3.5 w-3.5" />
-              La piattaforma di investimento USDT
+              {t('landing.hero.tag')}
             </div>
 
             <UsdtMonogram size={120} letter="U" className="mx-auto mb-6 usdt-glow-gold" />
 
             <h1 className="font-display text-4xl font-bold leading-tight sm:text-6xl">
-              <span className="usdt-gold-text">Investi</span>{' '}
-              <span className="text-foreground">in modo</span>
+              <span className="usdt-gold-text">{t('landing.hero.title_a')}</span>{' '}
+              <span className="text-foreground">{t('landing.hero.title_b')}</span>
               <br />
-              <span className="text-foreground">intelligente in </span>
-              <span className="usdt-gold-text">USDT</span>
+              <span className="text-foreground">{t('landing.hero.title_c')} </span>
+              <span className="usdt-gold-text">{t('landing.hero.title_d')}</span>
             </h1>
             <p className="mx-auto mt-4 max-w-lg text-base sm:text-lg text-muted-foreground">
-              Costruisci il tuo futuro con piani chiari, rendimenti trasparenti e una rete referral semplice da gestire.
+              {t('landing.hero.sub')}
             </p>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.5 }}
-            className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center"
-          >
+          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.5 }}
+            className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
             <Button size="lg" className="w-full gap-2 sm:w-auto usdt-btn-gold" onClick={() => navigate('/login')}>
-              Registrati ora <ArrowRight className="h-4 w-4" />
+              {t('landing.hero.cta_register')} <ArrowRight className="h-4 w-4" />
             </Button>
             <Button size="lg" className="w-full gap-2 sm:w-auto usdt-btn-ghost" onClick={() => navigate('/simulator')}>
-              Simula investimento <Calculator className="h-4 w-4" />
+              {t('landing.hero.cta_simulate')} <Calculator className="h-4 w-4" />
             </Button>
             <Button size="lg" variant="ghost" className="w-full gap-2 sm:w-auto" onClick={() => navigate('/home')}>
-              Esplora l'app <ChevronRight className="h-4 w-4" />
+              {t('landing.hero.cta_explore')} <ChevronRight className="h-4 w-4" />
             </Button>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
-            className="mx-auto mt-12 grid max-w-md grid-cols-3 gap-4 sm:max-w-lg"
-          >
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }}
+            className="mx-auto mt-12 grid max-w-md grid-cols-3 gap-4 sm:max-w-lg">
             {[
-              { value: '24/7', label: 'Operativo' },
-              { value: '4', label: 'Piani' },
+              { value: '24/7', label: t('landing.stats.operative') },
+              { value: '4', label: t('landing.stats.plans') },
               { value: '1:1', label: 'USD ↔ USDT' },
             ].map((s) => (
               <div key={s.label} className="text-center">
@@ -170,22 +124,17 @@ export default function Index() {
         <div className="mx-auto max-w-6xl px-4">
           <div className="text-center">
             <h2 className="font-display text-3xl font-bold sm:text-4xl">
-              Interfaccia dell'app<br />e <span className="usdt-gold-text">schermate principali</span>
+              {t('landing.screens.title_a')}<br />
+              {t('landing.screens.title_b')} <span className="usdt-gold-text">{t('landing.screens.title_c')}</span>
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-sm text-muted-foreground sm:text-base">
-              USDT è progettata per offrire un'esperienza semplice, trasparente e orientata al controllo della propria attività.
+              {t('landing.screens.sub')}
             </p>
           </div>
 
           <div className="mt-12 grid gap-6 sm:grid-cols-3">
             {screens.map((s, i) => (
-              <motion.div
-                key={s.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-              >
+              <motion.div key={s.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
                 <PhoneFrame index={i} />
                 <div className="mt-4 text-center">
                   <h3 className="font-display text-xl font-bold usdt-gold-text">{s.title}</h3>
@@ -203,27 +152,24 @@ export default function Index() {
       <section className="py-12 sm:py-20">
         <div className="mx-auto max-w-6xl px-4">
           <h2 className="text-center font-display text-3xl font-bold sm:text-4xl">
-            Caratteristiche <span className="usdt-gold-text">UX</span>
+            {t('landing.features.title_a')} <span className="usdt-gold-text">{t('landing.features.title_b')}</span>
           </h2>
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {features.map((f, i) => (
-              <motion.div
-                key={f.title}
-                initial={{ opacity: 0, y: 15 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.08 }}
-                className="usdt-card p-5 flex gap-4"
-              >
-                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">
-                  <f.icon className="h-5 w-5" />
-                </div>
-                <div>
-                  <h3 className="font-display font-semibold text-foreground">{f.title}</h3>
-                  <p className="mt-1 text-sm text-muted-foreground">{f.desc}</p>
-                </div>
-              </motion.div>
-            ))}
+            {features.map((f, i) => {
+              const Icon = featureIcons[i] ?? Smartphone;
+              return (
+                <motion.div key={f.title} initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}
+                  className="usdt-card p-5 flex gap-4">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary">
+                    <Icon className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h3 className="font-display font-semibold text-foreground">{f.title}</h3>
+                    <p className="mt-1 text-sm text-muted-foreground">{f.desc}</p>
+                  </div>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -234,25 +180,28 @@ export default function Index() {
       <section className="py-12 sm:py-20">
         <div className="mx-auto max-w-6xl px-4">
           <h2 className="text-center font-display text-3xl font-bold sm:text-4xl">
-            Come <span className="usdt-gold-text">funziona</span>
+            {t('landing.flow.title_a')} <span className="usdt-gold-text">{t('landing.flow.title_b')}</span>
           </h2>
           <div className="mt-12 flex flex-col items-stretch gap-3 lg:flex-row lg:items-center lg:justify-between">
-            {flow.map((step, i) => (
-              <div key={step.title} className="flex items-center gap-3 lg:flex-1 lg:flex-col lg:gap-2">
-                <div className="flex flex-1 items-center gap-3 lg:flex-col lg:text-center">
-                  <div className="usdt-coin flex h-14 w-14 items-center justify-center text-primary-foreground">
-                    <step.icon className="h-6 w-6" />
+            {flow.map((step, i) => {
+              const Icon = flowIcons[i] ?? UserPlus;
+              return (
+                <div key={step.title} className="flex items-center gap-3 lg:flex-1 lg:flex-col lg:gap-2">
+                  <div className="flex flex-1 items-center gap-3 lg:flex-col lg:text-center">
+                    <div className="usdt-coin flex h-14 w-14 items-center justify-center text-primary-foreground">
+                      <Icon className="h-6 w-6" />
+                    </div>
+                    <div className="lg:mt-2">
+                      <p className="font-display font-bold text-foreground">{step.title}</p>
+                      <p className="mt-0.5 max-w-[12rem] text-xs text-muted-foreground">{step.desc}</p>
+                    </div>
                   </div>
-                  <div className="lg:mt-2">
-                    <p className="font-display font-bold text-foreground">{step.title}</p>
-                    <p className="mt-0.5 max-w-[12rem] text-xs text-muted-foreground">{step.desc}</p>
-                  </div>
+                  {i < flow.length - 1 && (
+                    <ArrowRight className="h-5 w-5 shrink-0 text-primary/60 lg:rotate-0" />
+                  )}
                 </div>
-                {i < flow.length - 1 && (
-                  <ArrowRight className="h-5 w-5 shrink-0 text-primary/60 lg:rotate-0" />
-                )}
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -263,46 +212,40 @@ export default function Index() {
         <div className="mx-auto max-w-6xl px-4">
           <div className="text-center">
             <h2 className="font-display text-3xl font-bold sm:text-4xl">
-              Piani di <span className="usdt-gold-text">investimento</span>
+              {t('landing.plans.title_a')} <span className="usdt-gold-text">{t('landing.plans.title_b')}</span>
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-sm text-muted-foreground sm:text-base">
-              Cinque piani a durata fissa con rendimento giornaliero. Capitale e profitti rilasciati a scadenza.
+              {t('landing.plans.sub')}
             </p>
           </div>
 
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
             {plans.map((p, i) => (
-              <motion.div
-                key={p.name}
-                initial={{ opacity: 0, y: 15 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.06 }}
-                className={`relative rounded-2xl p-5 ${p.popular ? 'usdt-card-gold border-2 border-primary' : 'usdt-card'}`}
-              >
+              <motion.div key={p.name} initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.06 }}
+                className={`relative rounded-2xl p-5 ${p.popular ? 'usdt-card-gold border-2 border-primary' : 'usdt-card'}`}>
                 {p.popular && (
                   <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-0.5 text-[0.6rem] font-bold uppercase tracking-wide text-primary-foreground">
-                    Popolare
+                    {t('landing.plans.popular')}
                   </span>
                 )}
                 <h3 className="font-display text-xl font-bold usdt-gold-text">{p.name}</h3>
-                <p className="mt-1 text-xs text-muted-foreground">{p.days} giorni</p>
+                <p className="mt-1 text-xs text-muted-foreground">{p.days} {t('landing.plans.days')}</p>
                 <div className="mt-4">
                   <p className="font-display text-3xl font-bold text-foreground">{p.daily}</p>
-                  <p className="text-[0.7rem] text-muted-foreground">al giorno</p>
+                  <p className="text-[0.7rem] text-muted-foreground">{t('landing.plans.daily_sub')}</p>
                 </div>
                 <div className="mt-3 inline-flex rounded-full bg-primary/15 px-2.5 py-0.5 text-[0.7rem] font-bold text-primary">
                   ROI {p.roi}
                 </div>
                 <div className="mt-4 space-y-1 text-xs text-muted-foreground">
-                  <p>Min: <span className="text-foreground">{p.min}</span></p>
-                  <p>Max: <span className="text-foreground">{p.max}</span></p>
+                  <p>{t('landing.plans.min')}: <span className="text-foreground">{p.min} USDT</span></p>
+                  <p>{t('landing.plans.max')}: <span className="text-foreground">{p.max === '__UNLIMITED__' ? t('landing.plans.unlimited') : `${p.max} USDT`}</span></p>
                 </div>
               </motion.div>
             ))}
           </div>
           <p className="mt-6 text-center text-[0.7rem] text-muted-foreground">
-            Profitti calcolati ogni 24h. Multi-piano illimitati. Reinvestimento automatico opzionale.
+            {t('landing.plans.note')}
           </p>
         </div>
       </section>
@@ -313,40 +256,34 @@ export default function Index() {
         <div className="mx-auto max-w-6xl px-4">
           <div className="text-center">
             <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-3 py-1 text-xs text-primary">
-              <Network className="h-3.5 w-3.5" /> Sistema referral
+              <Network className="h-3.5 w-3.5" /> {t('landing.referral.tag')}
             </div>
             <h2 className="font-display text-3xl font-bold sm:text-4xl">
-              Rete a <span className="usdt-gold-text">4 livelli</span>
+              {t('landing.referral.title_a')} <span className="usdt-gold-text">{t('landing.referral.title_b')}</span>
             </h2>
             <p className="mx-auto mt-3 max-w-xl text-sm text-muted-foreground sm:text-base">
-              Commissioni accreditate istantaneamente all'attivazione di ogni piano nella tua rete.
+              {t('landing.referral.sub')}
             </p>
           </div>
 
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {referralLevels.map((r, i) => (
-              <motion.div
-                key={r.level}
-                initial={{ opacity: 0, y: 15 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.08 }}
-                className="usdt-card p-5 text-center"
-              >
+              <motion.div key={r.level} initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}
+                className="usdt-card p-5 text-center">
                 <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/15 text-primary">
                   <Layers className="h-5 w-5" />
                 </div>
                 <p className="mt-3 font-display text-sm font-bold text-foreground">{r.level}</p>
-                <p className="text-xs text-muted-foreground">{r.label}</p>
+                <p className="text-xs text-muted-foreground">{refLabels[i]?.label}</p>
                 <p className="mt-3 font-display text-3xl font-bold usdt-gold-text">{r.pct}</p>
-                <p className="mt-1 text-[0.7rem] text-muted-foreground">su 1.000 USDT: <span className="text-primary font-semibold">{r.on1000}</span></p>
+                <p className="mt-1 text-[0.7rem] text-muted-foreground">{t('landing.referral.on1000')}: <span className="text-primary font-semibold">{r.on1000}</span></p>
               </motion.div>
             ))}
           </div>
 
           <div className="mt-6 rounded-xl border border-primary/30 bg-primary/5 p-4 text-center">
             <p className="text-sm text-muted-foreground">
-              Totale cumulativo 4 livelli: <span className="font-display text-lg font-bold usdt-gold-text">7,5%</span> su ogni deposito della tua rete
+              {t('landing.referral.total')}: <span className="font-display text-lg font-bold usdt-gold-text">7,5%</span> {t('landing.referral.total_suffix')}
             </p>
           </div>
         </div>
@@ -357,32 +294,29 @@ export default function Index() {
       <section className="py-12 sm:py-20">
         <div className="mx-auto max-w-6xl px-4">
           <h2 className="text-center font-display text-3xl font-bold sm:text-4xl">
-            Bonus & <span className="usdt-gold-text">Milestone</span>
+            {t('landing.bonuses.title_a')} <span className="usdt-gold-text">{t('landing.bonuses.title_b')}</span>
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-center text-sm text-muted-foreground sm:text-base">
-            Premi per ogni traguardo: dalla registrazione alla crescita della rete.
+            {t('landing.bonuses.sub')}
           </p>
 
           <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {bonuses.map((b, i) => (
-              <motion.div
-                key={b.title}
-                initial={{ opacity: 0, y: 15 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.05 }}
-                className="usdt-card flex flex-col p-4"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/15 text-primary">
-                    <b.icon className="h-5 w-5" />
+            {bonuses.map((b, i) => {
+              const Icon = bonusIcons[i] ?? Star;
+              return (
+                <motion.div key={b.title} initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}
+                  className="usdt-card flex flex-col p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/15 text-primary">
+                      <Icon className="h-5 w-5" />
+                    </div>
+                    <h3 className="font-display text-sm font-bold text-foreground">{b.title}</h3>
                   </div>
-                  <h3 className="font-display text-sm font-bold text-foreground">{b.title}</h3>
-                </div>
-                <p className="mt-2 text-xs text-muted-foreground">{b.when}</p>
-                <p className="mt-3 font-display text-lg font-bold usdt-gold-text">{b.reward}</p>
-              </motion.div>
-            ))}
+                  <p className="mt-2 text-xs text-muted-foreground">{b.when}</p>
+                  <p className="mt-3 font-display text-lg font-bold usdt-gold-text">{b.reward}</p>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>
@@ -392,27 +326,21 @@ export default function Index() {
       <section className="py-12 sm:py-20">
         <div className="mx-auto max-w-6xl px-4">
           <h2 className="text-center font-display text-3xl font-bold sm:text-4xl">
-            Rank <span className="usdt-gold-text">VIP</span>
+            {t('landing.ranks.title_a')} <span className="usdt-gold-text">{t('landing.ranks.title_b')}</span>
           </h2>
           <p className="mx-auto mt-3 max-w-xl text-center text-sm text-muted-foreground sm:text-base">
-            Più cresce la tua rete (L1+L2), più aumenta il bonus giornaliero su tutti i piani.
+            {t('landing.ranks.sub')}
           </p>
 
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {ranks.map((r, i) => (
-              <motion.div
-                key={r.name}
-                initial={{ opacity: 0, y: 15 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.08 }}
-                className={`rounded-2xl p-5 ${i === 3 ? 'usdt-card-gold border-2 border-primary' : 'usdt-card'}`}
-              >
+              <motion.div key={r.name} initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}
+                className={`rounded-2xl p-5 ${i === 3 ? 'usdt-card-gold border-2 border-primary' : 'usdt-card'}`}>
                 <div className="flex items-center gap-2">
                   <Crown className={`h-5 w-5 ${i === 0 ? 'text-muted-foreground' : 'text-primary'}`} />
                   <h3 className="font-display text-lg font-bold text-foreground">{r.name}</h3>
                 </div>
-                <p className="mt-2 text-xs text-muted-foreground">Volume rete: <span className="text-foreground">{r.volume}</span></p>
+                <p className="mt-2 text-xs text-muted-foreground">{t('landing.ranks.volume_label')}: <span className="text-foreground">{r.volume}</span></p>
                 <p className="mt-4 font-display text-xl font-bold usdt-gold-text">{r.bonus}</p>
                 <p className="mt-1 text-[0.7rem] text-muted-foreground">{r.extra}</p>
               </motion.div>
@@ -427,14 +355,14 @@ export default function Index() {
         <div className="relative mx-auto max-w-3xl px-4 text-center">
           <UsdtMonogram size={72} letter="U" className="mx-auto mb-4" />
           <h2 className="font-display text-3xl font-bold sm:text-4xl">
-            Inizia oggi con <span className="usdt-gold-text">USDT</span>
+            {t('landing.cta.title_a')} <span className="usdt-gold-text">{t('landing.cta.title_b')}</span>
           </h2>
           <p className="mt-3 text-muted-foreground">
-            Crea il tuo account, deposita i primi USDT e attiva il tuo piano in pochi minuti.
+            {t('landing.cta.sub')}
           </p>
           <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-center">
             <Button size="lg" className="gap-2 usdt-btn-gold" onClick={() => navigate('/login')}>
-              Crea account <ArrowRight className="h-4 w-4" />
+              {t('landing.cta.btn')} <ArrowRight className="h-4 w-4" />
             </Button>
           </div>
         </div>
@@ -448,7 +376,7 @@ export default function Index() {
             <span className="font-display text-lg font-bold usdt-gold-text">USDT</span>
           </div>
           <p className="mt-2 text-xs text-muted-foreground">
-            © {new Date().getFullYear()} USDT. Tutti i diritti riservati.
+            © {new Date().getFullYear()} USDT. {t('landing.footer.rights')}
           </p>
         </div>
       </footer>
@@ -473,44 +401,47 @@ function PhoneFrame({ index }: { index: number }) {
 }
 
 function PhoneLanding() {
+  const { t } = useTranslation();
   return (
     <div className="flex h-full flex-col items-center justify-center gap-3 text-center">
       <UsdtMonogram size={56} letter="U" />
-      <p className="font-display text-sm font-bold usdt-gold-text">Benvenuto in USDT</p>
-      <p className="text-[0.55rem] text-muted-foreground">
-        Investi in modo intelligente.<br />Costruisci il tuo futuro.
+      <p className="font-display text-sm font-bold usdt-gold-text">{t('landing.phone.welcome')}</p>
+      <p className="text-[0.55rem] text-muted-foreground whitespace-pre-line">
+        {t('landing.phone.tagline')}
       </p>
       <div className="mt-2 w-full space-y-1.5">
-        <div className="usdt-btn-gold rounded-md py-1.5 text-[0.6rem]">Registrati</div>
-        <div className="usdt-btn-ghost rounded-md py-1.5 text-[0.6rem]">Accedi</div>
+        <div className="usdt-btn-gold rounded-md py-1.5 text-[0.6rem]">{t('landing.phone.register')}</div>
+        <div className="usdt-btn-ghost rounded-md py-1.5 text-[0.6rem]">{t('landing.phone.signin')}</div>
       </div>
     </div>
   );
 }
 
 function PhoneDashboard() {
+  const { t } = useTranslation();
+  const quick = t('landing.phone.quick', { returnObjects: true }) as string[];
   return (
     <div className="space-y-2">
       <div className="usdt-card-gold flex items-center justify-between p-2">
         <div>
-          <p className="text-[0.5rem] text-muted-foreground">Saldo USDT</p>
+          <p className="text-[0.5rem] text-muted-foreground">{t('landing.phone.balance')}</p>
           <p className="font-display text-sm font-bold usdt-gold-text">3.867,5</p>
         </div>
         <UsdtMonogram size={24} letter="U" />
       </div>
       <div className="grid grid-cols-4 gap-1">
-        {['Investi', 'Referral', 'Stats', 'Alert'].map((q) => (
+        {quick.map((q) => (
           <div key={q} className="rounded-lg border border-primary/20 bg-card/40 py-1 text-center text-[0.45rem]">
             {q}
           </div>
         ))}
       </div>
       <div className="space-y-1 rounded-lg border border-primary/15 p-1.5">
-        <p className="text-[0.5rem] font-bold text-foreground">Panoramica</p>
+        <p className="text-[0.5rem] font-bold text-foreground">{t('landing.phone.overview')}</p>
         {[
-          ['Rendimento', '0,60%'],
-          ['Piano attivo', 'Gold'],
-          ['Scadenza', 'G. 60'],
+          [t('landing.phone.yield_label'), '0,60%'],
+          [t('landing.phone.plan_label'), 'Gold'],
+          [t('landing.phone.exp_label'), t('landing.phone.exp_value')],
         ].map(([l, v]) => (
           <div key={l} className="flex justify-between text-[0.5rem]">
             <span className="text-muted-foreground">{l}</span>
@@ -523,33 +454,34 @@ function PhoneDashboard() {
 }
 
 function PhoneInvest() {
+  const { t } = useTranslation();
+  const d = t('landing.phone.days_short');
   const phonePlans = [
-    ['Silver',   '45 gg', '0,50%'],
-    ['Gold',     '60 gg', '0,60%'],
-    ['Platinum', '75 gg', '0,75%'],
-    ['Diamond',  '90 gg', '0,90%'],
+    ['Silver',   `45 ${d}`, '0,50%'],
+    ['Gold',     `60 ${d}`, '0,60%'],
+    ['Platinum', `75 ${d}`, '0,75%'],
+    ['Diamond',  `90 ${d}`, '0,90%'],
   ];
   return (
     <div className="space-y-2">
-      <p className="text-center font-display text-[0.6rem] font-bold text-foreground">Scegli il tuo piano</p>
-      {phonePlans.map(([n, d, r], i) => (
-        <div
-          key={n}
-          className={`flex items-center justify-between rounded-lg border p-1.5 ${
-            i === 1 ? 'border-primary bg-primary/10' : 'border-primary/15'
-          }`}
-        >
+      <p className="text-center font-display text-[0.6rem] font-bold text-foreground">{t('landing.phone.choose_plan')}</p>
+      {phonePlans.map(([n, dd, r], i) => (
+        <div key={n}
+          className={`flex items-center justify-between rounded-lg border p-1.5 ${i === 1 ? 'border-primary bg-primary/10' : 'border-primary/15'}`}>
           <div className="flex items-center gap-1.5">
             <div className="h-3 w-3 rotate-45 rounded-sm bg-primary/60" />
             <span className="text-[0.55rem] font-semibold">{n}</span>
           </div>
           <div className="text-right text-[0.5rem]">
-            <p className="text-muted-foreground">{d}</p>
-            <p className="font-bold text-primary">{r} / giorno</p>
+            <p className="text-muted-foreground">{dd}</p>
+            <p className="font-bold text-primary">{r} {t('landing.phone.per_day')}</p>
           </div>
         </div>
       ))}
-      <div className="usdt-btn-gold rounded-md py-1 text-center text-[0.55rem]">Conferma piano</div>
+      <div className="usdt-btn-gold rounded-md py-1 text-center text-[0.55rem]">{t('landing.phone.confirm')}</div>
     </div>
   );
 }
+
+// Suppress unused import warnings for icons referenced indirectly
+void Send; void Eye;
