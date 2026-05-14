@@ -21,6 +21,7 @@ import IntegrationsTab from '@/components/admin/IntegrationsTab';
 import CompensationTab from '@/components/admin/CompensationTab';
 import WatcherTab from '@/components/admin/WatcherTab';
 import RegistrationsTab from '@/components/admin/RegistrationsTab';
+import SystemStatusTab from '@/components/admin/SystemStatusTab';
 
 function KPICard({ icon: Icon, label, value, color }: { icon: any; label: string; value: string; color: string }) {
   return (
@@ -670,6 +671,7 @@ export default function AdminPage() {
             <TabsTrigger value="integrations" className="text-xs min-w-[2.5rem]">API</TabsTrigger>
             <TabsTrigger value="notifications" className="text-xs min-w-[4rem]">Notifiche</TabsTrigger>
             <TabsTrigger value="registrations" className="text-xs min-w-[4rem]">Registr.</TabsTrigger>
+            <TabsTrigger value="system" className="text-xs min-w-[4rem]">Sistema</TabsTrigger>
           </TabsList>
         </div>
         <TabsContent value="dashboard"><DashboardTab /></TabsContent>
@@ -683,6 +685,7 @@ export default function AdminPage() {
         <TabsContent value="integrations"><IntegrationsTab /></TabsContent>
         <TabsContent value="notifications"><NotificationsTab /></TabsContent>
         <TabsContent value="registrations"><RegistrationsTab /></TabsContent>
+        <TabsContent value="system"><SystemStatusTab /></TabsContent>
       </Tabs>
     </div>
   );
