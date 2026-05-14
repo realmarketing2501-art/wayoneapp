@@ -47,6 +47,14 @@ export default function HomePage() {
   const countdown = useCountdown();
   const { data: profile, isLoading } = useProfile();
   const { user } = useAuth();
+  const { t } = useTranslation();
+
+  const quickActions = [
+    { icon: TrendingUp, label: t('nav.invest'), path: '/invest' },
+    { icon: Users, label: t('nav.referral'), path: '/network' },
+    { icon: Wallet, label: t('nav.wallet'), path: '/fund' },
+    { icon: Bell, label: t('home.notifications'), path: '/income' },
+  ];
 
   const level = (profile?.level ?? 'gamma') as LevelName;
   const levelInfo = useLevel(level);
