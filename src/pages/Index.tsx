@@ -520,11 +520,11 @@ function PhoneDashboard() {
 }
 
 function PhoneInvest() {
-  const plans = [
-    ['Silver', '45 gg', '1,0%'],
-    ['Gold', '90 gg', '1,5%'],
-    ['Platinum', '90 gg', '2,0%'],
-    ['Diamond', '90 gg', '2,5%'],
+  const phonePlans = [
+    ['Silver',   '45 gg', '0,50%'],
+    ['Gold',     '60 gg', '0,60%'],
+    ['Platinum', '75 gg', '0,75%'],
+    ['Diamond',  '90 gg', '0,90%'],
   ];
   return (
     <div className="space-y-2">
