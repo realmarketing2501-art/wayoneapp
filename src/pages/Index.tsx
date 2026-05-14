@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { UsdtMonogram } from '@/components/UsdtMonogram';
 import HeaderLanguageButton from '@/components/HeaderLanguageButton';
+import CryptoTicker from '@/components/CryptoTicker';
 import { useTranslation } from 'react-i18next';
 
 const featureIcons = [Smartphone, BarChart3, FileText, Share2, Bell, ShieldCheck];
@@ -60,6 +61,7 @@ export default function Index() {
             </Button>
           </div>
         </div>
+        <CryptoTicker />
       </header>
 
       {/* Hero */}
