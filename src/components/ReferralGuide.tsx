@@ -12,8 +12,11 @@ import {
   TrendingUp,
   Gift,
   HelpCircle,
+  Copy,
+  Download,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import { QRCodeSVG } from 'qrcode.react';
 
 const COMMISSIONS = [
   { level: 'L1', label: 'Diretti', pct: 4, color: 'from-amber-400 to-yellow-500' },
