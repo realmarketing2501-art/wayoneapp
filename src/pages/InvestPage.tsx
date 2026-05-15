@@ -5,53 +5,67 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
-import { LevelBadge } from '@/components/LevelBadge';
 import { useProfile } from '@/hooks/useProfile';
-import { useLevels, useLevel } from '@/hooks/useLevels';
-import { dailyReturn, totalReturn, type Duration, isDurationAvailable, getDailyRateForLevel } from '@/lib/calculations';
-import { validateInvestment } from '@/lib/validations';
-import { Clock, TrendingUp, Calculator } from 'lucide-react';
+import { Clock, TrendingUp, Calculator, Sparkles } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
+
+type Plan = {
+  id: string;
+  name: string;
+  duration_days: number | null;
+  duration: number;
+  daily_return: number;
+  min_invest: number | null;
+  max_invest: number | null;
+  status: string;
+};
+
+const fmt = (n: number) => n.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 export default function InvestPage() {
   const { data: profile } = useProfile();
-  const { data: levels = [] } = useLevels();
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const userLevelId = profile?.level ?? 'gamma';
-  const userLevel = useLevel(userLevelId);
-
-  const [duration, setDuration] = useState<Duration>(45);
-  const [amount, setAmount] = useState<string>('');
-
-  // Auto-switch a 45 se 90 non disponibile per il livello
-  const can45 = isDurationAvailable(userLevel, 45);
-  const can90 = isDurationAvailable(userLevel, 90);
-  const effectiveDuration: Duration = can90 ? duration : 45;
-
-  const dailyRate = getDailyRateForLevel(userLevel, effectiveDuration);
-  const numericAmount = parseFloat(amount) || 0;
-  const dailyEarn = dailyRate ? dailyReturn(numericAmount, dailyRate) : 0;
-  const totalEarn = dailyRate ? totalReturn(numericAmount, dailyRate, effectiveDuration) : 0;
-
   const { data: plans = [] } = useQuery({
     queryKey: ['investment_plans'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('investment_plans').select('*').order('duration_days');
+      const { data, error } = await supabase
+        .from('investment_plans')
+        .select('*')
+        .eq('status', 'active')
+        .order('duration_days', { ascending: true });
       if (error) throw error;
-      return data;
+      return data as Plan[];
     },
   });
+
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [amount, setAmount] = useState<string>('');
+
+  const selected = useMemo(
+    () => plans.find((p) => p.id === selectedId) ?? plans[0] ?? null,
+    [plans, selectedId],
+  );
+  const days = selected?.duration_days ?? selected?.duration ?? 0;
+  const dailyRate = selected?.daily_return ?? 0;
+  const numericAmount = parseFloat(amount) || 0;
+  const dailyEarn = numericAmount * (dailyRate / 100);
+  const totalEarn = dailyEarn * days;
 
   const { data: investments = [] } = useQuery({
     queryKey: ['investments', user?.id],
     queryFn: async () => {
-      const { data, error } = await supabase.from('investments').select('*').eq('user_id', user!.id).order('created_at', { ascending: false });
+      const { data, error } = await supabase
+        .from('investments')
+        .select('*')
+        .eq('user_id', user!.id)
+        .order('created_at', { ascending: false });
       if (error) throw error;
       return data;
     },
@@ -60,14 +74,13 @@ export default function InvestPage() {
 
   const investMutation = useMutation({
     mutationFn: async () => {
-      const plan = plans.find((p) => p.duration_days === effectiveDuration);
-      if (!plan) throw new Error('Piano non trovato');
+      if (!selected) throw new Error('Nessun piano selezionato');
       const { data, error } = await supabase.rpc('create_investment', {
         p_user_id: user!.id,
-        p_plan_id: plan.id,
-        p_plan_name: plan.name,
+        p_plan_id: selected.id,
+        p_plan_name: selected.name,
         p_amount: numericAmount,
-        p_duration: effectiveDuration,
+        p_duration: days,
       });
       if (error) throw error;
       return data;
@@ -81,170 +94,119 @@ export default function InvestPage() {
     onError: (e: Error) => toast({ title: 'Errore', description: e.message, variant: 'destructive' }),
   });
 
+  const validation: { ok: boolean; error?: string } = useMemo(() => {
+    if (!selected) return { ok: false, error: 'Seleziona un piano' };
+    if (!numericAmount) return { ok: false };
+    if (selected.min_invest && numericAmount < selected.min_invest)
+      return { ok: false, error: `Minimo ${selected.min_invest} USDT` };
+    if (selected.max_invest && numericAmount > selected.max_invest)
+      return { ok: false, error: `Massimo ${selected.max_invest} USDT` };
+    if (numericAmount > Number(profile?.balance_available ?? 0))
+      return { ok: false, error: 'Saldo insufficiente' };
+    return { ok: true };
+  }, [selected, numericAmount, profile?.balance_available]);
+
   const handleInvest = () => {
-    if (!user) {
-      toast({ title: 'Accedi per investire', variant: 'destructive' });
-      return;
-    }
-    const result = validateInvestment({
-      level: userLevel,
-      amount: numericAmount,
-      duration: effectiveDuration,
-      availableBalance: Number(profile?.balance_available ?? 0),
-    });
-    if (!result.ok) {
-      toast({ title: 'Verifica importo', description: result.error, variant: 'destructive' });
-      return;
-    }
+    if (!user) return toast({ title: 'Accedi per investire', variant: 'destructive' });
+    if (!validation.ok) return toast({ title: 'Verifica importo', description: validation.error, variant: 'destructive' });
     investMutation.mutate();
   };
 
-  const validationPreview = useMemo(() => {
-    if (!numericAmount) return null;
-    return validateInvestment({
-      level: userLevel,
-      amount: numericAmount,
-      duration: effectiveDuration,
-      availableBalance: Number(profile?.balance_available ?? 0),
-    });
-  }, [userLevel, numericAmount, effectiveDuration, profile?.balance_available]);
-
   return (
     <div className="space-y-5 p-4">
-      {/* Livello card */}
+      {/* Saldo */}
       <Card className="border-primary/20">
-        <CardContent className="flex items-center justify-between gap-3 p-4 sm:p-5">
-          <div className="min-w-0">
-            <p className="text-xs text-muted-foreground sm:text-sm">Il tuo livello</p>
-            <p className="font-display text-lg font-bold text-foreground sm:text-xl">{userLevel?.name ?? '—'}</p>
-            <div className="mt-1 flex flex-wrap gap-3 text-xs text-primary">
-              {userLevel?.giornaliero_45 != null && <span>45gg: {userLevel.giornaliero_45}%/gg</span>}
-              {userLevel?.giornaliero_90 != null && <span>90gg: {userLevel.giornaliero_90}%/gg</span>}
-            </div>
-          </div>
-          <LevelBadge level={userLevelId} size="sm" />
+        <CardContent className="p-4">
+          <p className="text-xs text-muted-foreground">Saldo disponibile</p>
+          <p className="font-display text-2xl font-bold text-primary">
+            {fmt(Number(profile?.balance_available ?? 0))} <span className="text-sm text-muted-foreground">USDT</span>
+          </p>
         </CardContent>
       </Card>
 
-      {/* Simulatore / Form investimento */}
+      {/* Piani */}
+      <div>
+        <div className="mb-2 flex items-center gap-2">
+          <Sparkles className="h-4 w-4 text-primary" />
+          <h3 className="font-display text-base font-semibold">Scegli un piano</h3>
+        </div>
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+          {plans.map((p) => {
+            const active = (selected?.id ?? plans[0]?.id) === p.id;
+            const d = p.duration_days ?? p.duration;
+            return (
+              <button
+                key={p.id}
+                onClick={() => setSelectedId(p.id)}
+                className={cn(
+                  'rounded-xl border p-3 text-left transition-all',
+                  active ? 'border-primary bg-primary/10 shadow-sm' : 'border-border bg-card hover:border-primary/40',
+                )}
+              >
+                <div className="text-sm font-display font-bold">{p.name}</div>
+                <div className="text-[0.65rem] text-muted-foreground">{d} giorni</div>
+                <div className="mt-1 text-xs font-semibold text-primary">
+                  {String(p.daily_return).replace('.', ',')}%/gg
+                </div>
+                <div className="mt-1 text-[0.6rem] text-muted-foreground">
+                  Min {p.min_invest} · Max {p.max_invest && p.max_invest >= 1000000 ? '∞' : p.max_invest}
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Form investimento */}
       <Card>
         <CardContent className="p-4 space-y-4">
           <div className="flex items-center gap-2">
             <Calculator className="h-4 w-4 text-primary" />
-            <h3 className="font-display text-base font-semibold sm:text-lg">Nuovo Investimento</h3>
+            <h3 className="font-display text-base font-semibold">Nuovo investimento</h3>
           </div>
 
-          {/* Toggle 45/90 */}
-          <div>
-            <Label className="text-xs text-muted-foreground mb-1.5 block">Durata</Label>
-            <div className="grid grid-cols-2 gap-2">
-              <Button
-                type="button"
-                variant={effectiveDuration === 45 ? 'default' : 'outline'}
-                onClick={() => setDuration(45)}
-                disabled={!can45}
-                className="flex-col h-auto py-2.5"
-              >
-                <span className="font-display font-bold">45 giorni</span>
-                {userLevel?.giornaliero_45 != null && (
-                  <span className="text-[0.65rem] opacity-80">{userLevel.giornaliero_45}%/gg</span>
-                )}
-              </Button>
-              <Button
-                type="button"
-                variant={effectiveDuration === 90 ? 'default' : 'outline'}
-                onClick={() => setDuration(90)}
-                disabled={!can90}
-                className="flex-col h-auto py-2.5"
-              >
-                <span className="font-display font-bold">90 giorni</span>
-                {can90 ? (
-                  <span className="text-[0.65rem] opacity-80">{userLevel?.giornaliero_90}%/gg</span>
-                ) : (
-                  <span className="text-[0.6rem] opacity-70">Non disponibile</span>
-                )}
-              </Button>
-            </div>
-            {!can90 && (
-              <p className="text-[0.65rem] text-muted-foreground mt-1.5">
-                Il livello {userLevel?.name} non prevede il piano a 90 giorni.
-              </p>
-            )}
-          </div>
-
-          {/* Importo */}
           <div>
             <Label className="text-xs text-muted-foreground mb-1.5 block">
-              Importo (USDT)
-              {userLevelId === 'gamma' && ' · range 50–100'}
-              {userLevelId === 'beta' && ' · max 100'}
+              Importo (USDT){selected && ` · range ${selected.min_invest}–${selected.max_invest && selected.max_invest >= 1000000 ? '∞' : selected.max_invest}`}
             </Label>
             <Input
               type="number"
               inputMode="decimal"
-              placeholder={userLevelId === 'gamma' ? '50–100' : 'es. 250'}
+              placeholder="es. 250"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
             />
-            <p className="text-[0.65rem] text-muted-foreground mt-1">
-              Disponibile: {Number(profile?.balance_available ?? 0).toFixed(2)} USDT
-            </p>
           </div>
 
-          {/* Anteprima rendimento */}
-          {numericAmount > 0 && dailyRate != null && (
+          {numericAmount > 0 && selected && (
             <div className="grid grid-cols-2 gap-2">
               <div className="rounded-lg bg-secondary p-3">
                 <p className="text-[0.65rem] text-muted-foreground">Giornaliero</p>
-                <p className="font-display text-base font-semibold text-primary">+{dailyEarn.toFixed(2)} USDT</p>
+                <p className="font-display text-base font-semibold text-primary">+{fmt(dailyEarn)} USDT</p>
               </div>
               <div className="rounded-lg bg-secondary p-3">
-                <p className="text-[0.65rem] text-muted-foreground">Totale ({effectiveDuration}gg)</p>
-                <p className="font-display text-base font-semibold text-accent">+{totalEarn.toFixed(2)} USDT</p>
+                <p className="text-[0.65rem] text-muted-foreground">Totale ({days}gg)</p>
+                <p className="font-display text-base font-semibold text-accent">+{fmt(totalEarn)} USDT</p>
               </div>
             </div>
           )}
 
-          {/* Errore validazione */}
-          {validationPreview && !validationPreview.ok && (
+          {validation.error && numericAmount > 0 && (
             <p className="rounded-md border border-destructive/40 bg-destructive/10 px-3 py-2 text-xs text-destructive">
-              {validationPreview.error}
+              {validation.error}
             </p>
           )}
 
-          <Button
-            className="w-full"
-            onClick={handleInvest}
-            disabled={investMutation.isPending || !validationPreview?.ok}
-          >
+          <Button className="w-full" onClick={handleInvest} disabled={investMutation.isPending || !validation.ok}>
             {investMutation.isPending ? 'Creazione...' : 'Conferma Investimento'}
           </Button>
         </CardContent>
       </Card>
 
-      {/* Piani info */}
-      <div>
-        <h3 className="mb-3 font-display text-base font-semibold sm:text-lg">Piani Disponibili</h3>
-        <div className="grid grid-cols-2 gap-3">
-          {plans.map((plan) => (
-            <Card key={plan.id}>
-              <CardContent className="p-3.5">
-                <h4 className="font-display font-semibold text-foreground">{plan.name}</h4>
-                <div className="mt-1.5 flex flex-col gap-1 text-xs text-muted-foreground">
-                  <span className="flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {plan.duration_days} giorni</span>
-                  <span className="flex items-center gap-1"><TrendingUp className="h-3.5 w-3.5" /> Tasso da livello</span>
-                </div>
-                <Badge variant="secondary" className="mt-2 text-[0.6rem]">Min {plan.min_invest} USDT</Badge>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
-
       {/* I miei investimenti */}
       {user && investments.length > 0 && (
         <div>
-          <h3 className="mb-3 font-display text-base font-semibold sm:text-lg">I Miei Investimenti</h3>
+          <h3 className="mb-3 font-display text-base font-semibold">I miei investimenti</h3>
           <div className="space-y-2">
             {investments.map((inv) => {
               const progress = inv.duration_days
@@ -268,9 +230,7 @@ export default function InvestPage() {
                         </Badge>
                       </div>
                     </div>
-                    {inv.duration_days && (
-                      <Progress value={progress} className="mt-2 h-1.5" />
-                    )}
+                    {inv.duration_days && <Progress value={progress} className="mt-2 h-1.5" />}
                   </CardContent>
                 </Card>
               );
