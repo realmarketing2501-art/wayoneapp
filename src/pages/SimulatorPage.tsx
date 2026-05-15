@@ -19,19 +19,18 @@ type Plan = {
   popular?: boolean;
 };
 
+// Allineato all'engine reale: solo i piani 45gg e 90gg sono investibili.
+// I tassi sono indicativi (livello base); il rendimento reale dipende dal livello utente.
 const PLANS: Plan[] = [
-  { id: 'starter',  name: 'Starter',  days: 30, daily: 0.40, min: 20, max: 500 },
-  { id: 'silver',   name: 'Silver',   days: 45, daily: 0.50, min: 20, max: 2000 },
-  { id: 'gold',     name: 'Gold',     days: 60, daily: 0.60, min: 20, max: 5000, popular: true },
-  { id: 'platinum', name: 'Platinum', days: 75, daily: 0.75, min: 20, max: 10000 },
-  { id: 'diamond',  name: 'Diamond',  days: 90, daily: 0.90, min: 20, max: null },
+  { id: 'p45', name: '45 giorni', days: 45, daily: 0.50, min: 50, max: 10000, popular: true },
+  { id: 'p90', name: '90 giorni', days: 90, daily: 0.90, min: 50, max: null },
 ];
 
 const fmt = (n: number) =>
   n.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
 export default function SimulatorPage() {
-  const [planId, setPlanId] = useState<string>('gold');
+  const [planId, setPlanId] = useState<string>('p45');
   const [amount, setAmount] = useState<number>(500);
 
   const plan = PLANS.find((p) => p.id === planId)!;
@@ -89,7 +88,7 @@ export default function SimulatorPage() {
         {/* Piani */}
         <div className="mb-6">
           <Label className="mb-3 block text-sm font-medium">Piano</Label>
-          <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+          <div className="grid grid-cols-2 gap-2">
             {PLANS.map((p) => {
               const active = p.id === planId;
               return (
