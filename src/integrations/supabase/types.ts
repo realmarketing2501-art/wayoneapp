@@ -1112,6 +1112,10 @@ export type Database = {
         }
         Returns: boolean
       }
+      invest_in_fund: {
+        Args: { p_amount: number; p_fund_id: string; p_user_id: string }
+        Returns: string
+      }
       process_matched_deposit: {
         Args: {
           p_amount: number
