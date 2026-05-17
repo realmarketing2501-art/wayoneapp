@@ -1105,6 +1105,21 @@ export type Database = {
         Returns: string
       }
       expire_old_deposit_intents: { Args: never; Returns: number }
+      get_public_setting: { Args: { p_key: string }; Returns: string }
+      get_referral_tree: {
+        Args: { max_depth?: number }
+        Returns: {
+          created_at: string
+          depth: number
+          direct_referrals: number
+          has_confirmed_deposit: boolean
+          id: string
+          level: string
+          referred_by: string
+          user_id: string
+          username: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
