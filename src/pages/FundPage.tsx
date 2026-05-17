@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
@@ -11,13 +12,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useToast } from '@/hooks/use-toast';
-import { Calendar, TrendingUp, Sparkles } from 'lucide-react';
-
-import imgGrowth from '@/assets/fund_growth.jpg';
-import imgPremium from '@/assets/fund_premium.jpg';
-import imgRocket from '@/assets/fund_rocket.jpg';
-
-const FUND_IMAGES = [imgGrowth, imgPremium, imgRocket];
+import { Calendar, TrendingUp } from 'lucide-react';
 
 type Fund = {
   id: string; name: string; badge: string; total_return: number; duration: number;
@@ -36,10 +31,7 @@ export default function FundPage() {
   const { data: funds = [] } = useQuery({
     queryKey: ['special_funds'],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('special_funds')
-        .select('*')
-        .order('created_at', { ascending: false });
+      const { data, error } = await supabase.from('special_funds').select('*').order('created_at', { ascending: false });
       if (error) throw error;
       return data as Fund[];
     },
@@ -64,154 +56,82 @@ export default function FundPage() {
     onError: (e: Error) => toast({ title: 'Errore acquisto', description: e.message, variant: 'destructive' }),
   });
 
-  const fundImage = (idx: number) => FUND_IMAGES[idx % FUND_IMAGES.length];
-
-  function FundCard({ fund, idx }: { fund: Fund; idx: number }) {
+  function FundCard({ fund }: { fund: Fund }) {
     const pct = fund.goal > 0 ? Math.round((Number(fund.raised) / Number(fund.goal)) * 100) : 0;
-    const dim = fund.status === 'ended';
     return (
-      <div
-        className={`group overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur transition-all hover:border-[#00aeff]/50 ${
-          dim ? 'opacity-50' : ''
-        }`}
-      >
-        {/* IMAGE HERO */}
-        <div className="relative aspect-[16/9] w-full overflow-hidden">
-          <img
-            src={fundImage(idx)}
-            alt={fund.name}
-            loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#040a24] via-[#040a24]/30 to-transparent" />
-          <Badge className="absolute left-3 top-3 border-0 bg-[#00aeff]/90 text-[0.6rem] font-semibold text-[#0a1f5c]">
-            {fund.badge}
-          </Badge>
-          <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between">
+      <Card className={fund.status === 'ended' ? 'opacity-50' : ''}>
+        <CardContent className="p-4">
+          <div className="flex items-start justify-between">
             <div>
-              <h4 className="font-display text-lg font-bold leading-tight text-white drop-shadow">
-                {fund.name}
-              </h4>
-              <p className="text-[0.65rem] uppercase tracking-wider text-white/70">
-                {fund.duration} giorni
-              </p>
+              <h4 className="font-display font-semibold text-foreground">{fund.name}</h4>
+              <Badge variant={fund.badge === 'Special Fund' ? 'default' : 'secondary'} className="mt-1">{fund.badge}</Badge>
             </div>
             <div className="text-right">
-              <p className="font-display text-2xl font-extrabold text-[#00aeff] drop-shadow">
-                {fund.total_return}%
-              </p>
-              <p className="text-[0.6rem] uppercase tracking-wider text-white/70">rendimento</p>
+              <p className="font-display text-xl font-bold text-primary">{fund.total_return}%</p>
+              <p className="text-xs text-muted-foreground">rendimento totale</p>
             </div>
           </div>
-        </div>
-
-        {/* BODY */}
-        <div className="space-y-3 p-4">
-          <div className="flex gap-3 text-[0.7rem] text-white/70">
-            <span className="flex items-center gap-1"><Calendar className="h-3 w-3 text-[#00aeff]" />{fund.duration}gg</span>
-            <span className="flex items-center gap-1"><TrendingUp className="h-3 w-3 text-[#00aeff]" />{fund.min_invest}–{Number(fund.max_invest).toLocaleString()} USDT</span>
+          <div className="mt-3 flex gap-4 text-xs text-muted-foreground">
+            <span className="flex items-center gap-1"><Calendar className="h-3.5 w-3.5" />{fund.duration}gg</span>
+            <span className="flex items-center gap-1"><TrendingUp className="h-3.5 w-3.5" />{fund.min_invest}–{Number(fund.max_invest).toLocaleString()} USDT</span>
           </div>
-          <div>
-            <div className="mb-1 flex justify-between text-[0.65rem] text-white/60">
+          <div className="mt-3">
+            <div className="flex justify-between text-xs text-muted-foreground">
               <span>{Number(fund.raised).toLocaleString()} / {Number(fund.goal).toLocaleString()} USDT</span>
-              <span className="font-semibold text-[#00aeff]">{pct}%</span>
+              <span>{pct}%</span>
             </div>
-            <Progress value={pct} className="h-1.5 bg-white/10" />
+            <Progress value={pct} className="mt-1 h-2" />
           </div>
-          {fund.status === 'issuing' && (
-            <Button
-              className="w-full bg-gradient-to-r from-[#00aeff] to-[#0084ff] font-semibold text-[#0a1f5c] hover:opacity-90"
-              onClick={() => { setBuying(fund); setAmount(String(fund.min_invest)); }}
-            >
-              Acquista quote
-            </Button>
-          )}
-          {fund.status === 'upcoming' && (
-            <Button className="w-full bg-white/10 text-white/70" disabled>In arrivo · {fund.open_date}</Button>
-          )}
-          {fund.status === 'sold_out' && (
-            <Button className="w-full bg-white/10 text-white/70" disabled>Esaurito</Button>
-          )}
-          {fund.status === 'ended' && (
-            <Button className="w-full bg-white/10 text-white/70" disabled>Terminato</Button>
-          )}
-        </div>
-      </div>
+          {fund.status === 'issuing' && <Button className="mt-3 w-full" onClick={() => { setBuying(fund); setAmount(String(fund.min_invest)); }}>Acquista</Button>}
+          {fund.status === 'upcoming' && <Button className="mt-3 w-full" variant="secondary" disabled>In arrivo — {fund.open_date}</Button>}
+          {fund.status === 'sold_out' && <Button className="mt-3 w-full" variant="secondary" disabled>Esaurito</Button>}
+          {fund.status === 'ended' && <Button className="mt-3 w-full" variant="secondary" disabled>Terminato</Button>}
+        </CardContent>
+      </Card>
     );
   }
 
   return (
-    <div className="min-h-full bg-gradient-to-b from-[#0a1f5c] via-[#0a1747] to-[#040a24] text-white">
-      <header className="px-4 pt-6 pb-4">
-        <div className="flex items-center gap-2 text-[0.7rem] uppercase tracking-wider text-[#7ec6ff]">
-          <Sparkles className="h-3.5 w-3.5" /> Fondi speciali
-        </div>
-        <h1 className="mt-1 font-display text-2xl font-extrabold leading-tight">
-          Pacchetti curati.<br />
-          <span className="text-[#00aeff]">Rendimento totale fisso.</span>
-        </h1>
-        <p className="mt-2 text-xs text-white/60">
-          Quote a tempo limitato. I capitali vengono allocati a strategie aggregate gestite dal team.
-        </p>
-      </header>
-
-      <div className="px-4 pb-8">
-        <Tabs defaultValue="issuing">
-          <TabsList className="grid w-full grid-cols-4 bg-white/5">
-            <TabsTrigger value="issuing" className="data-[state=active]:bg-[#00aeff] data-[state=active]:text-[#0a1f5c]">In corso</TabsTrigger>
-            <TabsTrigger value="upcoming" className="data-[state=active]:bg-[#00aeff] data-[state=active]:text-[#0a1f5c]">In arrivo</TabsTrigger>
-            <TabsTrigger value="sold_out" className="data-[state=active]:bg-[#00aeff] data-[state=active]:text-[#0a1f5c]">Esauriti</TabsTrigger>
-            <TabsTrigger value="ended" className="data-[state=active]:bg-[#00aeff] data-[state=active]:text-[#0a1f5c]">Terminati</TabsTrigger>
-          </TabsList>
-          {(['issuing', 'upcoming', 'sold_out', 'ended'] as const).map(status => {
-            const list = funds.filter(f => f.status === status);
-            return (
-              <TabsContent key={status} value={status} className="mt-4 space-y-4">
-                {list.map((f, i) => <FundCard key={f.id} fund={f} idx={i} />)}
-                {list.length === 0 && (
-                  <p className="py-10 text-center text-sm text-white/50">Nessun fondo disponibile</p>
-                )}
-              </TabsContent>
-            );
-          })}
-        </Tabs>
-      </div>
+    <div className="space-y-6 p-4">
+      <h2 className="font-display text-xl font-bold">Fondi Speciali</h2>
+      <Tabs defaultValue="issuing">
+        <TabsList className="w-full">
+          <TabsTrigger value="issuing" className="flex-1">In corso</TabsTrigger>
+          <TabsTrigger value="upcoming" className="flex-1">In arrivo</TabsTrigger>
+          <TabsTrigger value="sold_out" className="flex-1">Esauriti</TabsTrigger>
+          <TabsTrigger value="ended" className="flex-1">Terminati</TabsTrigger>
+        </TabsList>
+        {(['issuing', 'upcoming', 'sold_out', 'ended'] as const).map(status => (
+          <TabsContent key={status} value={status} className="space-y-3">
+            {funds.filter(f => f.status === status).map(f => <FundCard key={f.id} fund={f} />)}
+            {funds.filter(f => f.status === status).length === 0 && (
+              <p className="py-8 text-center text-sm text-muted-foreground">Nessun fondo disponibile</p>
+            )}
+          </TabsContent>
+        ))}
+      </Tabs>
 
       <Dialog open={!!buying} onOpenChange={(o) => { if (!o) { setBuying(null); setAmount(''); } }}>
-        <DialogContent className="border-white/10 bg-[#0a1747] text-white">
-          <DialogHeader>
-            <DialogTitle>Acquista quote · <span className="text-[#00aeff]">{buying?.name}</span></DialogTitle>
-          </DialogHeader>
+        <DialogContent>
+          <DialogHeader><DialogTitle>Acquista quote · {buying?.name}</DialogTitle></DialogHeader>
           {buying && (
             <div className="space-y-3">
-              <div className="space-y-1 rounded-xl border border-white/10 bg-white/5 p-3 text-xs">
-                <div className="flex justify-between"><span className="text-white/60">Rendimento</span><span className="font-semibold text-[#00aeff]">{buying.total_return}% in {buying.duration}gg</span></div>
-                <div className="flex justify-between"><span className="text-white/60">Range</span><span>{buying.min_invest}–{Number(buying.max_invest).toLocaleString()} USDT</span></div>
-                <div className="flex justify-between"><span className="text-white/60">Disponibili nel fondo</span><span>{(Number(buying.goal) - Number(buying.raised)).toLocaleString()} USDT</span></div>
-                <div className="flex justify-between"><span className="text-white/60">Tuo saldo</span><span>{Number(profile?.balance_available ?? 0).toFixed(2)} USDT</span></div>
+              <div className="rounded-md bg-secondary p-3 text-xs space-y-1">
+                <div className="flex justify-between"><span className="text-muted-foreground">Rendimento</span><span className="font-semibold">{buying.total_return}% in {buying.duration}gg</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Range</span><span>{buying.min_invest}–{Number(buying.max_invest).toLocaleString()} USDT</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Disponibili nel fondo</span><span>{(Number(buying.goal) - Number(buying.raised)).toLocaleString()} USDT</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">Tuo saldo disponibile</span><span>{Number(profile?.balance_available ?? 0).toFixed(2)} USDT</span></div>
               </div>
               <div>
-                <Label className="text-[0.65rem] uppercase tracking-wider text-white/60">Importo (USDT)</Label>
-                <Input
-                  type="number"
-                  inputMode="decimal"
-                  value={amount}
-                  onChange={(e) => setAmount(e.target.value)}
-                  min={buying.min_invest}
-                  max={buying.max_invest}
-                  className="border-white/15 bg-[#040a24]/60 text-white focus-visible:ring-[#00aeff]"
-                />
+                <Label className="text-xs">Importo (USDT)</Label>
+                <Input type="number" inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} min={buying.min_invest} max={buying.max_invest} />
               </div>
             </div>
           )}
           <DialogFooter className="gap-2">
-            <Button variant="outline" className="border-white/20 bg-transparent text-white hover:bg-white/10" onClick={() => setBuying(null)}>Annulla</Button>
-            <Button
-              className="bg-gradient-to-r from-[#00aeff] to-[#0084ff] font-semibold text-[#0a1f5c] hover:opacity-90"
-              onClick={() => invest.mutate()}
-              disabled={invest.isPending || !amount || !user}
-            >
-              {invest.isPending ? 'Acquisto…' : 'Conferma'}
+            <Button variant="outline" onClick={() => setBuying(null)}>Annulla</Button>
+            <Button onClick={() => invest.mutate()} disabled={invest.isPending || !amount || !user}>
+              {invest.isPending ? 'Acquisto…' : 'Conferma acquisto'}
             </Button>
           </DialogFooter>
         </DialogContent>
