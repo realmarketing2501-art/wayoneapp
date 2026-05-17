@@ -21,13 +21,9 @@ function useAdminSettingPublic<T>(key: string, fallback: T) {
   return useQuery({
     queryKey: ['admin_settings', key],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from('admin_settings')
-        .select('value')
-        .eq('key', key)
-        .single();
-      if (error) return fallback;
-      try { return JSON.parse(data.value) as T; } catch { return fallback; }
+      const { data, error } = await supabase.rpc('get_public_setting', { p_key: key });
+      if (error || !data) return fallback;
+      try { return JSON.parse(data as unknown as string) as T; } catch { return fallback; }
     },
     staleTime: 5 * 60 * 1000,
   });
