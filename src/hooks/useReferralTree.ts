@@ -21,41 +21,45 @@ export function useReferralTree() {
     queryFn: async (): Promise<ReferralNode[]> => {
       if (!user) return [];
 
-      // Get current user's profile id
-      const { data: myProfile } = await supabase
-        .from('profiles')
-        .select('id')
-        .eq('user_id', user.id)
-        .single();
+      // Fetch only the caller's downline via security-definer RPC.
+      const { data: rows, error } = await supabase.rpc('get_referral_tree', { max_depth: 6 });
+      if (error || !rows) return [];
 
-      if (!myProfile) return [];
+      type Row = (typeof rows)[number];
+      const byParent = new Map<string, Row[]>();
+      for (const r of rows as Row[]) {
+        const key = (r.referred_by as string) ?? '__root__';
+        const arr = byParent.get(key) ?? [];
+        arr.push(r);
+        byParent.set(key, arr);
+      }
 
-      // Fetch all profiles that are in the user's downline (up to 3 levels deep)
-      // We fetch all profiles and build the tree client-side
-      const { data: allProfiles, error } = await supabase
-        .from('profiles')
-        .select('id, user_id, username, level, has_confirmed_deposit, created_at, direct_referrals, referred_by');
+      // Find roots: rows whose parent is not in the result set (i.e. direct children of caller).
+      const allIds = new Set((rows as Row[]).map((r) => r.id as string));
+      const roots = (rows as Row[]).filter((r) => !r.referred_by || !allIds.has(r.referred_by as string));
 
-      if (error || !allProfiles) return [];
+      const buildChildren = (parentId: string): ReferralNode[] =>
+        (byParent.get(parentId) ?? []).map((p) => ({
+          id: p.id as string,
+          user_id: p.user_id as string,
+          username: p.username as string,
+          level: p.level as string,
+          has_confirmed_deposit: !!p.has_confirmed_deposit,
+          created_at: p.created_at as string,
+          direct_referrals: (p.direct_referrals as number) ?? 0,
+          children: buildChildren(p.id as string),
+        }));
 
-      // Build tree recursively
-      const buildChildren = (parentId: string, depth: number): ReferralNode[] => {
-        if (depth > 6) return []; // max depth
-        return allProfiles
-          .filter((p) => p.referred_by === parentId)
-          .map((p) => ({
-            id: p.id,
-            user_id: p.user_id,
-            username: p.username,
-            level: p.level,
-            has_confirmed_deposit: p.has_confirmed_deposit,
-            created_at: p.created_at,
-            direct_referrals: p.direct_referrals,
-            children: buildChildren(p.id, depth + 1),
-          }));
-      };
-
-      return buildChildren(myProfile.id, 0);
+      return roots.map((p) => ({
+        id: p.id as string,
+        user_id: p.user_id as string,
+        username: p.username as string,
+        level: p.level as string,
+        has_confirmed_deposit: !!p.has_confirmed_deposit,
+        created_at: p.created_at as string,
+        direct_referrals: (p.direct_referrals as number) ?? 0,
+        children: buildChildren(p.id as string),
+      }));
     },
     enabled: !!user,
   });
