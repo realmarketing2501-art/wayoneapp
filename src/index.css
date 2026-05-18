@@ -4,134 +4,133 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================
+   WAY ONE — Palette inspired by SabioTrade
+   Deep midnight navy + mint green primary + electric blue + cyan
+   ============================================================ */
+
 @layer base {
   :root {
-    /* USDT — Light (rarely used; default is dark) */
-    --background: 220 30% 96%;
-    --foreground: 220 40% 10%;
+    /* Light fallback (raramente usata; default è dark) */
+    --background: 230 40% 96%;
+    --foreground: 232 60% 8%;
 
     --card: 0 0% 100%;
-    --card-foreground: 220 40% 10%;
+    --card-foreground: 232 60% 8%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 40% 10%;
+    --popover-foreground: 232 60% 8%;
 
-    --primary: 43 74% 49%;            /* gold */
-    --primary-foreground: 220 50% 8%;
+    --primary: 150 90% 55%;            /* mint green */
+    --primary-foreground: 232 60% 8%;
 
-    --secondary: 220 20% 92%;
-    --secondary-foreground: 220 30% 20%;
+    --secondary: 230 30% 92%;
+    --secondary-foreground: 232 50% 18%;
 
-    --muted: 220 20% 92%;
-    --muted-foreground: 220 15% 40%;
+    --muted: 230 30% 92%;
+    --muted-foreground: 230 15% 40%;
 
-    --accent: 43 74% 49%;
-    --accent-foreground: 220 50% 8%;
+    --accent: 230 90% 62%;             /* electric blue */
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 75% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 220 20% 85%;
-    --input: 220 20% 85%;
-    --ring: 43 74% 49%;
+    --border: 230 30% 85%;
+    --input: 230 30% 85%;
+    --ring: 150 90% 55%;
 
     --radius: 1rem;
 
-    --sidebar-background: 220 25% 96%;
-    --sidebar-foreground: 220 30% 20%;
-    --sidebar-primary: 43 74% 49%;
-    --sidebar-primary-foreground: 220 50% 8%;
-    --sidebar-accent: 220 20% 90%;
-    --sidebar-accent-foreground: 220 30% 20%;
-    --sidebar-border: 220 20% 85%;
-    --sidebar-ring: 43 74% 49%;
+    --sidebar-background: 230 35% 96%;
+    --sidebar-foreground: 232 50% 18%;
+    --sidebar-primary: 150 90% 55%;
+    --sidebar-primary-foreground: 232 60% 8%;
+    --sidebar-accent: 230 30% 90%;
+    --sidebar-accent-foreground: 232 50% 18%;
+    --sidebar-border: 230 30% 85%;
+    --sidebar-ring: 150 90% 55%;
 
-    /* USDT brand tokens (used by custom utilities) */
-    --u-bg: 220 50% 6%;
-    --u-surface: 220 40% 9%;
-    --u-card: 220 35% 12%;
-    --u-card-2: 220 30% 16%;
-    --u-gold: 43 74% 52%;
-    --u-gold-bright: 43 90% 65%;
-    --u-gold-deep: 38 70% 38%;
-    --u-cream: 45 30% 92%;
-    --u-muted: 220 15% 60%;
-    --u-success: 142 70% 45%;
+    /* Brand tokens (used by .usdt-* utilities – kept name for back-compat) */
+    --u-bg: 232 60% 6%;
+    --u-surface: 232 50% 9%;
+    --u-card: 232 45% 12%;
+    --u-card-2: 232 40% 16%;
+    --u-gold: 150 90% 60%;             /* mint primary */
+    --u-gold-bright: 150 100% 72%;     /* mint glow */
+    --u-gold-deep: 230 80% 50%;        /* electric blue */
+    --u-cream: 0 0% 98%;
+    --u-muted: 230 15% 65%;
+    --u-success: 150 90% 55%;
     --u-danger: 0 75% 58%;
 
-    --way-gold: 43 90% 60%;
+    --way-gold: 150 90% 60%;
     --way-bronze: 30 60% 50%;
     --way-silver: 220 10% 70%;
     --way-silver-elite: 210 20% 70%;
-    --way-sapphire: 220 80% 60%;
-    --way-diamond: 280 60% 65%;
-    --way-glow: 43 90% 60%;
+    --way-sapphire: 230 90% 62%;
+    --way-diamond: 188 90% 60%;        /* cyan */
+    --way-glow: 150 100% 72%;
   }
 
   .dark {
-    /* USDT — Dark (default) — Navy + Gold like LYRA mockup */
-    --background: 220 50% 6%;
-    --foreground: 45 30% 92%;
+    --background: 232 60% 6%;
+    --foreground: 0 0% 98%;
 
-    --card: 220 35% 12%;
-    --card-foreground: 45 30% 92%;
+    --card: 232 45% 12%;
+    --card-foreground: 0 0% 98%;
 
-    --popover: 220 40% 9%;
-    --popover-foreground: 45 30% 92%;
+    --popover: 232 50% 9%;
+    --popover-foreground: 0 0% 98%;
 
-    --primary: 43 90% 60%;
-    --primary-foreground: 220 50% 6%;
+    --primary: 150 90% 60%;
+    --primary-foreground: 232 60% 6%;
 
-    --secondary: 220 30% 16%;
-    --secondary-foreground: 45 30% 92%;
+    --secondary: 232 40% 16%;
+    --secondary-foreground: 0 0% 98%;
 
-    --muted: 220 30% 16%;
-    --muted-foreground: 220 15% 65%;
+    --muted: 232 40% 16%;
+    --muted-foreground: 230 15% 68%;
 
-    --accent: 43 90% 60%;
-    --accent-foreground: 220 50% 6%;
+    --accent: 230 90% 62%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 75% 58%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 43 40% 28%;             /* subtle gold border */
-    --input: 220 30% 18%;
-    --ring: 43 90% 60%;
+    --border: 230 40% 22%;
+    --input: 232 40% 18%;
+    --ring: 150 90% 60%;
 
-    --sidebar-background: 220 40% 9%;
-    --sidebar-foreground: 45 30% 92%;
-    --sidebar-primary: 43 90% 60%;
-    --sidebar-primary-foreground: 220 50% 6%;
-    --sidebar-accent: 220 30% 16%;
-    --sidebar-accent-foreground: 45 30% 92%;
-    --sidebar-border: 43 40% 28%;
-    --sidebar-ring: 43 90% 60%;
+    --sidebar-background: 232 50% 9%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 150 90% 60%;
+    --sidebar-primary-foreground: 232 60% 6%;
+    --sidebar-accent: 232 40% 16%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 230 40% 22%;
+    --sidebar-ring: 150 90% 60%;
   }
 }
 
 @layer base {
-  * {
-    @apply border-border;
-  }
-
+  * { @apply border-border; }
   body {
     @apply bg-background text-foreground;
     font-family: 'Inter', system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
-
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Playfair Display', 'Times New Roman', serif;
-    letter-spacing: -0.01em;
+    font-family: 'Inter', system-ui, sans-serif;
+    letter-spacing: -0.02em;
+    font-weight: 700;
   }
 }
 
-/* Safe area support for PWA */
 .safe-top { padding-top: env(safe-area-inset-top); }
 .safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
 
-/* Scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: hsl(var(--background)); }
 ::-webkit-scrollbar-thumb {
@@ -143,31 +142,31 @@
 html, body { overflow-x: clip; }
 
 /* ============================================== */
-/* USDT design system — utilities                 */
+/* Way One — utilities (Sabio-inspired)           */
 /* ============================================== */
 
-.font-display { font-family: 'Playfair Display', serif; }
+.font-display { font-family: 'Inter', system-ui, sans-serif; letter-spacing: -0.02em; }
 
 .usdt-bg {
   background:
-    radial-gradient(ellipse 80% 60% at 50% 0%, hsl(var(--u-gold) / 0.08), transparent 60%),
-    radial-gradient(ellipse 60% 40% at 100% 100%, hsl(var(--u-gold) / 0.05), transparent 60%),
-    linear-gradient(180deg, hsl(var(--u-bg)) 0%, hsl(220 50% 4%) 100%);
+    radial-gradient(ellipse 70% 50% at 50% 0%, hsl(230 90% 50% / 0.18), transparent 65%),
+    radial-gradient(ellipse 60% 45% at 50% 50%, hsl(265 80% 45% / 0.15), transparent 70%),
+    radial-gradient(ellipse 50% 40% at 100% 100%, hsl(150 90% 50% / 0.08), transparent 60%),
+    linear-gradient(180deg, hsl(var(--u-bg)) 0%, hsl(232 70% 4%) 100%);
 }
 
 .usdt-card {
-  background: linear-gradient(180deg, hsl(var(--u-card) / 0.95), hsl(var(--u-surface) / 0.95));
-  border: 1px solid hsl(var(--u-gold) / 0.18);
+  background: linear-gradient(180deg, hsl(var(--u-card) / 0.85), hsl(var(--u-surface) / 0.9));
+  border: 1px solid hsl(230 40% 25% / 0.6);
   border-radius: 1.25rem;
   box-shadow:
-    inset 0 1px 0 hsl(var(--u-gold) / 0.08),
-    0 8px 24px -8px hsl(220 60% 2% / 0.6);
+    inset 0 1px 0 hsl(0 0% 100% / 0.04),
+    0 8px 24px -8px hsl(232 70% 2% / 0.6);
 }
 
 .usdt-card-gold {
-  background:
-    linear-gradient(135deg, hsl(var(--u-card)) 0%, hsl(var(--u-card-2)) 100%);
-  border: 1px solid hsl(var(--u-gold) / 0.4);
+  background: linear-gradient(135deg, hsl(var(--u-card)) 0%, hsl(232 50% 14%) 100%);
+  border: 1px solid hsl(var(--u-gold) / 0.35);
   border-radius: 1.25rem;
   box-shadow:
     inset 0 1px 0 hsl(var(--u-gold) / 0.18),
@@ -176,11 +175,10 @@ html, body { overflow-x: clip; }
 }
 
 .usdt-gold-text {
-  background: linear-gradient(180deg, hsl(45 95% 75%) 0%, hsl(43 80% 55%) 60%, hsl(38 70% 42%) 100%);
+  background: linear-gradient(180deg, hsl(150 100% 78%) 0%, hsl(150 90% 60%) 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 1px 1px hsl(220 60% 2% / 0.6));
 }
 
 .usdt-divider {
@@ -189,53 +187,52 @@ html, body { overflow-x: clip; }
 }
 
 .usdt-btn-gold {
-  background: linear-gradient(180deg, hsl(45 95% 70%) 0%, hsl(43 85% 55%) 50%, hsl(38 75% 42%) 100%);
-  color: hsl(var(--u-bg));
-  font-weight: 700;
-  letter-spacing: 0.02em;
-  border: 1px solid hsl(var(--u-gold-deep));
+  background: linear-gradient(180deg, hsl(230 95% 65%) 0%, hsl(230 90% 55%) 100%);
+  color: hsl(0 0% 100%);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  border: 1px solid hsl(230 90% 70% / 0.6);
   box-shadow:
-    inset 0 1px 0 hsl(45 100% 90% / 0.6),
-    inset 0 -1px 0 hsl(38 70% 30% / 0.4),
-    0 6px 16px -4px hsl(var(--u-gold) / 0.4);
+    inset 0 1px 0 hsl(0 0% 100% / 0.25),
+    0 6px 18px -4px hsl(230 90% 50% / 0.55);
   transition: transform 0.15s ease, box-shadow 0.2s ease;
 }
 .usdt-btn-gold:hover {
   transform: translateY(-1px);
   box-shadow:
-    inset 0 1px 0 hsl(45 100% 90% / 0.6),
-    0 10px 24px -6px hsl(var(--u-gold) / 0.55);
+    inset 0 1px 0 hsl(0 0% 100% / 0.25),
+    0 10px 28px -6px hsl(230 90% 55% / 0.7);
 }
 .usdt-btn-gold:active { transform: translateY(0) scale(0.98); }
 
 .usdt-btn-ghost {
-  background: hsl(var(--u-card) / 0.6);
-  color: hsl(var(--u-cream));
-  border: 1px solid hsl(var(--u-gold) / 0.35);
+  background: hsl(232 45% 14% / 0.7);
+  color: hsl(0 0% 98%);
+  border: 1px solid hsl(230 40% 30% / 0.7);
   font-weight: 600;
   transition: all 0.2s ease;
 }
 .usdt-btn-ghost:hover {
-  border-color: hsl(var(--u-gold) / 0.6);
-  background: hsl(var(--u-card) / 0.9);
+  border-color: hsl(var(--u-gold) / 0.55);
+  background: hsl(232 45% 18% / 0.9);
 }
 
-/* USDT monogram coin */
+/* Coin / monogram — turned into mint+cyan disc */
 .usdt-coin {
   position: relative;
   border-radius: 50%;
   background:
-    radial-gradient(circle at 30% 25%, hsl(45 100% 85%), hsl(43 80% 50%) 55%, hsl(38 70% 30%) 100%);
+    radial-gradient(circle at 30% 25%, hsl(150 100% 82%), hsl(150 90% 55%) 55%, hsl(188 90% 40%) 100%);
   box-shadow:
-    inset 0 2px 4px hsl(45 100% 95% / 0.6),
-    inset 0 -3px 6px hsl(30 60% 20% / 0.5),
-    0 6px 18px -4px hsl(var(--u-gold) / 0.5),
-    0 0 0 2px hsl(var(--u-gold-deep) / 0.4);
+    inset 0 2px 4px hsl(150 100% 90% / 0.5),
+    inset 0 -3px 6px hsl(230 80% 15% / 0.6),
+    0 6px 20px -4px hsl(150 90% 50% / 0.55),
+    0 0 0 2px hsl(230 80% 50% / 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: hsl(220 60% 8%);
-  font-family: 'Playfair Display', serif;
+  color: hsl(232 60% 8%);
+  font-family: 'Inter', sans-serif;
   font-weight: 800;
 }
 .usdt-coin::before {
@@ -243,14 +240,13 @@ html, body { overflow-x: clip; }
   position: absolute;
   inset: 6%;
   border-radius: 50%;
-  border: 1px solid hsl(38 60% 25% / 0.5);
+  border: 1px solid hsl(230 60% 20% / 0.45);
   pointer-events: none;
 }
 
-/* Bottom nav */
 .usdt-nav {
-  background: linear-gradient(180deg, hsl(var(--u-surface) / 0.95), hsl(220 50% 5% / 0.98));
-  border-top: 1px solid hsl(var(--u-gold) / 0.25);
+  background: linear-gradient(180deg, hsl(var(--u-surface) / 0.92), hsl(232 60% 5% / 0.98));
+  border-top: 1px solid hsl(230 40% 25% / 0.7);
   backdrop-filter: blur(16px);
 }
 .usdt-nav-item {
@@ -260,12 +256,10 @@ html, body { overflow-x: clip; }
   border-radius: 12px;
 }
 .usdt-nav-item:hover {
-  color: hsl(var(--u-cream));
+  color: hsl(0 0% 98%);
   background: hsl(var(--u-gold) / 0.06);
 }
-.usdt-nav-item[data-active="true"] {
-  color: hsl(var(--u-gold-bright));
-}
+.usdt-nav-item[data-active="true"] { color: hsl(var(--u-gold-bright)); }
 .usdt-nav-item[data-active="true"]::before {
   content: '';
   position: absolute;
@@ -276,12 +270,12 @@ html, body { overflow-x: clip; }
   height: 2px;
   background: linear-gradient(90deg, transparent, hsl(var(--u-gold-bright)), transparent);
   border-radius: 2px;
-  box-shadow: 0 0 8px hsl(var(--u-gold) / 0.6);
+  box-shadow: 0 0 8px hsl(var(--u-gold) / 0.7);
 }
 
 .usdt-header {
-  background: linear-gradient(180deg, hsl(var(--u-surface) / 0.95), hsl(var(--u-bg) / 0.85));
-  border-bottom: 1px solid hsl(var(--u-gold) / 0.2);
+  background: linear-gradient(180deg, hsl(var(--u-surface) / 0.92), hsl(var(--u-bg) / 0.85));
+  border-bottom: 1px solid hsl(230 40% 22% / 0.7);
   backdrop-filter: blur(16px);
 }
 
@@ -290,11 +284,11 @@ html, body { overflow-x: clip; }
   100% { background-position: 200% 0; }
 }
 .usdt-shine {
-  background: linear-gradient(90deg, transparent 30%, hsl(45 100% 90% / 0.4) 50%, transparent 70%);
+  background: linear-gradient(90deg, transparent 30%, hsl(150 100% 85% / 0.35) 50%, transparent 70%);
   background-size: 200% 100%;
   animation: usdt-shine 3s linear infinite;
 }
 
 .usdt-glow-gold {
-  box-shadow: 0 0 24px hsl(var(--u-gold) / 0.25), 0 0 64px hsl(var(--u-gold) / 0.1);
+  box-shadow: 0 0 24px hsl(var(--u-gold) / 0.3), 0 0 64px hsl(230 90% 55% / 0.18);
 }
