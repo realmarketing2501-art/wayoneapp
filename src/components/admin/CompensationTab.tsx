@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
-import { Layers, Save } from 'lucide-react';
+import { Layers, Save, Trash2 } from 'lucide-react';
 import { useLevels, type LevelConfig } from '@/hooks/useLevels';
 
 export default function CompensationTab() {
@@ -15,6 +15,7 @@ export default function CompensationTab() {
   const queryClient = useQueryClient();
   const { data: levels = [], isLoading } = useLevels();
   const [edits, setEdits] = useState<Record<string, Partial<LevelConfig>>>({});
+  const [confirmDel, setConfirmDel] = useState<string | null>(null);
 
   const saveMutation = useMutation({
     mutationFn: async ({ id, patch }: { id: string; patch: Partial<LevelConfig> }) => {
@@ -29,6 +30,36 @@ export default function CompensationTab() {
     onError: (e: Error) => toast({ title: 'Errore', description: e.message, variant: 'destructive' }),
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      // Guardrail: blocca se ci sono utenti su questo livello
+      const { count: usersOnLevel, error: e1 } = await supabase
+        .from('profiles').select('*', { count: 'exact', head: true }).eq('level', id as any);
+      if (e1) throw e1;
+      if ((usersOnLevel ?? 0) > 0) {
+        throw new Error(`Impossibile eliminare: ${usersOnLevel} utenti sono ancora su questo livello.`);
+      }
+      // Guardrail: blocca se piani lo richiedono come min_level
+      const { count: plansUsing, error: e2 } = await supabase
+        .from('investment_plans').select('*', { count: 'exact', head: true }).eq('min_level', id as any);
+      if (e2) throw e2;
+      if ((plansUsing ?? 0) > 0) {
+        throw new Error(`Impossibile eliminare: ${plansUsing} piani richiedono questo livello.`);
+      }
+      const { error } = await supabase.from('levels').delete().eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['levels'] });
+      setConfirmDel(null);
+      toast({ title: 'Livello eliminato' });
+    },
+    onError: (e: Error) => {
+      setConfirmDel(null);
+      toast({ title: 'Eliminazione bloccata', description: e.message, variant: 'destructive' });
+    },
+  });
+
   const update = (id: string, patch: Partial<LevelConfig>) => {
     setEdits((prev) => ({ ...prev, [id]: { ...prev[id], ...patch } }));
   };
@@ -38,6 +69,7 @@ export default function CompensationTab() {
   if (isLoading) {
     return <div className="flex justify-center py-8"><div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" /></div>;
   }
+
 
   return (
     <Card>
@@ -60,6 +92,20 @@ export default function CompensationTab() {
                   {dirty && (
                     <Button size="sm" className="h-7 text-xs gap-1" onClick={() => saveMutation.mutate({ id: l.id, patch: edits[l.id] })} disabled={saveMutation.isPending}>
                       <Save className="h-3 w-3" /> Salva
+                    </Button>
+                  )}
+                  {confirmDel === l.id ? (
+                    <>
+                      <Button size="sm" variant="destructive" className="h-7 text-[0.65rem]" onClick={() => deleteMutation.mutate(l.id)} disabled={deleteMutation.isPending}>
+                        Conferma
+                      </Button>
+                      <Button size="sm" variant="outline" className="h-7 text-[0.65rem]" onClick={() => setConfirmDel(null)}>
+                        Annulla
+                      </Button>
+                    </>
+                  ) : (
+                    <Button size="sm" variant="ghost" className="h-7 w-7 p-0 text-destructive" onClick={() => setConfirmDel(l.id)} title="Elimina livello">
+                      <Trash2 className="h-3.5 w-3.5" />
                     </Button>
                   )}
                 </div>
