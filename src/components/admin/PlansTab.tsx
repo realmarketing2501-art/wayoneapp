@@ -270,7 +270,7 @@ export default function PlansTab() {
                   <p className="text-sm font-semibold truncate">{p.name || '—'}</p>
                   <div className="flex flex-wrap gap-1 mt-0.5">
                     <Badge variant="secondary" className="text-[0.55rem]">{p.status}</Badge>
-                    <Badge variant="outline" className="text-[0.55rem]">{p.min_level}</Badge>
+                    <Badge variant="outline" className="text-[0.55rem]">{levelLabel(p.min_level)}</Badge>
                     <Badge variant="outline" className="text-[0.55rem]">Tot. {totalReturn}%</Badge>
                   </div>
                 </div>
