@@ -30,6 +30,37 @@ const EMPTY: Omit<Task, 'id'> = {
   active: true,
 };
 
+function Fields({ t, onChange }: { t: Omit<Task, 'id'>; onChange: (v: Partial<Task>) => void }) {
+  return (
+    <div className="grid grid-cols-2 gap-2">
+      <div className="col-span-2">
+        <Label className="text-[0.6rem] text-muted-foreground">Titolo</Label>
+        <Input value={t.title} onChange={(e) => onChange({ title: e.target.value })} className="h-7 text-xs" />
+      </div>
+      <div className="col-span-2">
+        <Label className="text-[0.6rem] text-muted-foreground">Descrizione</Label>
+        <Textarea value={t.description} onChange={(e) => onChange({ description: e.target.value })} rows={2} className="text-xs" />
+      </div>
+      <div>
+        <Label className="text-[0.6rem] text-muted-foreground">Tipo</Label>
+        <Input value={t.type} onChange={(e) => onChange({ type: e.target.value })} className="h-7 text-xs" placeholder="invite / deposit / invest" />
+      </div>
+      <div>
+        <Label className="text-[0.6rem] text-muted-foreground">Obiettivo</Label>
+        <Input type="number" inputMode="numeric" value={t.total} onChange={(e) => onChange({ total: parseInt(e.target.value) || 1 })} className="h-7 text-xs" />
+      </div>
+      <div>
+        <Label className="text-[0.6rem] text-muted-foreground">Ricompensa USDT</Label>
+        <Input type="number" inputMode="decimal" step="0.01" value={t.reward} onChange={(e) => onChange({ reward: parseFloat(e.target.value) || 0 })} className="h-7 text-xs" />
+      </div>
+      <div className="flex items-end gap-2">
+        <Switch checked={t.active} onCheckedChange={(v) => onChange({ active: v })} />
+        <span className="text-xs">Attiva</span>
+      </div>
+    </div>
+  );
+}
+
 export default function TasksTab() {
   const { toast } = useToast();
   const qc = useQueryClient();
