@@ -478,20 +478,23 @@ export default function Index() {
 }
 
 /* ---------- Phone mockup ---------- */
-function PhoneFrame({ index }: { index: number }) {
+type PhonePlan = { name: string; days: number; daily: string; roi: string; min: number; max: string; popular?: boolean };
+
+function PhoneFrame({ index, plans }: { index: number; plans: PhonePlan[] }) {
   return (
     <div className="mx-auto w-full max-w-[220px]">
       <div className="relative aspect-[9/19] rounded-[2rem] border-2 border-primary/30 bg-gradient-to-b from-[hsl(var(--u-card))] to-[hsl(var(--u-bg))] p-2 shadow-2xl">
         <div className="absolute left-1/2 top-1.5 z-10 h-3 w-16 -translate-x-1/2 rounded-full bg-black/80" />
         <div className="h-full w-full overflow-hidden rounded-[1.6rem] bg-[hsl(var(--u-bg))] p-3 pt-6">
           {index === 0 && <PhoneLanding />}
-          {index === 1 && <PhoneDashboard />}
-          {index === 2 && <PhoneInvest />}
+          {index === 1 && <PhoneDashboard plans={plans} />}
+          {index === 2 && <PhoneInvest plans={plans} />}
         </div>
       </div>
     </div>
   );
 }
+
 
 function PhoneLanding() {
   const { t } = useTranslation();
