@@ -389,6 +389,50 @@ export default function Index() {
         </div>
       </section>
 
+      {/* Licenza e conformità */}
+      <div className="usdt-divider mx-auto max-w-6xl" />
+      <section className="py-12 sm:py-20">
+        <div className="mx-auto max-w-6xl px-4">
+          <div className="text-center">
+            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 px-3 py-1 text-xs text-primary">
+              <Award className="h-3.5 w-3.5" /> Licenza FSA
+            </div>
+            <h2 className="font-display text-3xl font-bold sm:text-4xl">
+              Trasparenza e <span className="usdt-gold-text">conformità</span>
+            </h2>
+            <p className="mx-auto mt-3 max-w-xl text-sm text-muted-foreground sm:text-base">
+              WAYONE opera con licenza Financial Dealer rilasciata dalle autorità di Saint Vincent and the Grenadines. Verifica i nostri documenti ufficiali.
+            </p>
+          </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mt-10 mx-auto max-w-xl rounded-2xl border border-primary/30 bg-gradient-to-br from-primary/5 via-background to-primary/10 p-6 text-center"
+          >
+            <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary/15 text-primary">
+              <ShieldCheck className="h-7 w-7" />
+            </div>
+            <h3 className="mt-4 font-display text-lg font-bold text-foreground">Financial Dealer License</h3>
+            <p className="mt-1 text-sm text-muted-foreground">SVG FSA — Way One Std</p>
+            <div className="mt-4 grid grid-cols-2 gap-3 text-left">
+              <div className="rounded-lg border border-border/60 bg-card/50 p-3">
+                <p className="text-[0.6rem] uppercase tracking-wider text-muted-foreground">Registrazione</p>
+                <p className="font-display text-sm font-bold text-foreground">09310 FSA</p>
+              </div>
+              <div className="rounded-lg border border-border/60 bg-card/50 p-3">
+                <p className="text-[0.6rem] uppercase tracking-wider text-muted-foreground">Stato</p>
+                <p className="font-display text-sm font-bold text-emerald-500">Attiva</p>
+              </div>
+            </div>
+            <Button size="lg" className="mt-5 gap-2 usdt-btn-gold" onClick={() => navigate('/certifications')}>
+              Verifica certificazione <ExternalLink className="h-4 w-4" />
+            </Button>
+          </motion.div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="relative overflow-hidden py-12 sm:py-20">
         <div className="absolute inset-x-0 top-0 mx-auto h-72 w-72 rounded-full bg-primary/15 blur-[120px]" />
