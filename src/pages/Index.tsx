@@ -175,7 +175,7 @@ export default function Index() {
           <div className="mt-12 grid gap-6 sm:grid-cols-3">
             {screens.map((s, i) => (
               <motion.div key={s.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}>
-                <PhoneFrame index={i} />
+                <PhoneFrame index={i} plans={plans} />
                 <div className="mt-4 text-center">
                   <h3 className="font-display text-xl font-bold usdt-gold-text">{s.title}</h3>
                   <p className="mt-1 text-sm text-muted-foreground">{s.desc}</p>
