@@ -38,6 +38,7 @@ export default function ProfilePage() {
     { icon: Shield, label: t('profile.security'), desc: t('profile.securityDesc'), path: null },
     { icon: Wallet, label: t('profile.wallets'), desc: t('profile.walletsDesc'), path: null },
     { icon: Award, label: t('profile.levels'), desc: t('profile.levelsDesc'), path: '/qualifiche' },
+    { icon: ShieldCheck, label: 'Certificazioni', desc: 'Licenze e documenti ufficiali WAYONE', path: '/certifications' },
     { icon: HelpCircle, label: t('profile.faq'), desc: t('profile.faqDesc'), path: '/faq' },
   ];
 
