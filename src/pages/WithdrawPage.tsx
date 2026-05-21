@@ -80,7 +80,7 @@ export default function WithdrawPage() {
       <Card>
         <CardContent className="space-y-4 p-4 sm:p-5">
           <div className="text-center">
-            <p className="text-xs text-muted-foreground sm:text-sm">Saldo disponibile</p>
+            <p className="text-xs text-muted-foreground sm:text-sm">Saldo disponibile al prelievo</p>
             <p className="font-display text-2xl font-bold text-primary">{balance.toLocaleString()} USDT</p>
           </div>
 
