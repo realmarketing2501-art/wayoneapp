@@ -14,14 +14,7 @@ const featureIcons = [Smartphone, BarChart3, FileText, Share2, Bell, ShieldCheck
 const flowIcons = [UserPlus, Wallet, TrendingUp, ArrowDownToLine];
 const bonusIcons = [Users, Star, Crown, Wallet, Wallet, Wallet];
 
-// Fallback statico mostrato se non ci sono piani configurati nel pannello admin
-const fallbackPlans = [
-  { name: 'Starter',  days: 30, daily: '0,40%', roi: '+12%',     min: 50, max: '500' },
-  { name: 'Silver',   days: 45, daily: '0,50%', roi: '+22,5%',   min: 50, max: '2.000' },
-  { name: 'Gold',     days: 60, daily: '0,60%', roi: '+36%',     min: 50, max: '5.000', popular: true },
-  { name: 'Platinum', days: 75, daily: '0,75%', roi: '+56,25%',  min: 50, max: '10.000' },
-  { name: 'Diamond',  days: 90, daily: '0,90%', roi: '+81%',     min: 50, max: '__UNLIMITED__' },
-];
+// Nessun fallback statico: se non ci sono piani attivi mostriamo un empty-state.
 
 const referralLevels = [
   { level: 'L1', pct: '4%',   on1000: '+40 USDT' },
