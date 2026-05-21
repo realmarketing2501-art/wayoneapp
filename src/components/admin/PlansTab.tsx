@@ -69,7 +69,7 @@ function FieldGrid({ p, onChange }: { p: Omit<Plan, 'id'>; onChange: (v: Partial
         <Label className="text-[0.6rem] text-muted-foreground">Livello minimo</Label>
         <Select value={p.min_level} onValueChange={(v) => onChange({ min_level: v })}>
           <SelectTrigger className="h-7 text-xs"><SelectValue /></SelectTrigger>
-          <SelectContent>{LEVELS.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
+          <SelectContent>{LEVELS.map((l) => <SelectItem key={l.id} value={l.id}>{l.label}</SelectItem>)}</SelectContent>
         </Select>
       </div>
       <div>
