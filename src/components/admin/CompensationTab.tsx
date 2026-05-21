@@ -53,9 +53,9 @@ export default function CompensationTab() {
             return (
               <div key={l.id} className="rounded-lg border border-border bg-card p-2.5 space-y-2">
                 <div className="flex items-center justify-between gap-2">
-                  <div>
-                    <p className="text-sm font-semibold text-foreground">{l.name}</p>
-                    <p className="text-[0.6rem] text-muted-foreground">{l.id} · ordine {l.ordine}</p>
+                  <div className="flex-1 min-w-0">
+                    <Input value={l.name} onChange={(e) => update(l.id, { name: e.target.value })} className="h-7 text-xs font-semibold" />
+                    <p className="text-[0.6rem] text-muted-foreground mt-0.5">codice: {l.id}</p>
                   </div>
                   {dirty && (
                     <Button size="sm" className="h-7 text-xs gap-1" onClick={() => saveMutation.mutate({ id: l.id, patch: edits[l.id] })} disabled={saveMutation.isPending}>
@@ -65,12 +65,24 @@ export default function CompensationTab() {
                 </div>
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                   <div>
+                    <Label className="text-[0.6rem] text-muted-foreground">Ordine</Label>
+                    <Input type="number" value={l.ordine ?? ''} onChange={(e) => update(l.id, { ordine: parseInt(e.target.value) || 0 })} className="h-7 text-xs" />
+                  </div>
+                  <div>
+                    <Label className="text-[0.6rem] text-muted-foreground">Durata (giorni)</Label>
+                    <Input type="number" value={l.durata_giorni ?? ''} onChange={(e) => update(l.id, { durata_giorni: e.target.value === '' ? null : parseInt(e.target.value) })} className="h-7 text-xs" />
+                  </div>
+                  <div>
                     <Label className="text-[0.6rem] text-muted-foreground">% 45gg</Label>
                     <Input type="number" step="0.1" value={l.giornaliero_45 ?? ''} onChange={(e) => update(l.id, { giornaliero_45: e.target.value === '' ? null : parseFloat(e.target.value) })} className="h-7 text-xs" />
                   </div>
                   <div>
                     <Label className="text-[0.6rem] text-muted-foreground">% 90gg</Label>
                     <Input type="number" step="0.1" value={l.giornaliero_90 ?? ''} onChange={(e) => update(l.id, { giornaliero_90: e.target.value === '' ? null : parseFloat(e.target.value) })} className="h-7 text-xs" />
+                  </div>
+                  <div>
+                    <Label className="text-[0.6rem] text-muted-foreground">% Settimanale</Label>
+                    <Input type="number" step="0.1" value={l.settimanale ?? ''} onChange={(e) => update(l.id, { settimanale: e.target.value === '' ? null : parseFloat(e.target.value) })} className="h-7 text-xs" />
                   </div>
                   <div>
                     <Label className="text-[0.6rem] text-muted-foreground">Unità req</Label>
@@ -96,8 +108,21 @@ export default function CompensationTab() {
                     <Label className="text-[0.6rem] text-muted-foreground">Max invest</Label>
                     <Input type="number" value={l.investimento_max ?? ''} onChange={(e) => update(l.id, { investimento_max: e.target.value === '' ? null : parseFloat(e.target.value) })} className="h-7 text-xs" />
                   </div>
+                  <div>
+                    <Label className="text-[0.6rem] text-muted-foreground">Prossimo livello</Label>
+                    <Input value={l.prossimo_livello ?? ''} onChange={(e) => update(l.id, { prossimo_livello: (e.target.value || null) as any })} className="h-7 text-xs" />
+                  </div>
+                  <div className="flex items-end gap-2">
+                    <label className="flex items-center gap-1.5 text-[0.65rem] text-muted-foreground">
+                      <input type="checkbox" checked={l.rete} onChange={(e) => update(l.id, { rete: e.target.checked })} />
+                      Rete attiva
+                    </label>
+                  </div>
+                  <div className="col-span-2 sm:col-span-4">
+                    <Label className="text-[0.6rem] text-muted-foreground">Note</Label>
+                    <Input value={l.note ?? ''} onChange={(e) => update(l.id, { note: e.target.value || null })} className="h-7 text-xs" />
+                  </div>
                 </div>
-                {l.note && <Badge variant="secondary" className="text-[0.6rem]">{l.note}</Badge>}
               </div>
             );
           })}
