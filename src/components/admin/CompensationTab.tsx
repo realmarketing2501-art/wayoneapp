@@ -17,6 +17,46 @@ export default function CompensationTab() {
   const [edits, setEdits] = useState<Record<string, Partial<LevelConfig>>>({});
   const [confirmDel, setConfirmDel] = useState<string | null>(null);
 
+  // Durate configurabili dei due slot di rendita (giornaliero_45 / giornaliero_90)
+  const { data: planDays } = useQuery({
+    queryKey: ['level_plan_days'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('admin_settings')
+        .select('key,value')
+        .in('key', ['level_plan_short_days', 'level_plan_long_days']);
+      if (error) throw error;
+      const map = Object.fromEntries((data ?? []).map((r) => [r.key, r.value]));
+      return {
+        short: Number(map.level_plan_short_days ?? 45),
+        long: Number(map.level_plan_long_days ?? 90),
+      };
+    },
+    staleTime: 30_000,
+  });
+  const [daysEdit, setDaysEdit] = useState<{ short?: number; long?: number }>({});
+  const shortDays = daysEdit.short ?? planDays?.short ?? 45;
+  const longDays = daysEdit.long ?? planDays?.long ?? 90;
+  const daysDirty = daysEdit.short !== undefined || daysEdit.long !== undefined;
+
+  const saveDays = useMutation({
+    mutationFn: async () => {
+      const updates: { key: string; value: string }[] = [];
+      if (daysEdit.short !== undefined) updates.push({ key: 'level_plan_short_days', value: String(daysEdit.short) });
+      if (daysEdit.long !== undefined) updates.push({ key: 'level_plan_long_days', value: String(daysEdit.long) });
+      for (const u of updates) {
+        const { error } = await supabase.from('admin_settings').update({ value: u.value }).eq('key', u.key);
+        if (error) throw error;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['level_plan_days'] });
+      setDaysEdit({});
+      toast({ title: 'Durate piani salvate' });
+    },
+    onError: (e: Error) => toast({ title: 'Errore', description: e.message, variant: 'destructive' }),
+  });
+
   const saveMutation = useMutation({
     mutationFn: async ({ id, patch }: { id: string; patch: Partial<LevelConfig> }) => {
       const { error } = await supabase.from('levels').update(patch).eq('id', id);
@@ -78,6 +118,38 @@ export default function CompensationTab() {
           <Layers className="h-4 w-4 text-primary" />
           <h4 className="text-sm font-semibold text-foreground">Livelli Way One</h4>
         </div>
+
+        {/* Durate dei due slot di rendita giornaliera (modificabili) */}
+        <div className="rounded-lg border border-primary/30 bg-primary/5 p-2.5">
+          <p className="text-[0.65rem] font-semibold text-foreground mb-1.5">
+            Durate piani (giorni) — usate dalle colonne % qui sotto
+          </p>
+          <div className="flex flex-wrap items-end gap-2">
+            <div>
+              <Label className="text-[0.6rem] text-muted-foreground">Piano breve (giorni)</Label>
+              <Input
+                type="number"
+                value={shortDays}
+                onChange={(e) => setDaysEdit((d) => ({ ...d, short: parseInt(e.target.value) || 0 }))}
+                className="h-7 w-28 text-xs"
+              />
+            </div>
+            <div>
+              <Label className="text-[0.6rem] text-muted-foreground">Piano lungo (giorni)</Label>
+              <Input
+                type="number"
+                value={longDays}
+                onChange={(e) => setDaysEdit((d) => ({ ...d, long: parseInt(e.target.value) || 0 }))}
+                className="h-7 w-28 text-xs"
+              />
+            </div>
+            {daysDirty && (
+              <Button size="sm" className="h-7 text-xs gap-1" onClick={() => saveDays.mutate()} disabled={saveDays.isPending}>
+                <Save className="h-3 w-3" /> Salva durate
+              </Button>
+            )}
+          </div>
+        </div>
         <div className="space-y-2">
           {levels.map((orig) => {
             const l = merged(orig);
@@ -119,11 +191,11 @@ export default function CompensationTab() {
                     <Input type="number" value={l.durata_giorni ?? ''} onChange={(e) => update(l.id, { durata_giorni: e.target.value === '' ? null : parseInt(e.target.value) })} className="h-7 text-xs" />
                   </div>
                   <div>
-                    <Label className="text-[0.6rem] text-muted-foreground">% 45gg</Label>
+                    <Label className="text-[0.6rem] text-muted-foreground">% {shortDays}gg</Label>
                     <Input type="number" step="0.1" value={l.giornaliero_45 ?? ''} onChange={(e) => update(l.id, { giornaliero_45: e.target.value === '' ? null : parseFloat(e.target.value) })} className="h-7 text-xs" />
                   </div>
                   <div>
-                    <Label className="text-[0.6rem] text-muted-foreground">% 90gg</Label>
+                    <Label className="text-[0.6rem] text-muted-foreground">% {longDays}gg</Label>
                     <Input type="number" step="0.1" value={l.giornaliero_90 ?? ''} onChange={(e) => update(l.id, { giornaliero_90: e.target.value === '' ? null : parseFloat(e.target.value) })} className="h-7 text-xs" />
                   </div>
                   <div>
