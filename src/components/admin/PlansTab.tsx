@@ -63,7 +63,7 @@ export default function PlansTab() {
       const p = { ...patch };
       if (p.duration_days !== undefined && p.duration === undefined) p.duration = p.duration_days ?? 0;
       if (p.duration !== undefined && p.duration_days === undefined) p.duration_days = p.duration;
-      const { error } = await supabase.from('investment_plans').update(p).eq('id', id);
+      const { error } = await supabase.from('investment_plans').update(p as any).eq('id', id);
       if (error) throw error;
     },
     onSuccess: () => {
