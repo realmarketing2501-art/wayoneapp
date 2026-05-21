@@ -62,28 +62,15 @@ export default function DepositPage() {
   const pendingIntents = activeIntents.filter((i: any) => i.status === 'pending');
   const recentIntents = activeIntents.filter((i: any) => i.status !== 'pending');
 
-  // Generate unique amount suffix to avoid collisions
-  const generateUniqueSuffix = () => {
-    return Math.floor(Math.random() * 99 + 1) / 100; // 0.01 - 0.99
-  };
-
   const createIntent = useMutation({
     mutationFn: async () => {
       const amt = parseFloat(amount);
       if (!amt || amt < 50) throw new Error('Importo minimo 50 USD');
       if (!walletAddress) throw new Error('Wallet non configurato per questa rete');
 
-      const suffix = generateUniqueSuffix();
-      const amountUsdt = amt + suffix; // unique USDT amount for matching
-
-      const { error } = await supabase.from('deposit_intents').insert({
-        user_id: user!.id,
-        amount_usd: amt,
-        amount_usdt: amountUsdt,
-        unique_suffix: suffix,
-        network: selectedNetwork.id,
-        wallet_address: walletAddress,
-        status: 'pending',
+      const { error } = await supabase.rpc('create_deposit_intent', {
+        p_amount_usd: amt,
+        p_network: selectedNetwork.id,
       });
       if (error) throw error;
     },
