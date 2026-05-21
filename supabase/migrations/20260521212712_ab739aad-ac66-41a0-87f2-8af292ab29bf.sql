@@ -1,0 +1,2 @@
+ALTER TABLE public.levels DROP CONSTRAINT IF EXISTS levels_prossimo_livello_fkey;
+ALTER TABLE public.levels ADD CONSTRAINT levels_prossimo_livello_fkey FOREIGN KEY (prossimo_livello) REFERENCES public.levels(id) ON DELETE SET NULL ON UPDATE CASCADE;
