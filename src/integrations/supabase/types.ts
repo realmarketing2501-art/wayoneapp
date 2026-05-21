@@ -1086,13 +1086,33 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      admin_approve_manual_deposit: {
+        Args: { p_deposit_id: string }
+        Returns: boolean
+      }
+      admin_approve_withdrawal: {
+        Args: { p_tx_hash?: string; p_withdrawal_id: string }
+        Returns: boolean
+      }
       admin_delete_user: { Args: { p_user_id: string }; Returns: boolean }
+      admin_reject_manual_deposit: {
+        Args: { p_deposit_id: string }
+        Returns: boolean
+      }
+      admin_reject_withdrawal: {
+        Args: { p_withdrawal_id: string }
+        Returns: boolean
+      }
       award_level_bonus: {
         Args: {
           p_level: Database["public"]["Enums"]["level_name"]
           p_user_id: string
         }
         Returns: boolean
+      }
+      create_deposit_intent: {
+        Args: { p_amount_usd: number; p_network: string }
+        Returns: string
       }
       create_investment: {
         Args: {
@@ -1134,6 +1154,14 @@ export type Database = {
       invest_in_fund: {
         Args: { p_amount: number; p_fund_id: string; p_user_id: string }
         Returns: string
+      }
+      process_daily_returns: {
+        Args: never
+        Returns: {
+          completed: number
+          processed: number
+          skipped: number
+        }[]
       }
       process_matched_deposit: {
         Args: {

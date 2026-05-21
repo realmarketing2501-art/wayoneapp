@@ -224,44 +224,19 @@ function DepositsTab() {
 
   const approveMutation = useMutation({
     mutationFn: async (depositId: string) => {
-      const deposit = deposits.find(d => d.id === depositId);
-      if (!deposit) throw new Error('Deposito non trovato');
-
-      // Update deposit status
-      const { error: depError } = await supabase.from('deposits').update({ 
-        status: 'confirmed', 
-        confirmed_at: new Date().toISOString(),
-        reviewed_by: user!.id
-      }).eq('id', depositId);
-      if (depError) throw depError;
-
-      // Update user balance
-      const { data: profile, error: profError } = await supabase.from('profiles').select('balance, balance_available').eq('user_id', deposit.user_id).single();
-      if (profError) throw profError;
-
-      const newBalance = Number(profile.balance) + Number(deposit.amount);
-      const newAvailable = Number(profile.balance_available) + Number(deposit.amount);
-
-      const { error: updateError } = await supabase.from('profiles').update({ 
-        balance: newBalance,
-        balance_available: newAvailable,
-        has_confirmed_deposit: true
-      }).eq('user_id', deposit.user_id);
-      if (updateError) throw updateError;
+      const { error } = await supabase.rpc('admin_approve_manual_deposit', { p_deposit_id: depositId });
+      if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin_deposits'] });
-      toast({ title: 'Deposito confermato', description: 'Saldo utente aggiornato.' });
+      toast({ title: 'Deposito confermato', description: 'Saldo utente aggiornato (atomico + ledger).' });
     },
     onError: (e: Error) => toast({ title: 'Errore', description: e.message, variant: 'destructive' }),
   });
 
   const rejectMutation = useMutation({
     mutationFn: async (depositId: string) => {
-      const { error } = await supabase.from('deposits').update({ 
-        status: 'rejected',
-        reviewed_by: user!.id
-      }).eq('id', depositId);
+      const { error } = await supabase.rpc('admin_reject_manual_deposit', { p_deposit_id: depositId });
       if (error) throw error;
     },
     onSuccess: () => {
@@ -345,46 +320,27 @@ function WithdrawalsTab() {
 
   const approveMutation = useMutation({
     mutationFn: async (withdrawalId: string) => {
-      const w = withdrawals.find(x => x.id === withdrawalId);
-      if (!w) throw new Error('Prelievo non trovato');
-
-      const { error } = await supabase.from('withdrawals').update({ 
-        status: 'completed',
-        reviewed_by: user!.id
-      }).eq('id', withdrawalId);
+      const { error } = await supabase.rpc('admin_approve_withdrawal', {
+        p_withdrawal_id: withdrawalId,
+        p_tx_hash: null,
+      });
       if (error) throw error;
-
-      // Deduct balance
-      const { data: profile, error: profError } = await supabase.from('profiles').select('balance, balance_available').eq('user_id', w.user_id).single();
-      if (profError) throw profError;
-
-      const newBalance = Math.max(0, Number(profile.balance) - Number(w.amount));
-      const newAvailable = Math.max(0, Number(profile.balance_available) - Number(w.amount));
-
-      const { error: updateError } = await supabase.from('profiles').update({ 
-        balance: newBalance,
-        balance_available: newAvailable
-      }).eq('user_id', w.user_id);
-      if (updateError) throw updateError;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin_withdrawals'] });
-      toast({ title: 'Prelievo approvato' });
+      toast({ title: 'Prelievo approvato', description: 'Stato impostato a completato. Saldo già scalato alla richiesta.' });
     },
     onError: (e: Error) => toast({ title: 'Errore', description: e.message, variant: 'destructive' }),
   });
 
   const rejectMutation = useMutation({
     mutationFn: async (withdrawalId: string) => {
-      const { error } = await supabase.from('withdrawals').update({ 
-        status: 'rejected',
-        reviewed_by: user!.id
-      }).eq('id', withdrawalId);
+      const { error } = await supabase.rpc('admin_reject_withdrawal', { p_withdrawal_id: withdrawalId });
       if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admin_withdrawals'] });
-      toast({ title: 'Prelievo rifiutato' });
+      toast({ title: 'Prelievo rifiutato', description: 'Saldo rimborsato.' });
     },
     onError: (e: Error) => toast({ title: 'Errore', description: e.message, variant: 'destructive' }),
   });
