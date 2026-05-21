@@ -118,6 +118,38 @@ export default function CompensationTab() {
           <Layers className="h-4 w-4 text-primary" />
           <h4 className="text-sm font-semibold text-foreground">Livelli Way One</h4>
         </div>
+
+        {/* Durate dei due slot di rendita giornaliera (modificabili) */}
+        <div className="rounded-lg border border-primary/30 bg-primary/5 p-2.5">
+          <p className="text-[0.65rem] font-semibold text-foreground mb-1.5">
+            Durate piani (giorni) — usate dalle colonne % qui sotto
+          </p>
+          <div className="flex flex-wrap items-end gap-2">
+            <div>
+              <Label className="text-[0.6rem] text-muted-foreground">Piano breve (giorni)</Label>
+              <Input
+                type="number"
+                value={shortDays}
+                onChange={(e) => setDaysEdit((d) => ({ ...d, short: parseInt(e.target.value) || 0 }))}
+                className="h-7 w-28 text-xs"
+              />
+            </div>
+            <div>
+              <Label className="text-[0.6rem] text-muted-foreground">Piano lungo (giorni)</Label>
+              <Input
+                type="number"
+                value={longDays}
+                onChange={(e) => setDaysEdit((d) => ({ ...d, long: parseInt(e.target.value) || 0 }))}
+                className="h-7 w-28 text-xs"
+              />
+            </div>
+            {daysDirty && (
+              <Button size="sm" className="h-7 text-xs gap-1" onClick={() => saveDays.mutate()} disabled={saveDays.isPending}>
+                <Save className="h-3 w-3" /> Salva durate
+              </Button>
+            )}
+          </div>
+        </div>
         <div className="space-y-2">
           {levels.map((orig) => {
             const l = merged(orig);
