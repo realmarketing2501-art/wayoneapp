@@ -104,7 +104,7 @@ export default function NetworkPage() {
 
   const referralCode = profile?.referral_code ?? '...';
   // Always use the published domain for referral links so they work outside preview
-  const referralUrl = `https://wayoneapp.lovable.app/login?ref=${referralCode}`;
+  const referralUrl = `https://wayone.xyz/login?ref=${referralCode}`;
 
   const copyLink = () => {
     navigator.clipboard.writeText(referralUrl);
