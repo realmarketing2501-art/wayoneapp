@@ -46,6 +46,43 @@ export default function Index() {
   const ranks = t('landing.ranks.items', { returnObjects: true }) as RankItem[];
   const refLabels = t('landing.referral.levels', { returnObjects: true }) as LevelLabel[];
 
+  // Piani dinamici dal pannello admin (tabella investment_plans)
+  const { data: dbPlans } = useQuery({
+    queryKey: ['landing_investment_plans'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('investment_plans')
+        .select('id,name,status,duration,duration_days,daily_return,min_invest,max_invest')
+        .eq('status', 'active')
+        .order('min_invest', { ascending: true, nullsFirst: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+    staleTime: 60_000,
+  });
+
+  const plans = useMemo(() => {
+    if (!dbPlans || dbPlans.length === 0) return fallbackPlans;
+    const fmt = (n: number) => n.toLocaleString('it-IT', { maximumFractionDigits: 2 });
+    const mid = Math.floor(dbPlans.length / 2);
+    return dbPlans.map((p, i) => {
+      const days = p.duration_days ?? p.duration ?? 0;
+      const daily = Number(p.daily_return ?? 0);
+      const roi = daily * days;
+      const max = p.max_invest && Number(p.max_invest) >= 1_000_000 ? '__UNLIMITED__' : fmt(Number(p.max_invest ?? 0));
+      return {
+        name: p.name,
+        days,
+        daily: `${fmt(daily)}%`,
+        roi: `+${fmt(roi)}%`,
+        min: Number(p.min_invest ?? 0),
+        max,
+        popular: i === mid,
+      };
+    });
+  }, [dbPlans]);
+
+
   return (
     <div className="min-h-screen usdt-bg">
       <header className="sticky top-0 z-50 usdt-header">
