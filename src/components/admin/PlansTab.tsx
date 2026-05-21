@@ -25,7 +25,7 @@ type Plan = {
 };
 
 const STATUSES = ['active', 'paused', 'archived'];
-const LEVELS = ['gamma', 'beta', 'alpha', 'omega', 'sigma'];
+const LEVELS = ['gamma', 'beta', 'silver', 'silver_elite', 'gold', 'gold_elite', 'oro_vip', 'bronze'];
 
 const EMPTY: Omit<Plan, 'id'> = {
   name: '',
