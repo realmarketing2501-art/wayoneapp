@@ -1104,6 +1104,10 @@ export type Database = {
         }
         Returns: string
       }
+      create_withdrawal: {
+        Args: { p_amount: number; p_type: string; p_wallet_address: string }
+        Returns: string
+      }
       expire_old_deposit_intents: { Args: never; Returns: number }
       get_public_setting: { Args: { p_key: string }; Returns: string }
       get_referral_tree: {
