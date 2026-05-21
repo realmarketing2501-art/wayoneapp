@@ -513,9 +513,10 @@ function PhoneLanding() {
   );
 }
 
-function PhoneDashboard() {
+function PhoneDashboard({ plans }: { plans: PhonePlan[] }) {
   const { t } = useTranslation();
   const quick = t('landing.phone.quick', { returnObjects: true }) as string[];
+  const featured = plans.find((p) => p.popular) ?? plans[Math.floor(plans.length / 2)] ?? plans[0];
   return (
     <div className="space-y-2">
       <div className="usdt-card-gold flex items-center justify-between p-2">
@@ -535,8 +536,8 @@ function PhoneDashboard() {
       <div className="space-y-1 rounded-lg border border-primary/15 p-1.5">
         <p className="text-[0.5rem] font-bold text-foreground">{t('landing.phone.overview')}</p>
         {[
-          [t('landing.phone.yield_label'), '0,60%'],
-          [t('landing.phone.plan_label'), 'Gold'],
+          [t('landing.phone.yield_label'), featured?.daily ?? '—'],
+          [t('landing.phone.plan_label'), featured?.name ?? '—'],
           [t('landing.phone.exp_label'), t('landing.phone.exp_value')],
         ].map(([l, v]) => (
           <div key={l} className="flex justify-between text-[0.5rem]">
@@ -549,28 +550,26 @@ function PhoneDashboard() {
   );
 }
 
-function PhoneInvest() {
+function PhoneInvest({ plans }: { plans: PhonePlan[] }) {
   const { t } = useTranslation();
   const d = t('landing.phone.days_short');
-  const phonePlans = [
-    ['Silver',   `45 ${d}`, '0,50%'],
-    ['Gold',     `60 ${d}`, '0,60%'],
-    ['Platinum', `75 ${d}`, '0,75%'],
-    ['Diamond',  `90 ${d}`, '0,90%'],
-  ];
+  // Mostra max 4 piani reali; evidenzia il "popular" (o il secondo)
+  const phonePlans = plans.slice(0, 4);
+  const popularIdx = phonePlans.findIndex((p) => p.popular);
+  const highlightIdx = popularIdx >= 0 ? popularIdx : Math.min(1, phonePlans.length - 1);
   return (
     <div className="space-y-2">
       <p className="text-center font-display text-[0.6rem] font-bold text-foreground">{t('landing.phone.choose_plan')}</p>
-      {phonePlans.map(([n, dd, r], i) => (
-        <div key={n}
-          className={`flex items-center justify-between rounded-lg border p-1.5 ${i === 1 ? 'border-primary bg-primary/10' : 'border-primary/15'}`}>
+      {phonePlans.map((p, i) => (
+        <div key={p.name}
+          className={`flex items-center justify-between rounded-lg border p-1.5 ${i === highlightIdx ? 'border-primary bg-primary/10' : 'border-primary/15'}`}>
           <div className="flex items-center gap-1.5">
             <div className="h-3 w-3 rotate-45 rounded-sm bg-primary/60" />
-            <span className="text-[0.55rem] font-semibold">{n}</span>
+            <span className="text-[0.55rem] font-semibold">{p.name}</span>
           </div>
           <div className="text-right text-[0.5rem]">
-            <p className="text-muted-foreground">{dd}</p>
-            <p className="font-bold text-primary">{r} {t('landing.phone.per_day')}</p>
+            <p className="text-muted-foreground">{p.days} {d}</p>
+            <p className="font-bold text-primary">{p.daily} {t('landing.phone.per_day')}</p>
           </div>
         </div>
       ))}
@@ -581,3 +580,4 @@ function PhoneInvest() {
 
 // Suppress unused import warnings for icons referenced indirectly
 void Send; void Eye;
+
