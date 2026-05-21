@@ -14,14 +14,7 @@ const featureIcons = [Smartphone, BarChart3, FileText, Share2, Bell, ShieldCheck
 const flowIcons = [UserPlus, Wallet, TrendingUp, ArrowDownToLine];
 const bonusIcons = [Users, Star, Crown, Wallet, Wallet, Wallet];
 
-// Fallback statico mostrato se non ci sono piani configurati nel pannello admin
-const fallbackPlans = [
-  { name: 'Starter',  days: 30, daily: '0,40%', roi: '+12%',     min: 50, max: '500' },
-  { name: 'Silver',   days: 45, daily: '0,50%', roi: '+22,5%',   min: 50, max: '2.000' },
-  { name: 'Gold',     days: 60, daily: '0,60%', roi: '+36%',     min: 50, max: '5.000', popular: true },
-  { name: 'Platinum', days: 75, daily: '0,75%', roi: '+56,25%',  min: 50, max: '10.000' },
-  { name: 'Diamond',  days: 90, daily: '0,90%', roi: '+81%',     min: 50, max: '__UNLIMITED__' },
-];
+// Nessun fallback statico: se non ci sono piani attivi mostriamo un empty-state.
 
 const referralLevels = [
   { level: 'L1', pct: '4%',   on1000: '+40 USDT' },
@@ -61,8 +54,8 @@ export default function Index() {
     staleTime: 60_000,
   });
 
-  const plans = useMemo(() => {
-    if (!dbPlans || dbPlans.length === 0) return fallbackPlans;
+  const plans = useMemo<PhonePlan[]>(() => {
+    if (!dbPlans || dbPlans.length === 0) return [];
     const fmt = (n: number) => n.toLocaleString('it-IT', { maximumFractionDigits: 2 });
     const mid = Math.floor(dbPlans.length / 2);
     return dbPlans.map((p, i) => {
@@ -81,6 +74,8 @@ export default function Index() {
       };
     });
   }, [dbPlans]);
+
+  const hasPlans = plans.length > 0;
 
 
   return (
@@ -259,34 +254,48 @@ export default function Index() {
             </p>
           </div>
 
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-            {plans.map((p, i) => (
-              <motion.div key={p.name} initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.06 }}
-                className={`relative rounded-2xl p-5 ${p.popular ? 'usdt-card-gold border-2 border-primary' : 'usdt-card'}`}>
-                {p.popular && (
-                  <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-0.5 text-[0.6rem] font-bold uppercase tracking-wide text-primary-foreground">
-                    {t('landing.plans.popular')}
-                  </span>
-                )}
-                <h3 className="font-display text-xl font-bold usdt-gold-text">{p.name}</h3>
-                <p className="mt-1 text-xs text-muted-foreground">{p.days} {t('landing.plans.days')}</p>
-                <div className="mt-4">
-                  <p className="font-display text-3xl font-bold text-foreground">{p.daily}</p>
-                  <p className="text-[0.7rem] text-muted-foreground">{t('landing.plans.daily_sub')}</p>
-                </div>
-                <div className="mt-3 inline-flex rounded-full bg-primary/15 px-2.5 py-0.5 text-[0.7rem] font-bold text-primary">
-                  ROI {p.roi}
-                </div>
-                <div className="mt-4 space-y-1 text-xs text-muted-foreground">
-                  <p>{t('landing.plans.min')}: <span className="text-foreground">{p.min} USDT</span></p>
-                  <p>{t('landing.plans.max')}: <span className="text-foreground">{p.max === '__UNLIMITED__' ? t('landing.plans.unlimited') : `${p.max} USDT`}</span></p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-          <p className="mt-6 text-center text-[0.7rem] text-muted-foreground">
-            {t('landing.plans.note')}
-          </p>
+          {hasPlans ? (
+            <>
+              <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+                {plans.map((p, i) => (
+                  <motion.div key={p.name} initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.06 }}
+                    className={`relative rounded-2xl p-5 ${p.popular ? 'usdt-card-gold border-2 border-primary' : 'usdt-card'}`}>
+                    {p.popular && (
+                      <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-0.5 text-[0.6rem] font-bold uppercase tracking-wide text-primary-foreground">
+                        {t('landing.plans.popular')}
+                      </span>
+                    )}
+                    <h3 className="font-display text-xl font-bold usdt-gold-text">{p.name}</h3>
+                    <p className="mt-1 text-xs text-muted-foreground">{p.days} {t('landing.plans.days')}</p>
+                    <div className="mt-4">
+                      <p className="font-display text-3xl font-bold text-foreground">{p.daily}</p>
+                      <p className="text-[0.7rem] text-muted-foreground">{t('landing.plans.daily_sub')}</p>
+                    </div>
+                    <div className="mt-3 inline-flex rounded-full bg-primary/15 px-2.5 py-0.5 text-[0.7rem] font-bold text-primary">
+                      ROI {p.roi}
+                    </div>
+                    <div className="mt-4 space-y-1 text-xs text-muted-foreground">
+                      <p>{t('landing.plans.min')}: <span className="text-foreground">{p.min} USDT</span></p>
+                      <p>{t('landing.plans.max')}: <span className="text-foreground">{p.max === '__UNLIMITED__' ? t('landing.plans.unlimited') : `${p.max} USDT`}</span></p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+              <p className="mt-6 text-center text-[0.7rem] text-muted-foreground">
+                {t('landing.plans.note')}
+              </p>
+            </>
+          ) : (
+            <div className="mt-10 usdt-card mx-auto max-w-md p-8 text-center">
+              <Wallet className="mx-auto h-8 w-8 text-primary/60" />
+              <p className="mt-3 font-display text-base font-semibold text-foreground">
+                Nessun piano attivo disponibile
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Torna a breve: nuovi piani saranno pubblicati dall'amministrazione.
+              </p>
+            </div>
+          )}
         </div>
       </section>
 
@@ -513,10 +522,21 @@ function PhoneLanding() {
   );
 }
 
+function PhoneEmpty({ label }: { label: string }) {
+  return (
+    <div className="flex h-full flex-col items-center justify-center gap-2 text-center px-2">
+      <Wallet className="h-6 w-6 text-primary/50" />
+      <p className="text-[0.55rem] font-semibold text-foreground">{label}</p>
+      <p className="text-[0.5rem] text-muted-foreground">A breve nuovi piani.</p>
+    </div>
+  );
+}
+
 function PhoneDashboard({ plans }: { plans: PhonePlan[] }) {
   const { t } = useTranslation();
   const quick = t('landing.phone.quick', { returnObjects: true }) as string[];
   const featured = plans.find((p) => p.popular) ?? plans[Math.floor(plans.length / 2)] ?? plans[0];
+  if (!featured) return <PhoneEmpty label="Nessun piano attivo" />;
   return (
     <div className="space-y-2">
       <div className="usdt-card-gold flex items-center justify-between p-2">
@@ -536,8 +556,8 @@ function PhoneDashboard({ plans }: { plans: PhonePlan[] }) {
       <div className="space-y-1 rounded-lg border border-primary/15 p-1.5">
         <p className="text-[0.5rem] font-bold text-foreground">{t('landing.phone.overview')}</p>
         {[
-          [t('landing.phone.yield_label'), featured?.daily ?? '—'],
-          [t('landing.phone.plan_label'), featured?.name ?? '—'],
+          [t('landing.phone.yield_label'), featured.daily],
+          [t('landing.phone.plan_label'), featured.name],
           [t('landing.phone.exp_label'), t('landing.phone.exp_value')],
         ].map(([l, v]) => (
           <div key={l} className="flex justify-between text-[0.5rem]">
@@ -553,8 +573,8 @@ function PhoneDashboard({ plans }: { plans: PhonePlan[] }) {
 function PhoneInvest({ plans }: { plans: PhonePlan[] }) {
   const { t } = useTranslation();
   const d = t('landing.phone.days_short');
-  // Mostra max 4 piani reali; evidenzia il "popular" (o il secondo)
   const phonePlans = plans.slice(0, 4);
+  if (phonePlans.length === 0) return <PhoneEmpty label="Nessun piano attivo" />;
   const popularIdx = phonePlans.findIndex((p) => p.popular);
   const highlightIdx = popularIdx >= 0 ? popularIdx : Math.min(1, phonePlans.length - 1);
   return (
