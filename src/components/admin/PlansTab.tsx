@@ -25,7 +25,18 @@ type Plan = {
 };
 
 const STATUSES = ['active', 'paused', 'archived'];
-const LEVELS = ['gamma', 'beta', 'silver', 'silver_elite', 'gold', 'gold_elite', 'oro_vip', 'bronze'];
+// Mappa codice DB → nome visibile (in ordine di livello MLM)
+const LEVELS: { id: string; label: string }[] = [
+  { id: 'gamma', label: 'Starter' },
+  { id: 'beta', label: 'Silver' },
+  { id: 'bronze', label: 'Gold' },
+  { id: 'silver', label: 'Platinum' },
+  { id: 'silver_elite', label: 'Platinum Elite' },
+  { id: 'gold', label: 'Diamond' },
+  { id: 'gold_elite', label: 'Diamond Elite' },
+  { id: 'oro_vip', label: 'VIP' },
+];
+const levelLabel = (id: string) => LEVELS.find((l) => l.id === id)?.label ?? id;
 
 const EMPTY: Omit<Plan, 'id'> = {
   name: '',
@@ -58,7 +69,7 @@ function FieldGrid({ p, onChange }: { p: Omit<Plan, 'id'>; onChange: (v: Partial
         <Label className="text-[0.6rem] text-muted-foreground">Livello minimo</Label>
         <Select value={p.min_level} onValueChange={(v) => onChange({ min_level: v })}>
           <SelectTrigger className="h-7 text-xs"><SelectValue /></SelectTrigger>
-          <SelectContent>{LEVELS.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
+          <SelectContent>{LEVELS.map((l) => <SelectItem key={l.id} value={l.id}>{l.label}</SelectItem>)}</SelectContent>
         </Select>
       </div>
       <div>
@@ -259,7 +270,7 @@ export default function PlansTab() {
                   <p className="text-sm font-semibold truncate">{p.name || '—'}</p>
                   <div className="flex flex-wrap gap-1 mt-0.5">
                     <Badge variant="secondary" className="text-[0.55rem]">{p.status}</Badge>
-                    <Badge variant="outline" className="text-[0.55rem]">{p.min_level}</Badge>
+                    <Badge variant="outline" className="text-[0.55rem]">{levelLabel(p.min_level)}</Badge>
                     <Badge variant="outline" className="text-[0.55rem]">Tot. {totalReturn}%</Badge>
                   </div>
                 </div>
