@@ -557,6 +557,18 @@ function NotificationsTab() {
     onError: (e: Error) => toast({ title: 'Errore', description: e.message, variant: 'destructive' }),
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from('notifications').delete().eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin_notifications'] });
+      toast({ title: 'Notifica eliminata' });
+    },
+    onError: (e: Error) => toast({ title: 'Errore', description: e.message, variant: 'destructive' }),
+  });
+
   return (
     <div className="space-y-4">
       <Card>
@@ -573,10 +585,20 @@ function NotificationsTab() {
       <div className="space-y-1.5 max-h-[50vh] overflow-y-auto">
         {notifications.map(n => (
           <Card key={n.id}>
-            <CardContent className="p-3">
-              <p className="font-medium text-foreground text-sm">{n.title}</p>
-              <p className="text-xs text-muted-foreground mt-0.5">{n.message}</p>
-              <p className="text-[0.6rem] text-muted-foreground mt-1">{new Date(n.created_at).toLocaleString('it-IT')}</p>
+            <CardContent className="p-3 flex items-start justify-between gap-2">
+              <div className="min-w-0 flex-1">
+                <p className="font-medium text-foreground text-sm">{n.title}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{n.message}</p>
+                <p className="text-[0.6rem] text-muted-foreground mt-1">{new Date(n.created_at).toLocaleString('it-IT')}</p>
+              </div>
+              <Button
+                size="sm"
+                variant="destructive"
+                className="h-7 px-2 text-xs shrink-0"
+                onClick={() => { if (confirm('Eliminare la notifica?')) deleteMutation.mutate(n.id); }}
+              >
+                Elimina
+              </Button>
             </CardContent>
           </Card>
         ))}
