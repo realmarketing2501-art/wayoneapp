@@ -6,13 +6,16 @@ import { UsdtMonogram } from '@/components/UsdtMonogram';
 import HeaderLanguageButton from '@/components/HeaderLanguageButton';
 import CryptoTicker from '@/components/CryptoTicker';
 import { useTranslation } from 'react-i18next';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useMemo } from 'react';
 
 const featureIcons = [Smartphone, BarChart3, FileText, Share2, Bell, ShieldCheck];
 const flowIcons = [UserPlus, Wallet, TrendingUp, ArrowDownToLine];
 const bonusIcons = [Users, Star, Crown, Wallet, Wallet, Wallet];
 
-// Numeric/structural plan data (text labels via i18n)
-const plans = [
+// Fallback statico mostrato se non ci sono piani configurati nel pannello admin
+const fallbackPlans = [
   { name: 'Starter',  days: 30, daily: '0,40%', roi: '+12%',     min: 50, max: '500' },
   { name: 'Silver',   days: 45, daily: '0,50%', roi: '+22,5%',   min: 50, max: '2.000' },
   { name: 'Gold',     days: 60, daily: '0,60%', roi: '+36%',     min: 50, max: '5.000', popular: true },
