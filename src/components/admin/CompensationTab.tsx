@@ -191,11 +191,11 @@ export default function CompensationTab() {
                     <Input type="number" value={l.durata_giorni ?? ''} onChange={(e) => update(l.id, { durata_giorni: e.target.value === '' ? null : parseInt(e.target.value) })} className="h-7 text-xs" />
                   </div>
                   <div>
-                    <Label className="text-[0.6rem] text-muted-foreground">% 45gg</Label>
+                    <Label className="text-[0.6rem] text-muted-foreground">% {shortDays}gg</Label>
                     <Input type="number" step="0.1" value={l.giornaliero_45 ?? ''} onChange={(e) => update(l.id, { giornaliero_45: e.target.value === '' ? null : parseFloat(e.target.value) })} className="h-7 text-xs" />
                   </div>
                   <div>
-                    <Label className="text-[0.6rem] text-muted-foreground">% 90gg</Label>
+                    <Label className="text-[0.6rem] text-muted-foreground">% {longDays}gg</Label>
                     <Input type="number" step="0.1" value={l.giornaliero_90 ?? ''} onChange={(e) => update(l.id, { giornaliero_90: e.target.value === '' ? null : parseFloat(e.target.value) })} className="h-7 text-xs" />
                   </div>
                   <div>
