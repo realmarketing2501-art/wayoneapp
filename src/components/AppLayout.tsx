@@ -1,5 +1,5 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { Home, TrendingUp, Users, Wallet, User, LogIn, Bell } from 'lucide-react';
+import { Home, TrendingUp, Users, Wallet, User, LogIn, Bell, ShieldCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import HeaderLanguageButton from './HeaderLanguageButton';
 import { useAuth } from '@/contexts/AuthContext';
