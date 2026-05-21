@@ -254,34 +254,48 @@ export default function Index() {
             </p>
           </div>
 
-          <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-            {plans.map((p, i) => (
-              <motion.div key={p.name} initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.06 }}
-                className={`relative rounded-2xl p-5 ${p.popular ? 'usdt-card-gold border-2 border-primary' : 'usdt-card'}`}>
-                {p.popular && (
-                  <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-0.5 text-[0.6rem] font-bold uppercase tracking-wide text-primary-foreground">
-                    {t('landing.plans.popular')}
-                  </span>
-                )}
-                <h3 className="font-display text-xl font-bold usdt-gold-text">{p.name}</h3>
-                <p className="mt-1 text-xs text-muted-foreground">{p.days} {t('landing.plans.days')}</p>
-                <div className="mt-4">
-                  <p className="font-display text-3xl font-bold text-foreground">{p.daily}</p>
-                  <p className="text-[0.7rem] text-muted-foreground">{t('landing.plans.daily_sub')}</p>
-                </div>
-                <div className="mt-3 inline-flex rounded-full bg-primary/15 px-2.5 py-0.5 text-[0.7rem] font-bold text-primary">
-                  ROI {p.roi}
-                </div>
-                <div className="mt-4 space-y-1 text-xs text-muted-foreground">
-                  <p>{t('landing.plans.min')}: <span className="text-foreground">{p.min} USDT</span></p>
-                  <p>{t('landing.plans.max')}: <span className="text-foreground">{p.max === '__UNLIMITED__' ? t('landing.plans.unlimited') : `${p.max} USDT`}</span></p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-          <p className="mt-6 text-center text-[0.7rem] text-muted-foreground">
-            {t('landing.plans.note')}
-          </p>
+          {hasPlans ? (
+            <>
+              <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+                {plans.map((p, i) => (
+                  <motion.div key={p.name} initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.06 }}
+                    className={`relative rounded-2xl p-5 ${p.popular ? 'usdt-card-gold border-2 border-primary' : 'usdt-card'}`}>
+                    {p.popular && (
+                      <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-0.5 text-[0.6rem] font-bold uppercase tracking-wide text-primary-foreground">
+                        {t('landing.plans.popular')}
+                      </span>
+                    )}
+                    <h3 className="font-display text-xl font-bold usdt-gold-text">{p.name}</h3>
+                    <p className="mt-1 text-xs text-muted-foreground">{p.days} {t('landing.plans.days')}</p>
+                    <div className="mt-4">
+                      <p className="font-display text-3xl font-bold text-foreground">{p.daily}</p>
+                      <p className="text-[0.7rem] text-muted-foreground">{t('landing.plans.daily_sub')}</p>
+                    </div>
+                    <div className="mt-3 inline-flex rounded-full bg-primary/15 px-2.5 py-0.5 text-[0.7rem] font-bold text-primary">
+                      ROI {p.roi}
+                    </div>
+                    <div className="mt-4 space-y-1 text-xs text-muted-foreground">
+                      <p>{t('landing.plans.min')}: <span className="text-foreground">{p.min} USDT</span></p>
+                      <p>{t('landing.plans.max')}: <span className="text-foreground">{p.max === '__UNLIMITED__' ? t('landing.plans.unlimited') : `${p.max} USDT`}</span></p>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+              <p className="mt-6 text-center text-[0.7rem] text-muted-foreground">
+                {t('landing.plans.note')}
+              </p>
+            </>
+          ) : (
+            <div className="mt-10 usdt-card mx-auto max-w-md p-8 text-center">
+              <Wallet className="mx-auto h-8 w-8 text-primary/60" />
+              <p className="mt-3 font-display text-base font-semibold text-foreground">
+                Nessun piano attivo disponibile
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Torna a breve: nuovi piani saranno pubblicati dall'amministrazione.
+              </p>
+            </div>
+          )}
         </div>
       </section>
 
