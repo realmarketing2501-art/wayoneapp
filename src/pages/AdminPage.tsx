@@ -24,6 +24,7 @@ import RegistrationsTab from '@/components/admin/RegistrationsTab';
 import SystemStatusTab from '@/components/admin/SystemStatusTab';
 import FundsTab from '@/components/admin/FundsTab';
 import PlansTab from '@/components/admin/PlansTab';
+import TasksTab from '@/components/admin/TasksTab';
 
 function KPICard({ icon: Icon, label, value, color }: { icon: any; label: string; value: string; color: string }) {
   return (
@@ -557,6 +558,18 @@ function NotificationsTab() {
     onError: (e: Error) => toast({ title: 'Errore', description: e.message, variant: 'destructive' }),
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from('notifications').delete().eq('id', id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admin_notifications'] });
+      toast({ title: 'Notifica eliminata' });
+    },
+    onError: (e: Error) => toast({ title: 'Errore', description: e.message, variant: 'destructive' }),
+  });
+
   return (
     <div className="space-y-4">
       <Card>
@@ -573,10 +586,20 @@ function NotificationsTab() {
       <div className="space-y-1.5 max-h-[50vh] overflow-y-auto">
         {notifications.map(n => (
           <Card key={n.id}>
-            <CardContent className="p-3">
-              <p className="font-medium text-foreground text-sm">{n.title}</p>
-              <p className="text-xs text-muted-foreground mt-0.5">{n.message}</p>
-              <p className="text-[0.6rem] text-muted-foreground mt-1">{new Date(n.created_at).toLocaleString('it-IT')}</p>
+            <CardContent className="p-3 flex items-start justify-between gap-2">
+              <div className="min-w-0 flex-1">
+                <p className="font-medium text-foreground text-sm">{n.title}</p>
+                <p className="text-xs text-muted-foreground mt-0.5">{n.message}</p>
+                <p className="text-[0.6rem] text-muted-foreground mt-1">{new Date(n.created_at).toLocaleString('it-IT')}</p>
+              </div>
+              <Button
+                size="sm"
+                variant="destructive"
+                className="h-7 px-2 text-xs shrink-0"
+                onClick={() => { if (confirm('Eliminare la notifica?')) deleteMutation.mutate(n.id); }}
+              >
+                Elimina
+              </Button>
             </CardContent>
           </Card>
         ))}
@@ -675,6 +698,7 @@ export default function AdminPage() {
             <TabsTrigger value="registrations" className="text-xs min-w-[4rem]">Registr.</TabsTrigger>
             <TabsTrigger value="funds" className="text-xs min-w-[3.5rem]">Fondi</TabsTrigger>
             <TabsTrigger value="plans" className="text-xs min-w-[3.5rem]">Piani</TabsTrigger>
+            <TabsTrigger value="tasks" className="text-xs min-w-[3.5rem]">Attività</TabsTrigger>
             <TabsTrigger value="system" className="text-xs min-w-[4rem]">Sistema</TabsTrigger>
           </TabsList>
         </div>
@@ -691,6 +715,7 @@ export default function AdminPage() {
         <TabsContent value="registrations"><RegistrationsTab /></TabsContent>
        <TabsContent value="funds"><FundsTab /></TabsContent>
        <TabsContent value="plans"><PlansTab /></TabsContent>
+       <TabsContent value="tasks"><TasksTab /></TabsContent>
        <TabsContent value="system"><SystemStatusTab /></TabsContent>
       </Tabs>
     </div>
