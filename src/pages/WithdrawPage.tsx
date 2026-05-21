@@ -32,7 +32,7 @@ export default function WithdrawPage() {
   const feePct = selected?.fee_pct ?? 10;
   const fee = numAmount * feePct / 100;
   const net = numAmount - fee;
-  const balance = Number(profile?.balance ?? 0);
+  const balance = Number(profile?.balance_available ?? 0);
 
   const { data: withdrawals = [] } = useQuery({
     queryKey: ['withdrawals', user?.id],
