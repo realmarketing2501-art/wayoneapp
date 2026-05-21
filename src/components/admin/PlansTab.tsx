@@ -25,7 +25,18 @@ type Plan = {
 };
 
 const STATUSES = ['active', 'paused', 'archived'];
-const LEVELS = ['gamma', 'beta', 'silver', 'silver_elite', 'gold', 'gold_elite', 'oro_vip', 'bronze'];
+// Mappa codice DB → nome visibile (in ordine di livello MLM)
+const LEVELS: { id: string; label: string }[] = [
+  { id: 'gamma', label: 'Starter' },
+  { id: 'beta', label: 'Silver' },
+  { id: 'bronze', label: 'Gold' },
+  { id: 'silver', label: 'Platinum' },
+  { id: 'silver_elite', label: 'Platinum Elite' },
+  { id: 'gold', label: 'Diamond' },
+  { id: 'gold_elite', label: 'Diamond Elite' },
+  { id: 'oro_vip', label: 'VIP' },
+];
+const levelLabel = (id: string) => LEVELS.find((l) => l.id === id)?.label ?? id;
 
 const EMPTY: Omit<Plan, 'id'> = {
   name: '',
