@@ -459,6 +459,15 @@ export default function Index() {
             <UsdtMonogram size={24} letter="U" />
             <span className="font-display text-lg font-bold usdt-gold-text">USDT</span>
           </div>
+          <div className="mt-3 flex flex-wrap items-center justify-center gap-3 text-xs text-muted-foreground">
+            <button onClick={() => navigate('/certifications')} className="hover:text-primary hover:underline">
+              Certificazioni
+            </button>
+            <span className="text-border">|</span>
+            <button onClick={() => navigate('/faq')} className="hover:text-primary hover:underline">
+              FAQ
+            </button>
+          </div>
           <p className="mt-2 text-xs text-muted-foreground">
             © {new Date().getFullYear()} USDT. {t('landing.footer.rights')}
           </p>
