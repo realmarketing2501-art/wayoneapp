@@ -49,16 +49,13 @@ export default function WithdrawPage() {
       if (numAmount > balance) throw new Error('Saldo insufficiente');
       if (numAmount <= 0) throw new Error('Importo non valido');
       if (!wallet.trim()) throw new Error('Inserisci un indirizzo wallet');
-      const { error } = await supabase.from('withdrawals').insert({
-        user_id: user!.id,
-        amount: numAmount,
-        fee,
-        net,
-        wallet_address: wallet,
-        type: selected?.key ?? 'medium',
-        status: 'pending',
+      const { error } = await supabase.rpc('create_withdrawal', {
+        p_amount: numAmount,
+        p_wallet_address: wallet.trim(),
+        p_type: selected?.key ?? 'medium',
       });
       if (error) throw error;
+      queryClient.invalidateQueries({ queryKey: ['profile'] });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['withdrawals'] });
