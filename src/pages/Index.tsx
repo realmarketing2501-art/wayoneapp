@@ -61,8 +61,8 @@ export default function Index() {
     staleTime: 60_000,
   });
 
-  const plans = useMemo(() => {
-    if (!dbPlans || dbPlans.length === 0) return fallbackPlans;
+  const plans = useMemo<PhonePlan[]>(() => {
+    if (!dbPlans || dbPlans.length === 0) return [];
     const fmt = (n: number) => n.toLocaleString('it-IT', { maximumFractionDigits: 2 });
     const mid = Math.floor(dbPlans.length / 2);
     return dbPlans.map((p, i) => {
@@ -81,6 +81,8 @@ export default function Index() {
       };
     });
   }, [dbPlans]);
+
+  const hasPlans = plans.length > 0;
 
 
   return (
