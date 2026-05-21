@@ -6,13 +6,16 @@ import { UsdtMonogram } from '@/components/UsdtMonogram';
 import HeaderLanguageButton from '@/components/HeaderLanguageButton';
 import CryptoTicker from '@/components/CryptoTicker';
 import { useTranslation } from 'react-i18next';
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useMemo } from 'react';
 
 const featureIcons = [Smartphone, BarChart3, FileText, Share2, Bell, ShieldCheck];
 const flowIcons = [UserPlus, Wallet, TrendingUp, ArrowDownToLine];
 const bonusIcons = [Users, Star, Crown, Wallet, Wallet, Wallet];
 
-// Numeric/structural plan data (text labels via i18n)
-const plans = [
+// Fallback statico mostrato se non ci sono piani configurati nel pannello admin
+const fallbackPlans = [
   { name: 'Starter',  days: 30, daily: '0,40%', roi: '+12%',     min: 50, max: '500' },
   { name: 'Silver',   days: 45, daily: '0,50%', roi: '+22,5%',   min: 50, max: '2.000' },
   { name: 'Gold',     days: 60, daily: '0,60%', roi: '+36%',     min: 50, max: '5.000', popular: true },
@@ -42,6 +45,43 @@ export default function Index() {
   const bonuses = t('landing.bonuses.items', { returnObjects: true }) as BonusItem[];
   const ranks = t('landing.ranks.items', { returnObjects: true }) as RankItem[];
   const refLabels = t('landing.referral.levels', { returnObjects: true }) as LevelLabel[];
+
+  // Piani dinamici dal pannello admin (tabella investment_plans)
+  const { data: dbPlans } = useQuery({
+    queryKey: ['landing_investment_plans'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('investment_plans')
+        .select('id,name,status,duration,duration_days,daily_return,min_invest,max_invest')
+        .eq('status', 'active')
+        .order('min_invest', { ascending: true, nullsFirst: false });
+      if (error) throw error;
+      return data ?? [];
+    },
+    staleTime: 60_000,
+  });
+
+  const plans = useMemo(() => {
+    if (!dbPlans || dbPlans.length === 0) return fallbackPlans;
+    const fmt = (n: number) => n.toLocaleString('it-IT', { maximumFractionDigits: 2 });
+    const mid = Math.floor(dbPlans.length / 2);
+    return dbPlans.map((p, i) => {
+      const days = p.duration_days ?? p.duration ?? 0;
+      const daily = Number(p.daily_return ?? 0);
+      const roi = daily * days;
+      const max = p.max_invest && Number(p.max_invest) >= 1_000_000 ? '__UNLIMITED__' : fmt(Number(p.max_invest ?? 0));
+      return {
+        name: p.name,
+        days,
+        daily: `${fmt(daily)}%`,
+        roi: `+${fmt(roi)}%`,
+        min: Number(p.min_invest ?? 0),
+        max,
+        popular: i === mid,
+      };
+    });
+  }, [dbPlans]);
+
 
   return (
     <div className="min-h-screen usdt-bg">

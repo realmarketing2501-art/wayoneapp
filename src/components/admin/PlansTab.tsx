@@ -40,6 +40,95 @@ const EMPTY: Omit<Plan, 'id'> = {
   pool_filled: 0,
 };
 
+function FieldGrid({ p, onChange }: { p: Omit<Plan, 'id'>; onChange: (v: Partial<Plan>) => void }) {
+  return (
+    <div className="grid grid-cols-2 gap-2">
+      <div className="col-span-2">
+        <Label className="text-[0.6rem] text-muted-foreground">Nome piano</Label>
+        <Input value={p.name} onChange={(e) => onChange({ name: e.target.value })} className="h-7 text-xs" />
+      </div>
+      <div>
+        <Label className="text-[0.6rem] text-muted-foreground">Status</Label>
+        <Select value={p.status} onValueChange={(v) => onChange({ status: v })}>
+          <SelectTrigger className="h-7 text-xs"><SelectValue /></SelectTrigger>
+          <SelectContent>{STATUSES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
+        </Select>
+      </div>
+      <div>
+        <Label className="text-[0.6rem] text-muted-foreground">Livello minimo</Label>
+        <Select value={p.min_level} onValueChange={(v) => onChange({ min_level: v })}>
+          <SelectTrigger className="h-7 text-xs"><SelectValue /></SelectTrigger>
+          <SelectContent>{LEVELS.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
+        </Select>
+      </div>
+      <div>
+        <Label className="text-[0.6rem] text-muted-foreground">Durata (giorni)</Label>
+        <Input
+          type="number"
+          inputMode="numeric"
+          value={p.duration_days ?? p.duration ?? 0}
+          onChange={(e) => {
+            const v = parseInt(e.target.value) || 0;
+            onChange({ duration_days: v, duration: v });
+          }}
+          className="h-7 text-xs"
+        />
+      </div>
+      <div>
+        <Label className="text-[0.6rem] text-muted-foreground">Rendimento %/giorno</Label>
+        <Input
+          type="number"
+          inputMode="decimal"
+          step="0.01"
+          value={p.daily_return ?? 0}
+          onChange={(e) => onChange({ daily_return: parseFloat(e.target.value) || 0 })}
+          className="h-7 text-xs"
+        />
+      </div>
+      <div>
+        <Label className="text-[0.6rem] text-muted-foreground">Min USDT</Label>
+        <Input
+          type="number"
+          inputMode="decimal"
+          value={p.min_invest ?? 0}
+          onChange={(e) => onChange({ min_invest: parseFloat(e.target.value) || 0 })}
+          className="h-7 text-xs"
+        />
+      </div>
+      <div>
+        <Label className="text-[0.6rem] text-muted-foreground">Max USDT</Label>
+        <Input
+          type="number"
+          inputMode="decimal"
+          value={p.max_invest ?? 0}
+          onChange={(e) => onChange({ max_invest: parseFloat(e.target.value) || 0 })}
+          className="h-7 text-xs"
+        />
+      </div>
+      <div>
+        <Label className="text-[0.6rem] text-muted-foreground">Pool totale</Label>
+        <Input
+          type="number"
+          inputMode="decimal"
+          value={p.pool_total ?? 0}
+          onChange={(e) => onChange({ pool_total: parseFloat(e.target.value) || 0 })}
+          className="h-7 text-xs"
+        />
+      </div>
+      <div>
+        <Label className="text-[0.6rem] text-muted-foreground">Pool riempito</Label>
+        <Input
+          type="number"
+          inputMode="decimal"
+          value={p.pool_filled ?? 0}
+          onChange={(e) => onChange({ pool_filled: parseFloat(e.target.value) || 0 })}
+          className="h-7 text-xs"
+        />
+      </div>
+    </div>
+  );
+}
+
 export default function PlansTab() {
   const { toast } = useToast();
   const qc = useQueryClient();
@@ -115,86 +204,8 @@ export default function PlansTab() {
     );
   }
 
-  const FieldGrid = ({ p, onChange }: { p: Omit<Plan, 'id'>; onChange: (v: Partial<Plan>) => void }) => (
-    <div className="grid grid-cols-2 gap-2">
-      <div className="col-span-2">
-        <Label className="text-[0.6rem] text-muted-foreground">Nome piano</Label>
-        <Input value={p.name} onChange={(e) => onChange({ name: e.target.value })} className="h-7 text-xs" />
-      </div>
-      <div>
-        <Label className="text-[0.6rem] text-muted-foreground">Status</Label>
-        <Select value={p.status} onValueChange={(v) => onChange({ status: v })}>
-          <SelectTrigger className="h-7 text-xs"><SelectValue /></SelectTrigger>
-          <SelectContent>{STATUSES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
-        </Select>
-      </div>
-      <div>
-        <Label className="text-[0.6rem] text-muted-foreground">Livello minimo</Label>
-        <Select value={p.min_level} onValueChange={(v) => onChange({ min_level: v })}>
-          <SelectTrigger className="h-7 text-xs"><SelectValue /></SelectTrigger>
-          <SelectContent>{LEVELS.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
-        </Select>
-      </div>
-      <div>
-        <Label className="text-[0.6rem] text-muted-foreground">Durata (giorni)</Label>
-        <Input
-          type="number"
-          value={p.duration_days ?? p.duration ?? 0}
-          onChange={(e) => {
-            const v = parseInt(e.target.value) || 0;
-            onChange({ duration_days: v, duration: v });
-          }}
-          className="h-7 text-xs"
-        />
-      </div>
-      <div>
-        <Label className="text-[0.6rem] text-muted-foreground">Rendimento %/giorno</Label>
-        <Input
-          type="number"
-          step="0.01"
-          value={p.daily_return ?? 0}
-          onChange={(e) => onChange({ daily_return: parseFloat(e.target.value) || 0 })}
-          className="h-7 text-xs"
-        />
-      </div>
-      <div>
-        <Label className="text-[0.6rem] text-muted-foreground">Min USDT</Label>
-        <Input
-          type="number"
-          value={p.min_invest ?? 0}
-          onChange={(e) => onChange({ min_invest: parseFloat(e.target.value) || 0 })}
-          className="h-7 text-xs"
-        />
-      </div>
-      <div>
-        <Label className="text-[0.6rem] text-muted-foreground">Max USDT</Label>
-        <Input
-          type="number"
-          value={p.max_invest ?? 0}
-          onChange={(e) => onChange({ max_invest: parseFloat(e.target.value) || 0 })}
-          className="h-7 text-xs"
-        />
-      </div>
-      <div>
-        <Label className="text-[0.6rem] text-muted-foreground">Pool totale</Label>
-        <Input
-          type="number"
-          value={p.pool_total ?? 0}
-          onChange={(e) => onChange({ pool_total: parseFloat(e.target.value) || 0 })}
-          className="h-7 text-xs"
-        />
-      </div>
-      <div>
-        <Label className="text-[0.6rem] text-muted-foreground">Pool riempito</Label>
-        <Input
-          type="number"
-          value={p.pool_filled ?? 0}
-          onChange={(e) => onChange({ pool_filled: parseFloat(e.target.value) || 0 })}
-          className="h-7 text-xs"
-        />
-      </div>
-    </div>
-  );
+
+
 
   return (
     <div className="space-y-3">
