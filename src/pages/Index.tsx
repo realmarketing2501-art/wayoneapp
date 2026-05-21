@@ -522,10 +522,21 @@ function PhoneLanding() {
   );
 }
 
+function PhoneEmpty({ label }: { label: string }) {
+  return (
+    <div className="flex h-full flex-col items-center justify-center gap-2 text-center px-2">
+      <Wallet className="h-6 w-6 text-primary/50" />
+      <p className="text-[0.55rem] font-semibold text-foreground">{label}</p>
+      <p className="text-[0.5rem] text-muted-foreground">A breve nuovi piani.</p>
+    </div>
+  );
+}
+
 function PhoneDashboard({ plans }: { plans: PhonePlan[] }) {
   const { t } = useTranslation();
   const quick = t('landing.phone.quick', { returnObjects: true }) as string[];
   const featured = plans.find((p) => p.popular) ?? plans[Math.floor(plans.length / 2)] ?? plans[0];
+  if (!featured) return <PhoneEmpty label="Nessun piano attivo" />;
   return (
     <div className="space-y-2">
       <div className="usdt-card-gold flex items-center justify-between p-2">
@@ -545,8 +556,8 @@ function PhoneDashboard({ plans }: { plans: PhonePlan[] }) {
       <div className="space-y-1 rounded-lg border border-primary/15 p-1.5">
         <p className="text-[0.5rem] font-bold text-foreground">{t('landing.phone.overview')}</p>
         {[
-          [t('landing.phone.yield_label'), featured?.daily ?? '—'],
-          [t('landing.phone.plan_label'), featured?.name ?? '—'],
+          [t('landing.phone.yield_label'), featured.daily],
+          [t('landing.phone.plan_label'), featured.name],
           [t('landing.phone.exp_label'), t('landing.phone.exp_value')],
         ].map(([l, v]) => (
           <div key={l} className="flex justify-between text-[0.5rem]">
@@ -562,8 +573,8 @@ function PhoneDashboard({ plans }: { plans: PhonePlan[] }) {
 function PhoneInvest({ plans }: { plans: PhonePlan[] }) {
   const { t } = useTranslation();
   const d = t('landing.phone.days_short');
-  // Mostra max 4 piani reali; evidenzia il "popular" (o il secondo)
   const phonePlans = plans.slice(0, 4);
+  if (phonePlans.length === 0) return <PhoneEmpty label="Nessun piano attivo" />;
   const popularIdx = phonePlans.findIndex((p) => p.popular);
   const highlightIdx = popularIdx >= 0 ? popularIdx : Math.min(1, phonePlans.length - 1);
   return (
