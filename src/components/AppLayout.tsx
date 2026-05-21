@@ -63,6 +63,22 @@ export default function AppLayout() {
       <main className="flex-1 overflow-y-auto pb-24">
         <GuestBanner />
         <Outlet />
+        {/* Footer legale visibile in tutte le pagine */}
+        <footer className="border-t border-primary/10 mt-6 py-5">
+          <div className="mx-auto max-w-lg px-4 text-center">
+            <div className="flex items-center justify-center gap-4 text-xs text-muted-foreground">
+              <button onClick={() => navigate('/certifications')} className="flex items-center gap-1 hover:text-primary hover:underline">
+                <ShieldCheck className="h-3.5 w-3.5" /> Certificazioni
+              </button>
+              <button onClick={() => navigate('/faq')} className="hover:text-primary hover:underline">
+                FAQ
+              </button>
+            </div>
+            <p className="mt-2 text-[0.65rem] text-muted-foreground/60">
+              © {new Date().getFullYear()} WAYONE. Tutti i diritti riservati.
+            </p>
+          </div>
+        </footer>
       </main>
 
       <nav className="fixed bottom-0 left-0 right-0 z-50 usdt-nav safe-bottom">
