@@ -313,9 +313,18 @@ async function matchAndCredit(supabase: any): Promise<number> {
       continue;
     }
 
-    // Find best match: exact amount first (within 0.01), then closest
-    let bestIntent = intents.find((i: any) => Math.abs(i.amount_usdt - tx.amount) < 0.01);
-    if (!bestIntent) bestIntent = intents[0];
+    // Ambiguity guard: more than one compatible intent => manual review
+    if (intents.length > 1) {
+      await supabase.from("detected_transactions").update({
+        status: "needs_review",
+        processing_error: "Più deposit intent compatibili trovati: revisione manuale richiesta",
+      }).eq("id", tx.id);
+      continue;
+    }
+
+    const bestIntent = intents[0];
+
+
 
     // Process the match using the security definer function (atomic, locked)
     const { data: success, error } = await supabase.rpc("process_matched_deposit", {
