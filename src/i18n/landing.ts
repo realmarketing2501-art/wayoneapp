@@ -50,7 +50,7 @@ const it = {
   plans: {
     title_a: "Piani di",
     title_b: "investimento",
-    sub: "Cinque piani a durata fissa con rendimento giornaliero. Capitale e profitti rilasciati a scadenza.",
+    sub: "Piani a durata fissa con rendimento giornaliero. Capitale e profitti rilasciati a scadenza.",
     popular: "Popolare",
     days: "giorni",
     daily_sub: "al giorno",
@@ -79,7 +79,6 @@ const it = {
     title_b: "Pool",
     sub: "Vantaggi collegati ai livelli: bonus potenziali, profondità rete e pool speciali. Non sono bonus generici scollegati.",
     items: [
-      { title: "Starter", when: "Accesso base ai piani iniziali", reward: "Pool Starter" },
       { title: "Silver", when: "36 unità · produzione 3.600 USDT", reward: "10% potenziale · 360 USDT" },
       { title: "Gold", when: "216 unità · produzione 21.600 USDT", reward: "15% potenziale · 3.240 USDT" },
       { title: "Platinum", when: "1.296 unità · produzione 129.600 USDT", reward: "15% potenziale · 19.440 USDT" },
@@ -97,7 +96,6 @@ const it = {
     sub: "Ogni livello sblocca vantaggi futuri. Il capitale già investito resta bloccato fino alla scadenza del piano.",
     volume_label: "Produzione richiesta",
     items: [
-      { name: "Starter", volume: "600 USDT", bonus: "Base", extra: "Accesso piani iniziali" },
       { name: "Silver", volume: "3.600 USDT", bonus: "Pool Silver", extra: "Rete L2 + bonus potenziale 10%" },
       { name: "Gold", volume: "21.600 USDT", bonus: "Pool Gold", extra: "Rete L3 + bonus potenziale 15%" },
       { name: "Platinum", volume: "129.600 USDT", bonus: "Pool Platinum", extra: "Rete L4 + vantaggi premium" },
@@ -181,7 +179,7 @@ const en: typeof it = {
   plans: {
     title_a: "Investment",
     title_b: "plans",
-    sub: "Five fixed-duration plans with daily yield. Capital and profits released at maturity.",
+    sub: "Fixed-duration plans with daily yield. Capital and profits released at maturity.",
     popular: "Popular",
     days: "days",
     daily_sub: "per day",
@@ -210,7 +208,6 @@ const en: typeof it = {
     title_b: "Pools",
     sub: "Level-based benefits: potential bonuses, network depth and special pools. No disconnected generic milestones.",
     items: [
-      { title: "Starter", when: "Base access to initial plans", reward: "Starter Pool" },
       { title: "Silver", when: "36 units · 3,600 USDT production", reward: "10% potential · 360 USDT" },
       { title: "Gold", when: "216 units · 21,600 USDT production", reward: "15% potential · 3,240 USDT" },
       { title: "Platinum", when: "1,296 units · 129,600 USDT production", reward: "15% potential · 19,440 USDT" },
@@ -228,7 +225,6 @@ const en: typeof it = {
     sub: "Each level unlocks future benefits. Already invested capital remains locked until the plan maturity.",
     volume_label: "Required production",
     items: [
-      { name: "Starter", volume: "600 USDT", bonus: "Base", extra: "Initial plan access" },
       { name: "Silver", volume: "3,600 USDT", bonus: "Silver Pool", extra: "L2 network + 10% potential bonus" },
       { name: "Gold", volume: "21,600 USDT", bonus: "Gold Pool", extra: "L3 network + 15% potential bonus" },
       { name: "Platinum", volume: "129,600 USDT", bonus: "Platinum Pool", extra: "L4 network + premium benefits" },
@@ -312,7 +308,7 @@ const es: typeof it = {
   plans: {
     title_a: "Planes de",
     title_b: "inversión",
-    sub: "Cinco planes de duración fija con rendimiento diario. Capital y beneficios al vencimiento.",
+    sub: "Planes de duración fija con rendimiento diario. Capital y beneficios al vencimiento.",
     popular: "Popular",
     days: "días",
     daily_sub: "al día",
@@ -341,7 +337,6 @@ const es: typeof it = {
     title_b: "Pools",
     sub: "Ventajas conectadas a niveles: bonus potenciales, profundidad de red y pools especiales. Sin hitos genéricos desconectados.",
     items: [
-      { title: "Starter", when: "Acceso base a planes iniciales", reward: "Pool Starter" },
       { title: "Silver", when: "36 unidades · producción 3.600 USDT", reward: "10% potencial · 360 USDT" },
       { title: "Gold", when: "216 unidades · producción 21.600 USDT", reward: "15% potencial · 3.240 USDT" },
       { title: "Platinum", when: "1.296 unidades · producción 129.600 USDT", reward: "15% potencial · 19.440 USDT" },
@@ -363,7 +358,6 @@ const es: typeof it = {
     sub: "Cada nivel desbloquea ventajas futuras. El capital ya invertido queda bloqueado hasta el vencimiento del plan.",
     volume_label: "Producción requerida",
     items: [
-      { name: "Starter", volume: "600 USDT", bonus: "Base", extra: "Acceso a planes iniciales" },
       { name: "Silver", volume: "3.600 USDT", bonus: "Pool Silver", extra: "Red L2 + bonus potencial 10%" },
       { name: "Gold", volume: "21.600 USDT", bonus: "Pool Gold", extra: "Red L3 + bonus potencial 15%" },
       { name: "Platinum", volume: "129.600 USDT", bonus: "Pool Platinum", extra: "Red L4 + ventajas premium" },
@@ -447,7 +441,7 @@ const fr: typeof it = {
   plans: {
     title_a: "Plans d'",
     title_b: "investissement",
-    sub: "Cinq plans à durée fixe avec rendement quotidien. Capital et profits libérés à échéance.",
+    sub: "Plans à durée fixe avec rendement quotidien. Capital et profits libérés à échéance.",
     popular: "Populaire",
     days: "jours",
     daily_sub: "par jour",
@@ -476,7 +470,6 @@ const fr: typeof it = {
     title_b: "Pools",
     sub: "Avantages liés aux niveaux : bonus potentiels, profondeur réseau et pools spéciales. Aucun milestone générique déconnecté.",
     items: [
-      { title: "Starter", when: "Accès de base aux plans initiaux", reward: "Pool Starter" },
       { title: "Silver", when: "36 unités · production 3 600 USDT", reward: "10% potentiel · 360 USDT" },
       { title: "Gold", when: "216 unités · production 21 600 USDT", reward: "15% potentiel · 3 240 USDT" },
       { title: "Platinum", when: "1 296 unités · production 129 600 USDT", reward: "15% potentiel · 19 440 USDT" },
@@ -494,7 +487,6 @@ const fr: typeof it = {
     sub: "Chaque niveau débloque des avantages futurs. Le capital déjà investi reste bloqué jusqu’à l’échéance du plan.",
     volume_label: "Production requise",
     items: [
-      { name: "Starter", volume: "600 USDT", bonus: "Base", extra: "Accès aux plans initiaux" },
       { name: "Silver", volume: "3 600 USDT", bonus: "Pool Silver", extra: "Réseau L2 + bonus potentiel 10%" },
       { name: "Gold", volume: "21 600 USDT", bonus: "Pool Gold", extra: "Réseau L3 + bonus potentiel 15%" },
       { name: "Platinum", volume: "129 600 USDT", bonus: "Pool Platinum", extra: "Réseau L4 + avantages premium" },
@@ -602,7 +594,6 @@ const zh: typeof it = {
     title_b: "资金池",
     sub: "与等级关联的权益：潜在奖金、网络深度和特殊资金池。无脱离等级的通用里程碑。",
     items: [
-      { title: "Starter", when: "初始计划基础访问权限", reward: "Starter 资金池" },
       { title: "Silver", when: "36 单位 · 3,600 USDT 业绩", reward: "10% 潜在 · 360 USDT" },
       { title: "Gold", when: "216 单位 · 21,600 USDT 业绩", reward: "15% 潜在 · 3,240 USDT" },
       { title: "Platinum", when: "1,296 单位 · 129,600 USDT 业绩", reward: "15% 潜在 · 19,440 USDT" },
@@ -616,7 +607,6 @@ const zh: typeof it = {
     sub: "每个等级解锁未来权益。已投资的本金在计划到期前保持锁定。",
     volume_label: "要求业绩",
     items: [
-      { name: "Starter", volume: "600 USDT", bonus: "基础", extra: "初始计划访问权限" },
       { name: "Silver", volume: "3,600 USDT", bonus: "Silver 资金池", extra: "L2 网络 + 10% 潜在奖金" },
       { name: "Gold", volume: "21,600 USDT", bonus: "Gold 资金池", extra: "L3 网络 + 15% 潜在奖金" },
       { name: "Platinum", volume: "129,600 USDT", bonus: "Platinum 资金池", extra: "L4 网络 + 高级权益" },
