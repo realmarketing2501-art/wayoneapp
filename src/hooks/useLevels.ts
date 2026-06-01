@@ -1,12 +1,10 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import type { LevelName } from "@/lib/levels";
+import { useQuery } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import type { LevelName } from '@/lib/levels';
 
 export interface LevelConfig {
   id: LevelName;
   name: string;
-  active?: boolean;
-  pool_id?: string | null;
   ordine: number;
   unita_richieste: number | null;
   produzione_richiesta: number | null;
@@ -29,9 +27,12 @@ export interface LevelConfig {
  */
 export function useLevels() {
   return useQuery({
-    queryKey: ["levels"],
+    queryKey: ['levels'],
     queryFn: async (): Promise<LevelConfig[]> => {
-      const { data, error } = await supabase.from("levels").select("*").order("ordine", { ascending: true });
+      const { data, error } = await supabase
+        .from('levels')
+        .select('*')
+        .order('ordine', { ascending: true });
       if (error) throw error;
       return (data ?? []) as LevelConfig[];
     },
