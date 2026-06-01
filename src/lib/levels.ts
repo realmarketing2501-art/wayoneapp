@@ -18,9 +18,9 @@ export const LEVEL_LABELS: Record<LevelName, string> = {
   bronze: 'Gold',
   silver: 'Platinum',
   silver_elite: 'Platinum Elite',
-  gold: 'Diamond',
-  gold_elite: 'Diamond Elite',
-  oro_vip: 'VIP',
+  gold: 'Smeraldo',
+  gold_elite: 'Smeraldo',
+  oro_vip: 'Smeraldo',
 };
 
 export const LEVEL_ORDER: LevelName[] = ['gamma', 'beta', 'bronze', 'silver', 'silver_elite', 'gold', 'gold_elite', 'oro_vip'];
