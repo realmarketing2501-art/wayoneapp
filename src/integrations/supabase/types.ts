@@ -472,6 +472,7 @@ export type Database = {
       }
       levels: {
         Row: {
+          active: boolean
           bonus_percentuale: number
           bonus_valore: number
           created_at: string
@@ -484,6 +485,7 @@ export type Database = {
           name: string
           note: string | null
           ordine: number
+          pool_id: string | null
           produzione_richiesta: number | null
           prossimo_livello: string | null
           rete: boolean
@@ -492,6 +494,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          active?: boolean
           bonus_percentuale?: number
           bonus_valore?: number
           created_at?: string
@@ -504,6 +507,7 @@ export type Database = {
           name: string
           note?: string | null
           ordine: number
+          pool_id?: string | null
           produzione_richiesta?: number | null
           prossimo_livello?: string | null
           rete?: boolean
@@ -512,6 +516,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          active?: boolean
           bonus_percentuale?: number
           bonus_valore?: number
           created_at?: string
@@ -524,6 +529,7 @@ export type Database = {
           name?: string
           note?: string | null
           ordine?: number
+          pool_id?: string | null
           produzione_richiesta?: number | null
           prossimo_livello?: string | null
           rete?: boolean
@@ -532,6 +538,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "levels_pool_id_fkey"
+            columns: ["pool_id"]
+            isOneToOne: false
+            referencedRelation: "special_funds"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "levels_prossimo_livello_fkey"
             columns: ["prossimo_livello"]
