@@ -1107,6 +1107,10 @@ export type Database = {
         Args: { p_tx_hash?: string; p_withdrawal_id: string }
         Returns: boolean
       }
+      admin_credit_user: {
+        Args: { p_amount: number; p_note?: string; p_user_id: string }
+        Returns: boolean
+      }
       admin_delete_user: { Args: { p_user_id: string }; Returns: boolean }
       admin_reject_manual_deposit: {
         Args: { p_deposit_id: string }

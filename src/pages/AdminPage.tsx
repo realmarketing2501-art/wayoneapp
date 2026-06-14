@@ -112,6 +112,24 @@ function UsersTab() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const [creditAmount, setCreditAmount] = useState<Record<string, string>>({});
+
+  const creditMutation = useMutation({
+    mutationFn: async ({ userId, amount }: { userId: string; amount: number }) => {
+      const { error } = await supabase.rpc('admin_credit_user', {
+        p_user_id: userId,
+        p_amount: amount,
+        p_note: 'Credito test admin',
+      });
+      if (error) throw error;
+    },
+    onSuccess: (_, { userId }) => {
+      queryClient.invalidateQueries({ queryKey: ['admin_profiles'] });
+      setCreditAmount(s => ({ ...s, [userId]: '' }));
+      toast({ title: 'Saldo aggiornato' });
+    },
+    onError: (e: Error) => toast({ title: 'Errore', description: e.message, variant: 'destructive' }),
+  });
 
   const { data: profiles = [] } = useQuery({
     queryKey: ['admin_profiles'],
@@ -199,6 +217,28 @@ function UsersTab() {
                     Elimina
                   </Button>
                 )}
+              </div>
+              <div className="flex gap-1.5 items-center">
+                <Input
+                  type="number"
+                  step="1"
+                  placeholder="USDT (+/-)"
+                  className="h-7 text-[0.65rem] flex-1"
+                  value={creditAmount[p.user_id] ?? ''}
+                  onChange={e => setCreditAmount(s => ({ ...s, [p.user_id]: e.target.value }))}
+                />
+                <Button
+                  size="sm"
+                  className="h-7 text-[0.65rem]"
+                  disabled={creditMutation.isPending || !creditAmount[p.user_id]}
+                  onClick={() => {
+                    const amt = parseFloat(creditAmount[p.user_id] || '');
+                    if (!isFinite(amt) || amt === 0) return;
+                    creditMutation.mutate({ userId: p.user_id, amount: amt });
+                  }}
+                >
+                  Accredita
+                </Button>
               </div>
             </CardContent>
           </Card>
