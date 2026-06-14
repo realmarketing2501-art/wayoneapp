@@ -218,6 +218,28 @@ function UsersTab() {
                   </Button>
                 )}
               </div>
+              <div className="flex gap-1.5 items-center">
+                <Input
+                  type="number"
+                  step="1"
+                  placeholder="USDT (+/-)"
+                  className="h-7 text-[0.65rem] flex-1"
+                  value={creditAmount[p.user_id] ?? ''}
+                  onChange={e => setCreditAmount(s => ({ ...s, [p.user_id]: e.target.value }))}
+                />
+                <Button
+                  size="sm"
+                  className="h-7 text-[0.65rem]"
+                  disabled={creditMutation.isPending || !creditAmount[p.user_id]}
+                  onClick={() => {
+                    const amt = parseFloat(creditAmount[p.user_id] || '');
+                    if (!isFinite(amt) || amt === 0) return;
+                    creditMutation.mutate({ userId: p.user_id, amount: amt });
+                  }}
+                >
+                  Accredita
+                </Button>
+              </div>
             </CardContent>
           </Card>
         ))}
