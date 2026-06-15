@@ -6,7 +6,17 @@ import { createClient } from "npm:@supabase/supabase-js@2.45.0";
  * (FOR UPDATE su investimento + profilo, guardia anti doppio pagamento, ledger).
  * Questa edge function è solo il trigger schedulabile.
  */
-Deno.serve(async () => {
+Deno.serve(async (req) => {
+  const cronSecret = Deno.env.get("CRON_SECRET");
+  if (cronSecret) {
+    const provided = req.headers.get("x-cron-secret");
+    if (provided !== cronSecret) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+  }
   try {
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL")!,
