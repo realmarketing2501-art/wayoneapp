@@ -274,12 +274,11 @@ function UsersTab() {
                   <Button
                     size="sm"
                     type="button"
-                    className="col-span-2 h-9 w-full text-xs font-semibold sm:col-span-1"
-                    disabled={creditMutation.isPending || !creditAmount[p.user_id]}
+                    className="col-span-2 h-9 w-full cursor-pointer text-xs font-semibold sm:col-span-1 disabled:cursor-wait"
+                    disabled={creditMutation.isPending && creditMutation.variables?.userId === p.user_id}
                     onClick={() => {
                       const raw = creditAmount[p.user_id];
                       const amt = parseFloat(raw || '');
-                      console.log('[admin_credit_user] click', { userId: p.user_id, raw, amt, demoOn });
                       if (!isFinite(amt) || amt === 0) {
                         toast({ title: 'Importo non valido', description: 'Inserisci un numero diverso da 0', variant: 'destructive' });
                         return;
