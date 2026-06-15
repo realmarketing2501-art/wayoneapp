@@ -73,6 +73,17 @@ function DashboardTab() {
     },
   });
 
+  const { data: levelsList = [] } = useQuery({
+    queryKey: ['admin_levels'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('levels').select('id, name, ordine').order('ordine');
+      if (error) throw error;
+      return data;
+    },
+  });
+  const levelName = (id: string | null | undefined) =>
+    levelsList.find(l => l.id === id)?.name ?? id ?? '—';
+
   const totalBalance = profiles.reduce((s, p) => s + Number(p.balance), 0);
   const totalDeposited = deposits.filter(d => d.status === 'confirmed').reduce((s, d) => s + Number(d.amount), 0);
   const pendingWithdrawals = withdrawals.filter(w => w.status === 'pending').length;
@@ -98,7 +109,7 @@ function DashboardTab() {
           <div className="space-y-1.5">
             {Object.entries(levelDist).map(([level, count]) => (
               <div key={level} className="flex justify-between text-sm">
-                <span className="text-muted-foreground text-xs">{level}</span>
+                <span className="text-muted-foreground text-xs">{levelName(level)}</span>
                 <Badge variant="secondary" className="text-[0.6rem]">{count}</Badge>
               </div>
             ))}
@@ -145,6 +156,17 @@ function UsersTab() {
       return data;
     },
   });
+
+  const { data: levelsList = [] } = useQuery({
+    queryKey: ['admin_levels'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('levels').select('id, name, ordine').order('ordine');
+      if (error) throw error;
+      return data;
+    },
+  });
+  const levelName = (id: string | null | undefined) =>
+    levelsList.find(l => l.id === id)?.name ?? id ?? '—';
 
   const suspendMutation = useMutation({
     mutationFn: async ({ userId, suspend }: { userId: string; suspend: boolean }) => {
@@ -195,7 +217,7 @@ function UsersTab() {
                   <p className="text-[0.6rem] text-muted-foreground">{p.referral_code} · {new Date(p.created_at).toLocaleDateString('it-IT')}</p>
                 </div>
                 <div className="text-right shrink-0">
-                  <Badge variant="outline" className="text-[0.6rem]">{p.level}</Badge>
+                  <Badge variant="outline" className="text-[0.6rem]">{levelName(p.level)}</Badge>
                   <p className="text-[0.6rem] text-muted-foreground mt-0.5">{Number(p.balance).toLocaleString()} USDT</p>
                 </div>
               </div>
