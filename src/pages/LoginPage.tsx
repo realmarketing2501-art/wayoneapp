@@ -9,6 +9,7 @@ import { ArrowLeft, Eye } from 'lucide-react';
 import { UsdtMonogram } from '@/components/UsdtMonogram';
 import { lovable } from '@/integrations/lovable';
 import { trackAuthEvent } from '@/hooks/useTrackSignup';
+import { useTranslation } from 'react-i18next';
 
 export default function LoginPage() {
   const [searchParams] = useSearchParams();
@@ -23,6 +24,7 @@ export default function LoginPage() {
   const navigate = useNavigate();
   const { signIn, signUp, user } = useAuth();
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   if (user) {
     navigate('/home', { replace: true });
@@ -35,7 +37,7 @@ export default function LoginPage() {
       redirect_uri: window.location.origin + '/home',
     });
     if (result.error) {
-      toast({ title: 'Errore Google', description: result.error.message, variant: 'destructive' });
+      toast({ title: t('login.googleErrorTitle'), description: result.error.message, variant: 'destructive' });
       setGoogleLoading(false);
       return;
     }
@@ -52,7 +54,7 @@ export default function LoginPage() {
     if (isLogin) {
       const { error } = await signIn(email, password);
       if (error) {
-        toast({ title: 'Errore', description: error.message, variant: 'destructive' });
+        toast({ title: t('login.errorTitle'), description: error.message, variant: 'destructive' });
       } else {
         trackAuthEvent('login');
         navigate('/home');
@@ -60,10 +62,10 @@ export default function LoginPage() {
     } else {
       const { error } = await signUp(email, password, username, referral || undefined);
       if (error) {
-        toast({ title: 'Errore', description: error.message, variant: 'destructive' });
+        toast({ title: t('login.errorTitle'), description: error.message, variant: 'destructive' });
       } else {
         trackAuthEvent('signup');
-        toast({ title: 'Registrazione completata!', description: "Controlla la tua email per confermare l'account." });
+        toast({ title: t('login.signupSuccessTitle'), description: t('login.signupSuccessDesc') });
       }
     }
     setLoading(false);
@@ -81,13 +83,13 @@ export default function LoginPage() {
 
       <div className="mb-6 flex flex-col items-center text-center">
         <UsdtMonogram size={72} letter="U" className="mb-4 usdt-glow-gold" />
-        <h1 className="font-display text-3xl font-bold usdt-gold-text">USDT</h1>
-        <p className="mt-2 text-sm text-muted-foreground">La piattaforma di investimento USDT</p>
+        <h1 className="font-display text-3xl font-bold usdt-gold-text">{t('login.brand')}</h1>
+        <p className="mt-2 text-sm text-muted-foreground">{t('login.subtitle')}</p>
       </div>
 
       <div className="usdt-card-gold w-full max-w-sm p-6">
         <h2 className="mb-4 text-center font-display text-xl font-semibold">
-          {isLogin ? 'Accedi' : 'Registrati'}
+          {isLogin ? t('login.signIn') : t('login.signUp')}
         </h2>
 
         <Button
@@ -103,45 +105,45 @@ export default function LoginPage() {
             <path fill="#4CAF50" d="M24 44c5 0 9.5-1.9 12.9-5.1l-6-5c-1.9 1.3-4.3 2.1-6.9 2.1-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/>
             <path fill="#1976D2" d="M43.6 20.5h-1.9V20H24v8h11.3c-.8 2.4-2.4 4.4-4.4 5.9l6 5C40.9 35.4 44 30 44 24c0-1.3-.1-2.3-.4-3.5z"/>
           </svg>
-          {googleLoading ? 'Apertura...' : 'Continua con Google'}
+          {googleLoading ? t('login.opening') : t('login.continueGoogle')}
         </Button>
 
         <div className="my-4 flex items-center gap-2">
           <div className="h-px flex-1 bg-border" />
-          <span className="text-[0.65rem] uppercase tracking-wider text-muted-foreground">oppure</span>
+          <span className="text-[0.65rem] uppercase tracking-wider text-muted-foreground">{t('login.or')}</span>
           <div className="h-px flex-1 bg-border" />
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-3.5">
           {!isLogin && (
             <div className="space-y-1.5">
-              <Label className="text-sm">Username</Label>
-              <Input placeholder="Il tuo username" value={username} onChange={e => setUsername(e.target.value)} required />
+              <Label className="text-sm">{t('login.username')}</Label>
+              <Input placeholder={t('login.usernamePlaceholder')} value={username} onChange={e => setUsername(e.target.value)} required />
             </div>
           )}
           <div className="space-y-1.5">
-            <Label className="text-sm">Email</Label>
-            <Input type="email" placeholder="email@esempio.com" value={email} onChange={e => setEmail(e.target.value)} required />
+            <Label className="text-sm">{t('login.email')}</Label>
+            <Input type="email" placeholder={t('login.emailPlaceholder')} value={email} onChange={e => setEmail(e.target.value)} required />
           </div>
           <div className="space-y-1.5">
-            <Label className="text-sm">Password</Label>
+            <Label className="text-sm">{t('login.password')}</Label>
             <Input type="password" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} />
           </div>
           {!isLogin && (
             <div className="space-y-1.5">
-              <Label className="text-sm">Codice Referral (opzionale)</Label>
-              <Input placeholder="USDT-XXXXX" value={referral} onChange={e => setReferral(e.target.value)} />
+              <Label className="text-sm">{t('login.referralOptional')}</Label>
+              <Input placeholder={t('login.referralPlaceholder')} value={referral} onChange={e => setReferral(e.target.value)} />
             </div>
           )}
           <Button className="usdt-btn-gold w-full" type="submit" disabled={loading}>
-            {loading ? 'Caricamento...' : isLogin ? 'Accedi' : 'Crea Account'}
+            {loading ? t('login.loading') : isLogin ? t('login.signIn') : t('login.createAccount')}
           </Button>
         </form>
 
         <p className="mt-4 text-center text-sm text-muted-foreground">
-          {isLogin ? 'Non hai un account?' : 'Hai già un account?'}{' '}
+          {isLogin ? t('login.noAccount') : t('login.haveAccount')}{' '}
           <button onClick={() => setIsLogin(!isLogin)} className="font-medium text-primary hover:underline">
-            {isLogin ? 'Registrati' : 'Accedi'}
+            {isLogin ? t('login.signUp') : t('login.signIn')}
           </button>
         </p>
       </div>
@@ -151,7 +153,7 @@ export default function LoginPage() {
         className="mt-4 gap-2 text-xs text-muted-foreground"
         onClick={() => navigate('/home')}
       >
-        <Eye className="h-3.5 w-3.5" /> Esplora l'app come ospite
+        <Eye className="h-3.5 w-3.5" /> {t('login.exploreGuest')}
       </Button>
     </div>
   );
