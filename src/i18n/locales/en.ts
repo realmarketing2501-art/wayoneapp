@@ -1,5 +1,5 @@
 export default {
-  nav: { home: 'Home', wallet: 'Wallet', invest: 'Invest', referral: 'Referral', profile: 'Profile', login: 'Sign in' },
+  nav: { home: 'Home', wallet: 'Funds', invest: 'Invest', referral: 'Referral', profile: 'Profile', login: 'Sign in' },
   common: {
     loading: 'Loading...', save: 'Save', cancel: 'Cancel', confirm: 'Confirm', back: 'Back',
     close: 'Close', copy: 'Copy', copied: 'Copied!', download: 'Download', share: 'Share',
