@@ -35,7 +35,7 @@ export default function Index() {
   const features = t('landing.features.items', { returnObjects: true }) as Item[];
   const flow = t('landing.flow.items', { returnObjects: true }) as Item[];
   const screens = t('landing.screens.items', { returnObjects: true }) as Item[];
-  const bonuses = t('landing.bonuses.items', { returnObjects: true }) as BonusItem[];
+  
   const ranks = t('landing.ranks.items', { returnObjects: true }) as RankItem[];
   const refLabels = t('landing.referral.levels', { returnObjects: true }) as LevelLabel[];
 
