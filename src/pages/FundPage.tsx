@@ -37,6 +37,21 @@ export default function FundPage() {
     },
   });
 
+  const { data: myFunds = [] } = useQuery({
+    queryKey: ['my_fund_investments', user?.id],
+    enabled: !!user,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('fund_investments')
+        .select('id, amount, status, daily_rate, duration_days, days_remaining, total_earned, last_payout_at, created_at, completed_at, fund_id, special_funds(name, badge, total_return, duration)')
+        .eq('user_id', user!.id)
+        .in('status', ['active', 'completed'])
+        .order('created_at', { ascending: false });
+      if (error) throw error;
+      return data as any[];
+    },
+  });
+
   const invest = useMutation({
     mutationFn: async () => {
       if (!user || !buying) throw new Error('Accedi per investire');
@@ -50,6 +65,7 @@ export default function FundPage() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['special_funds'] });
       qc.invalidateQueries({ queryKey: ['profile'] });
+      qc.invalidateQueries({ queryKey: ['my_fund_investments'] });
       toast({ title: 'Quota acquistata', description: `${amount} USDT investiti nel fondo ${buying?.name}.` });
       setBuying(null); setAmount('');
     },
@@ -94,6 +110,53 @@ export default function FundPage() {
   return (
     <div className="space-y-6 p-4">
       <h2 className="font-display text-xl font-bold">Fondi Speciali</h2>
+
+      {myFunds.length > 0 && (
+        <Card>
+          <CardContent className="p-4 space-y-3">
+            <h3 className="font-display text-sm font-semibold">I miei fondi</h3>
+            <div className="space-y-2">
+              {myFunds.map((mf) => {
+                const sf = mf.special_funds || {};
+                const totalDays = mf.duration_days ?? sf.duration ?? 0;
+                const elapsed = Math.max(0, totalDays - (mf.days_remaining ?? totalDays));
+                const pct = totalDays > 0 ? Math.round((elapsed / totalDays) * 100) : 0;
+                return (
+                  <div key={mf.id} className="rounded-md border p-3 text-xs space-y-2">
+                    <div className="flex items-center justify-between">
+                      <div className="min-w-0">
+                        <p className="font-semibold text-foreground truncate">{sf.name}</p>
+                        <p className="text-[0.65rem] text-muted-foreground">
+                          {Number(mf.amount).toLocaleString()} USDT · {mf.daily_rate}% /gg · {sf.total_return}% totale
+                        </p>
+                      </div>
+                      <Badge variant={mf.status === 'completed' ? 'secondary' : 'default'} className="text-[0.55rem]">
+                        {mf.status === 'completed' ? 'Completato' : 'Attivo'}
+                      </Badge>
+                    </div>
+                    <div className="grid grid-cols-3 gap-2 text-[0.65rem]">
+                      <div>
+                        <p className="text-muted-foreground">Maturato</p>
+                        <p className="font-semibold text-primary">+{Number(mf.total_earned ?? 0).toFixed(2)} USDT</p>
+                      </div>
+                      <div>
+                        <p className="text-muted-foreground">Giorni</p>
+                        <p className="font-semibold">{elapsed}/{totalDays}</p>
+                      </div>
+                      <div>
+                        <p className="text-muted-foreground">Ultimo</p>
+                        <p className="font-semibold">{mf.last_payout_at ? new Date(mf.last_payout_at).toLocaleDateString('it-IT') : '—'}</p>
+                      </div>
+                    </div>
+                    <Progress value={pct} className="h-1.5" />
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
       <Tabs defaultValue="issuing">
         <TabsList className="w-full">
           <TabsTrigger value="issuing" className="flex-1">In corso</TabsTrigger>
