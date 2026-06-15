@@ -13,7 +13,6 @@ import { useTranslation } from 'react-i18next';
 
 const networks = [
   { id: 'TRC-20', label: 'TRC-20 (Tron)', fee: '~1 USDT', time: '~3 min' },
-  { id: 'ERC-20', label: 'ERC-20 (Ethereum)', fee: '~5-15 USDT', time: '~5 min' },
 ];
 
 const PRESET_AMOUNTS = [50, 100, 250, 500, 1000, 2500];
