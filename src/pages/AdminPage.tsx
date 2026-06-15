@@ -26,6 +26,8 @@ import FundsTab from '@/components/admin/FundsTab';
 import PlansTab from '@/components/admin/PlansTab';
 import TasksTab from '@/components/admin/TasksTab';
 import SimulationTab from '@/components/admin/SimulationTab';
+import DemoTab from '@/components/admin/DemoTab';
+import { useDemoMode } from '@/hooks/useDemoMode';
 
 function KPICard({ icon: Icon, label, value, color }: { icon: any; label: string; value: string; color: string }) {
   return (
@@ -113,6 +115,8 @@ function UsersTab() {
   const queryClient = useQueryClient();
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [creditAmount, setCreditAmount] = useState<Record<string, string>>({});
+  const { data: demoOn = false } = useDemoMode();
+
 
   const creditMutation = useMutation({
     mutationFn: async ({ userId, amount }: { userId: string; amount: number }) => {
@@ -218,28 +222,34 @@ function UsersTab() {
                   </Button>
                 )}
               </div>
-              <div className="flex gap-1.5 items-center">
-                <Input
-                  type="number"
-                  step="1"
-                  placeholder="USDT (+/-)"
-                  className="h-7 text-[0.65rem] flex-1"
-                  value={creditAmount[p.user_id] ?? ''}
-                  onChange={e => setCreditAmount(s => ({ ...s, [p.user_id]: e.target.value }))}
-                />
-                <Button
-                  size="sm"
-                  className="h-7 text-[0.65rem]"
-                  disabled={creditMutation.isPending || !creditAmount[p.user_id]}
-                  onClick={() => {
-                    const amt = parseFloat(creditAmount[p.user_id] || '');
-                    if (!isFinite(amt) || amt === 0) return;
-                    creditMutation.mutate({ userId: p.user_id, amount: amt });
-                  }}
-                >
-                  Accredita
-                </Button>
-              </div>
+              {demoOn ? (
+                <div className="flex gap-1.5 items-center">
+                  <Input
+                    type="number"
+                    step="1"
+                    placeholder="USDT (+/-)"
+                    className="h-7 text-[0.65rem] flex-1"
+                    value={creditAmount[p.user_id] ?? ''}
+                    onChange={e => setCreditAmount(s => ({ ...s, [p.user_id]: e.target.value }))}
+                  />
+                  <Button
+                    size="sm"
+                    className="h-7 text-[0.65rem]"
+                    disabled={creditMutation.isPending || !creditAmount[p.user_id]}
+                    onClick={() => {
+                      const amt = parseFloat(creditAmount[p.user_id] || '');
+                      if (!isFinite(amt) || amt === 0) return;
+                      creditMutation.mutate({ userId: p.user_id, amount: amt });
+                    }}
+                  >
+                    Accredita
+                  </Button>
+                </div>
+              ) : (
+                <p className="text-[0.6rem] text-muted-foreground italic">
+                  Attiva la Modalità Demo per accreditare USDT di test.
+                </p>
+              )}
             </CardContent>
           </Card>
         ))}
@@ -698,6 +708,7 @@ export default function AdminPage() {
             <TabsTrigger value="tasks" className="text-xs min-w-[3.5rem]">Attività</TabsTrigger>
             <TabsTrigger value="simulation" className="text-xs min-w-[4.5rem]">Simulazione</TabsTrigger>
             <TabsTrigger value="system" className="text-xs min-w-[4rem]">Sistema</TabsTrigger>
+            <TabsTrigger value="demo" className="text-xs min-w-[3.5rem]">Demo</TabsTrigger>
           </TabsList>
         </div>
         <TabsContent value="dashboard"><DashboardTab /></TabsContent>
@@ -716,6 +727,7 @@ export default function AdminPage() {
        <TabsContent value="tasks"><TasksTab /></TabsContent>
        <TabsContent value="simulation"><SimulationTab /></TabsContent>
        <TabsContent value="system"><SystemStatusTab /></TabsContent>
+       <TabsContent value="demo"><DemoTab /></TabsContent>
       </Tabs>
     </div>
   );
