@@ -52,19 +52,19 @@
     --sidebar-ring: 150 90% 55%;
 
     /* Brand tokens (used by .usdt-* utilities – kept name for back-compat) */
-    --u-bg: 232 60% 6%;
-    --u-surface: 232 50% 9%;
-    --u-card: 232 45% 12%;
-    --u-card-2: 232 40% 16%;
-    --u-gold: 150 90% 60%;             /* mint primary */
-    --u-gold-bright: 150 100% 72%;     /* mint glow */
-    --u-gold-deep: 230 80% 50%;        /* electric blue */
+    --u-bg: 222 65% 11%;
+    --u-surface: 220 55% 15%;
+    --u-card: 220 50% 19%;
+    --u-card-2: 220 45% 24%;
+    --u-gold: 195 95% 60%;             /* bright cyan/azure */
+    --u-gold-bright: 190 100% 72%;     /* azure glow */
+    --u-gold-deep: 220 90% 55%;        /* electric blue */
     --u-cream: 0 0% 98%;
-    --u-muted: 230 15% 65%;
-    --u-success: 150 90% 55%;
-    --u-danger: 0 75% 58%;
+    --u-muted: 220 20% 72%;
+    --u-success: 150 85% 55%;
+    --u-danger: 0 75% 60%;
 
-    --way-gold: 150 90% 60%;
+    --way-gold: 195 95% 60%;
     --way-bronze: 30 60% 50%;
     --way-silver: 220 10% 70%;
     --way-silver-elite: 210 20% 70%;
@@ -74,42 +74,42 @@
   }
 
   .dark {
-    --background: 232 60% 6%;
-    --foreground: 0 0% 98%;
+    --background: 222 65% 11%;
+    --foreground: 0 0% 99%;
 
-    --card: 232 45% 12%;
-    --card-foreground: 0 0% 98%;
+    --card: 220 50% 18%;
+    --card-foreground: 0 0% 99%;
 
-    --popover: 232 50% 9%;
-    --popover-foreground: 0 0% 98%;
+    --popover: 220 55% 15%;
+    --popover-foreground: 0 0% 99%;
 
-    --primary: 150 90% 60%;
-    --primary-foreground: 232 60% 6%;
+    --primary: 195 95% 60%;
+    --primary-foreground: 222 70% 8%;
 
-    --secondary: 232 40% 16%;
-    --secondary-foreground: 0 0% 98%;
+    --secondary: 220 45% 24%;
+    --secondary-foreground: 0 0% 99%;
 
-    --muted: 232 40% 16%;
-    --muted-foreground: 230 15% 68%;
+    --muted: 220 40% 22%;
+    --muted-foreground: 220 25% 78%;
 
-    --accent: 230 90% 62%;
+    --accent: 220 95% 65%;
     --accent-foreground: 0 0% 100%;
 
-    --destructive: 0 75% 58%;
+    --destructive: 0 75% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 230 40% 22%;
-    --input: 232 40% 18%;
-    --ring: 150 90% 60%;
+    --border: 220 45% 30%;
+    --input: 220 45% 24%;
+    --ring: 195 95% 60%;
 
-    --sidebar-background: 232 50% 9%;
-    --sidebar-foreground: 0 0% 98%;
-    --sidebar-primary: 150 90% 60%;
-    --sidebar-primary-foreground: 232 60% 6%;
-    --sidebar-accent: 232 40% 16%;
-    --sidebar-accent-foreground: 0 0% 98%;
-    --sidebar-border: 230 40% 22%;
-    --sidebar-ring: 150 90% 60%;
+    --sidebar-background: 220 55% 14%;
+    --sidebar-foreground: 0 0% 99%;
+    --sidebar-primary: 195 95% 60%;
+    --sidebar-primary-foreground: 222 70% 8%;
+    --sidebar-accent: 220 45% 24%;
+    --sidebar-accent-foreground: 0 0% 99%;
+    --sidebar-border: 220 45% 30%;
+    --sidebar-ring: 195 95% 60%;
   }
 }
 
@@ -149,10 +149,10 @@ html, body { overflow-x: clip; }
 
 .usdt-bg {
   background:
-    radial-gradient(ellipse 70% 50% at 50% 0%, hsl(230 90% 50% / 0.18), transparent 65%),
-    radial-gradient(ellipse 60% 45% at 50% 50%, hsl(265 80% 45% / 0.15), transparent 70%),
-    radial-gradient(ellipse 50% 40% at 100% 100%, hsl(150 90% 50% / 0.08), transparent 60%),
-    linear-gradient(180deg, hsl(var(--u-bg)) 0%, hsl(232 70% 4%) 100%);
+    radial-gradient(ellipse 80% 55% at 50% 0%, hsl(200 100% 55% / 0.32), transparent 65%),
+    radial-gradient(ellipse 65% 50% at 50% 50%, hsl(220 95% 55% / 0.22), transparent 70%),
+    radial-gradient(ellipse 55% 45% at 100% 100%, hsl(190 95% 55% / 0.18), transparent 60%),
+    linear-gradient(180deg, hsl(222 65% 13%) 0%, hsl(220 70% 9%) 100%);
 }
 
 .usdt-card {
