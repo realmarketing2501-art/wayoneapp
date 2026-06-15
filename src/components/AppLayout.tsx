@@ -1,5 +1,5 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { Home, TrendingUp, Users, Wallet, User, LogIn, Bell, ShieldCheck } from 'lucide-react';
+import { Home, TrendingUp, Users, Landmark, User, LogIn, Bell, ShieldCheck, FlaskConical } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import HeaderLanguageButton from './HeaderLanguageButton';
 import { useAuth } from '@/contexts/AuthContext';
@@ -8,6 +8,7 @@ import GuestBanner from './GuestBanner';
 import CryptoTicker from './CryptoTicker';
 import { useAutoTrackSession } from '@/hooks/useTrackSignup';
 import { useTranslation } from 'react-i18next';
+import { useDemoMode } from '@/hooks/useDemoMode';
 
 export default function AppLayout() {
   const location = useLocation();
