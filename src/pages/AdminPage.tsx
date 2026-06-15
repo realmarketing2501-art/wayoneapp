@@ -73,6 +73,17 @@ function DashboardTab() {
     },
   });
 
+  const { data: levelsList = [] } = useQuery({
+    queryKey: ['admin_levels'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('levels').select('id, name, ordine').order('ordine');
+      if (error) throw error;
+      return data;
+    },
+  });
+  const levelName = (id: string | null | undefined) =>
+    levelsList.find(l => l.id === id)?.name ?? id ?? '—';
+
   const totalBalance = profiles.reduce((s, p) => s + Number(p.balance), 0);
   const totalDeposited = deposits.filter(d => d.status === 'confirmed').reduce((s, d) => s + Number(d.amount), 0);
   const pendingWithdrawals = withdrawals.filter(w => w.status === 'pending').length;
