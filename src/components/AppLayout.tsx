@@ -60,6 +60,12 @@ export default function AppLayout() {
           </div>
         </div>
         <CryptoTicker />
+        {demoMode && (
+          <div className="flex items-center justify-center gap-2 bg-amber-500/15 px-3 py-1.5 text-[0.7rem] font-semibold text-amber-600 dark:text-amber-400 border-t border-amber-500/30">
+            <FlaskConical className="h-3.5 w-3.5" />
+            <span>MODALITÀ DEMO ATTIVA · I dati sono di prova</span>
+          </div>
+        )}
       </header>
 
       <main className="flex-1 overflow-y-auto pb-24">
