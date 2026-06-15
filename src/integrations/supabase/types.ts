@@ -1138,6 +1138,10 @@ export type Database = {
         Args: { p_withdrawal_id: string }
         Returns: boolean
       }
+      admin_set_user_suspended: {
+        Args: { p_suspended: boolean; p_user_id: string }
+        Returns: boolean
+      }
       admin_wipe_demo_data: { Args: { p_confirm: string }; Returns: Json }
       award_level_bonus: {
         Args: {
