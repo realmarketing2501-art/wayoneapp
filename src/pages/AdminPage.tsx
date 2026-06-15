@@ -115,22 +115,24 @@ function UsersTab() {
   const queryClient = useQueryClient();
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [creditAmount, setCreditAmount] = useState<Record<string, string>>({});
+  const [creditNote, setCreditNote] = useState<Record<string, string>>({});
   const { data: demoOn = false } = useDemoMode();
 
 
   const creditMutation = useMutation({
-    mutationFn: async ({ userId, amount }: { userId: string; amount: number }) => {
+    mutationFn: async ({ userId, amount, note }: { userId: string; amount: number; note: string }) => {
       const { error } = await supabase.rpc('admin_credit_user', {
         p_user_id: userId,
         p_amount: amount,
-        p_note: 'Credito test admin',
+        p_note: note || (demoOn ? 'Accredito demo admin' : 'Accredito admin'),
       });
       if (error) throw error;
     },
     onSuccess: (_, { userId }) => {
       queryClient.invalidateQueries({ queryKey: ['admin_profiles'] });
       setCreditAmount(s => ({ ...s, [userId]: '' }));
-      toast({ title: 'Saldo aggiornato' });
+      setCreditNote(s => ({ ...s, [userId]: '' }));
+      toast({ title: demoOn ? 'Saldo demo aggiornato' : 'Saldo reale aggiornato' });
     },
     onError: (e: Error) => toast({ title: 'Errore', description: e.message, variant: 'destructive' }),
   });
