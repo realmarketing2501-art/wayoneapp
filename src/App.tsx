@@ -16,6 +16,7 @@ import IncomePage from "./pages/IncomePage";
 import FundPage from "./pages/FundPage";
 import WithdrawPage from "./pages/WithdrawPage";
 import ProfilePage from "./pages/ProfilePage";
+import SecurityPage from "./pages/SecurityPage";
 import TaskCenterPage from "./pages/TaskCenterPage";
 import LoginPage from "./pages/LoginPage";
 import DepositPage from "./pages/DepositPage";
@@ -57,6 +58,7 @@ const App = () => (
                 <Route path="/fund" element={<FundPage />} />
                 <Route path="/withdraw" element={<WithdrawPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/security" element={<SecurityPage />} />
                 <Route path="/tasks" element={<TaskCenterPage />} />
                 <Route path="/deposit" element={<DepositPage />} />
                 <Route path="/admin" element={<AdminPage />} />
