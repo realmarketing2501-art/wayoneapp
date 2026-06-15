@@ -176,13 +176,19 @@ function UsersTab() {
 
   const suspendMutation = useMutation({
     mutationFn: async ({ userId, suspend }: { userId: string; suspend: boolean }) => {
-      const { error } = await supabase.from('profiles').update({ is_suspended: suspend }).eq('user_id', userId);
+      const { error } = await supabase.rpc('admin_set_user_suspended', {
+        p_user_id: userId,
+        p_suspended: suspend,
+      });
       if (error) throw error;
     },
     onSuccess: (_, { suspend }) => {
       queryClient.invalidateQueries({ queryKey: ['admin_profiles'] });
       toast({ title: suspend ? 'Utente sospeso' : 'Utente riattivato' });
     },
+    onError: (e: Error) => toast({ title: 'Errore', description: e.message, variant: 'destructive' }),
+  });
+
     onError: (e: Error) => toast({ title: 'Errore', description: e.message, variant: 'destructive' }),
   });
 
