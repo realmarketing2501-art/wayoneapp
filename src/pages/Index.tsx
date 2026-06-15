@@ -35,7 +35,7 @@ export default function Index() {
   const features = t('landing.features.items', { returnObjects: true }) as Item[];
   const flow = t('landing.flow.items', { returnObjects: true }) as Item[];
   const screens = t('landing.screens.items', { returnObjects: true }) as Item[];
-  const bonuses = t('landing.bonuses.items', { returnObjects: true }) as BonusItem[];
+  
   const ranks = t('landing.ranks.items', { returnObjects: true }) as RankItem[];
   const refLabels = t('landing.referral.levels', { returnObjects: true }) as LevelLabel[];
 
@@ -338,37 +338,7 @@ export default function Index() {
         </div>
       </section>
 
-      {/* Bonus & Milestone */}
-      <div className="usdt-divider mx-auto max-w-6xl" />
-      <section className="py-12 sm:py-20">
-        <div className="mx-auto max-w-6xl px-4">
-          <h2 className="text-center font-display text-3xl font-bold sm:text-4xl">
-            {t('landing.bonuses.title_a')} <span className="usdt-gold-text">{t('landing.bonuses.title_b')}</span>
-          </h2>
-          <p className="mx-auto mt-3 max-w-xl text-center text-sm text-muted-foreground sm:text-base">
-            {t('landing.bonuses.sub')}
-          </p>
-
-          <div className="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {bonuses.map((b, i) => {
-              const Icon = bonusIcons[i] ?? Star;
-              return (
-                <motion.div key={b.title} initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}
-                  className="usdt-card flex flex-col p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/15 text-primary">
-                      <Icon className="h-5 w-5" />
-                    </div>
-                    <h3 className="font-display text-sm font-bold text-foreground">{b.title}</h3>
-                  </div>
-                  <p className="mt-2 text-xs text-muted-foreground">{b.when}</p>
-                  <p className="mt-3 font-display text-lg font-bold usdt-gold-text">{b.reward}</p>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
+      {/* Bonus & Milestone rimosso: sezione non collegata a configurazioni reali */}
 
       {/* Rank VIP */}
       <div className="usdt-divider mx-auto max-w-6xl" />
