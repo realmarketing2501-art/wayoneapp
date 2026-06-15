@@ -16,10 +16,11 @@ export default function AppLayout() {
   const { user } = useAuth();
   const { t } = useTranslation();
   useAutoTrackSession();
+  const { data: demoMode } = useDemoMode();
 
   const publicTabs = [
     { path: '/home', icon: Home, label: t('nav.home') },
-    { path: '/fund', icon: Wallet, label: t('nav.wallet') },
+    { path: '/fund', icon: Landmark, label: t('nav.wallet') },
     { path: '/invest', icon: TrendingUp, label: t('nav.invest') },
     { path: '/network', icon: Users, label: t('nav.referral') },
   ];
