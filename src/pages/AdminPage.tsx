@@ -255,26 +255,26 @@ function UsersTab() {
                     {demoOn ? 'DEMO' : 'REALE'}
                   </Badge>
                 </div>
-                <div className="flex gap-1.5 items-center">
+                <div className="grid grid-cols-[7rem_minmax(0,1fr)] gap-2 sm:grid-cols-[7rem_minmax(0,1fr)_8rem]">
                   <Input
                     type="number"
                     step="1"
                     placeholder="USDT (+/-)"
-                    className="h-7 text-[0.65rem] w-24"
+                    className="h-9 text-xs"
                     value={creditAmount[p.user_id] ?? ''}
                     onChange={e => setCreditAmount(s => ({ ...s, [p.user_id]: e.target.value }))}
                   />
                   <Input
                     type="text"
                     placeholder={demoOn ? 'Nota (test, ricarica demo...)' : 'Motivo (premio, rimborso, bug...)'}
-                    className="h-7 text-[0.65rem] flex-1"
+                    className="h-9 text-xs min-w-0"
                     value={creditNote[p.user_id] ?? ''}
                     onChange={e => setCreditNote(s => ({ ...s, [p.user_id]: e.target.value }))}
                   />
                   <Button
                     size="sm"
                     type="button"
-                    className="h-7 text-[0.65rem] shrink-0"
+                    className="col-span-2 h-9 w-full text-xs font-semibold sm:col-span-1"
                     disabled={creditMutation.isPending || !creditAmount[p.user_id]}
                     onClick={() => {
                       const raw = creditAmount[p.user_id];
