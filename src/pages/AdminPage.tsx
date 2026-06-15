@@ -141,12 +141,16 @@ function UsersTab() {
     },
     onSuccess: (_, { userId }) => {
       queryClient.invalidateQueries({ queryKey: ['admin_profiles'] });
+      queryClient.invalidateQueries({ queryKey: ['admin_wallets'] });
+      queryClient.invalidateQueries({ queryKey: ['admin_wallet_transactions'] });
+      queryClient.invalidateQueries({ queryKey: ['admin_ledger'] });
       setCreditAmount(s => ({ ...s, [userId]: '' }));
       setCreditNote(s => ({ ...s, [userId]: '' }));
       toast({ title: demoOn ? 'Saldo demo aggiornato' : 'Saldo reale aggiornato' });
     },
     onError: (e: Error) => toast({ title: 'Errore', description: e.message, variant: 'destructive' }),
   });
+
 
   const { data: profiles = [] } = useQuery({
     queryKey: ['admin_profiles'],
