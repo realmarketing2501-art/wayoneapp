@@ -109,7 +109,7 @@ function DashboardTab() {
           <div className="space-y-1.5">
             {Object.entries(levelDist).map(([level, count]) => (
               <div key={level} className="flex justify-between text-sm">
-                <span className="text-muted-foreground text-xs">{level}</span>
+                <span className="text-muted-foreground text-xs">{levelName(level)}</span>
                 <Badge variant="secondary" className="text-[0.6rem]">{count}</Badge>
               </div>
             ))}
