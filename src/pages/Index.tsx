@@ -256,10 +256,10 @@ export default function Index() {
 
           {hasPlans ? (
             <>
-              <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+              <div className="mt-10 flex flex-wrap justify-center gap-4">
                 {plans.map((p, i) => (
                   <motion.div key={p.name} initial={{ opacity: 0, y: 15 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.06 }}
-                    className={`relative rounded-2xl p-5 ${p.popular ? 'usdt-card-gold border-2 border-primary' : 'usdt-card'}`}>
+                    className={`relative rounded-2xl p-5 w-full sm:w-[calc(50%-0.5rem)] lg:w-[calc(20%-0.8rem)] lg:min-w-[180px] ${p.popular ? 'usdt-card-gold border-2 border-primary' : 'usdt-card'}`}>
                     {p.popular && (
                       <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-0.5 text-[0.6rem] font-bold uppercase tracking-wide text-primary-foreground">
                         {t('landing.plans.popular')}
