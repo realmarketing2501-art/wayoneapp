@@ -16,13 +16,15 @@ import ReferralGuide from '@/components/ReferralGuide';
 import { useAuth } from '@/contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { LogIn } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
-function TreeNode({ node, depth = 0 }: { node: ReferralNode; depth?: number }) {
+function TreeNode({ node, depth = 0, localeTag }: { node: ReferralNode; depth?: number; localeTag: string }) {
+  const { t } = useTranslation();
   const [open, setOpen] = useState(depth < 1);
   const hasChildren = node.children.length > 0;
   const levelColor = getLevelColorClass(node.level as LevelName);
   const levelLabel = getLevelLabel(node.level as LevelName);
-  const joinDate = new Date(node.created_at).toLocaleDateString('it-IT', { day: '2-digit', month: 'short', year: 'numeric' });
+  const joinDate = new Date(node.created_at).toLocaleDateString(localeTag, { day: '2-digit', month: 'short', year: 'numeric' });
 
   return (
     <div className={depth > 0 ? 'ml-4 border-l border-border pl-3' : ''}>
@@ -46,16 +48,16 @@ function TreeNode({ node, depth = 0 }: { node: ReferralNode; depth?: number }) {
           <div className="flex items-center gap-2 mt-0.5">
             {node.has_confirmed_deposit ? (
               <span className="flex items-center gap-1 text-[0.6rem] text-green-500">
-                <CheckCircle2 className="h-3 w-3" /> Attivo
+                <CheckCircle2 className="h-3 w-3" /> {t('network.nodeActive')}
               </span>
             ) : (
               <span className="flex items-center gap-1 text-[0.6rem] text-amber-500">
-                <Clock className="h-3 w-3" /> In attesa deposito
+                <Clock className="h-3 w-3" /> {t('network.nodePending')}
               </span>
             )}
             <span className="text-[0.6rem] text-muted-foreground">· {joinDate}</span>
             {node.direct_referrals > 0 && (
-              <span className="text-[0.6rem] text-muted-foreground">· {node.direct_referrals} ref</span>
+              <span className="text-[0.6rem] text-muted-foreground">· {t('network.nodeRefShort', { n: node.direct_referrals })}</span>
             )}
           </div>
         </div>
@@ -64,7 +66,7 @@ function TreeNode({ node, depth = 0 }: { node: ReferralNode; depth?: number }) {
       {open && hasChildren && (
         <div className="mt-1">
           {node.children.map((child) => (
-            <TreeNode key={child.id} node={child} depth={depth + 1} />
+            <TreeNode key={child.id} node={child} depth={depth + 1} localeTag={localeTag} />
           ))}
         </div>
       )}
@@ -73,6 +75,7 @@ function TreeNode({ node, depth = 0 }: { node: ReferralNode; depth?: number }) {
 }
 
 export default function NetworkPage() {
+  const { t, i18n } = useTranslation();
   const [showQR, setShowQR] = useState(false);
   const { toast } = useToast();
   const { user } = useAuth();
@@ -80,6 +83,7 @@ export default function NetworkPage() {
   const { data: profile } = useProfile();
   const { data: tree, isLoading: treeLoading } = useReferralTree();
   const { data: levels = [] } = useLevels();
+  const localeTag = i18n.language === 'zh' ? 'zh-CN' : i18n.language;
 
   if (!user) {
     return (
@@ -88,13 +92,13 @@ export default function NetworkPage() {
           <CardContent className="p-6 text-center space-y-4">
             <Users className="h-10 w-10 text-primary mx-auto" />
             <div>
-              <p className="font-display text-lg font-bold text-foreground">Accedi per vedere la tua rete</p>
+              <p className="font-display text-lg font-bold text-foreground">{t('network.loginRequiredTitle')}</p>
               <p className="text-sm text-muted-foreground mt-1">
-                Il tuo codice e link referral sono disponibili solo dopo il login.
+                {t('network.loginRequiredDesc')}
               </p>
             </div>
             <Button className="usdt-btn-gold w-full" onClick={() => navigate('/login')}>
-              <LogIn className="h-4 w-4 mr-2" /> Accedi o registrati
+              <LogIn className="h-4 w-4 mr-2" /> {t('network.loginCta')}
             </Button>
           </CardContent>
         </Card>
@@ -103,12 +107,11 @@ export default function NetworkPage() {
   }
 
   const referralCode = profile?.referral_code ?? '...';
-  // Always use the published domain for referral links so they work outside preview
   const referralUrl = `https://wayone.xyz/login?ref=${referralCode}`;
 
   const copyLink = () => {
     navigator.clipboard.writeText(referralUrl);
-    toast({ title: 'Link copiato!', description: 'Il tuo link referral è stato copiato.' });
+    toast({ title: t('network.linkCopiedTitle'), description: t('network.linkCopiedDesc') });
   };
 
   const userLevel = (profile?.level ?? 'gamma') as LevelName;
@@ -117,10 +120,10 @@ export default function NetworkPage() {
   const progress = computeProgress(levels, userLevel, units, production);
 
   const stats = [
-    { icon: Users, label: 'Unità (referral attivi)', value: units },
-    { icon: DollarSign, label: 'Produzione rete', value: `${production.toLocaleString()} USDT` },
-    { icon: Users, label: 'Referral Diretti', value: profile?.direct_referrals ?? 0 },
-    { icon: Award, label: 'Bonus livello', value: `${progress?.current.bonus_valore ?? 0} USDT` },
+    { icon: Users, label: t('network.statUnits'), value: units },
+    { icon: DollarSign, label: t('network.statProduction'), value: `${production.toLocaleString()} USDT` },
+    { icon: Users, label: t('network.statDirectReferrals'), value: profile?.direct_referrals ?? 0 },
+    { icon: Award, label: t('network.statLevelBonus'), value: `${progress?.current.bonus_valore ?? 0} USDT` },
   ];
 
   return (
@@ -139,13 +142,12 @@ export default function NetworkPage() {
         ))}
       </div>
 
-      {/* Progress verso prossimo livello */}
       {progress && progress.next && (
         <Card className="border-primary/20">
           <CardContent className="p-4 space-y-3">
             <div className="flex items-center justify-between gap-2">
               <div className="min-w-0">
-                <p className="text-xs text-muted-foreground">Avanzamento qualifica</p>
+                <p className="text-xs text-muted-foreground">{t('network.progressTitle')}</p>
                 <p className="font-display text-base font-bold text-foreground">
                   {progress.current.name} → {progress.next.name}
                 </p>
@@ -156,10 +158,9 @@ export default function NetworkPage() {
               </Badge>
             </div>
 
-            {/* Units bar */}
             <div>
               <div className="flex items-center justify-between text-[0.7rem] mb-1">
-                <span className="text-muted-foreground">Unità (referral attivi)</span>
+                <span className="text-muted-foreground">{t('network.statUnits')}</span>
                 <span className="font-medium text-foreground">
                   {units} / {progress.next.unita_richieste}
                   {progress.unitsMissing > 0 && (
@@ -170,10 +171,9 @@ export default function NetworkPage() {
               <Progress value={progress.unitsPct} className="h-1.5" />
             </div>
 
-            {/* Production bar */}
             <div>
               <div className="flex items-center justify-between text-[0.7rem] mb-1">
-                <span className="text-muted-foreground">Produzione rete</span>
+                <span className="text-muted-foreground">{t('network.statProduction')}</span>
                 <span className="font-medium text-foreground">
                   {production.toLocaleString()} / {Number(progress.next.produzione_richiesta).toLocaleString()} USDT
                   {progress.productionMissing > 0 && (
@@ -189,7 +189,7 @@ export default function NetworkPage() {
 
       <Card className="border-primary/20">
         <CardContent className="p-4">
-          <p className="text-sm font-medium text-foreground">Il tuo Link Referral</p>
+          <p className="text-sm font-medium text-foreground">{t('network.yourReferralLink')}</p>
           <div className="mt-2 flex gap-2">
             <div className="flex-1 overflow-hidden rounded-lg bg-secondary px-3 py-2 font-mono text-[0.65rem] text-muted-foreground break-all sm:text-xs">
               {referralUrl}
@@ -205,26 +205,24 @@ export default function NetworkPage() {
         </CardContent>
       </Card>
 
-      {/* Manuale Referral */}
       <ReferralGuide url={referralUrl} code={referralCode} />
 
-      {/* Referral Tree */}
       <Card>
         <CardContent className="p-4">
           <p className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
             <Users className="h-4 w-4 text-primary" />
-            Il tuo Albero Referral
+            {t('network.yourTree')}
           </p>
           {treeLoading ? (
-            <p className="text-sm text-muted-foreground text-center py-4">Caricamento...</p>
+            <p className="text-sm text-muted-foreground text-center py-4">{t('common.loading')}</p>
           ) : !tree || tree.length === 0 ? (
             <p className="text-sm text-muted-foreground text-center py-4">
-              Nessun referral ancora. Condividi il tuo link per far crescere la rete!
+              {t('network.noReferrals')}
             </p>
           ) : (
             <div className="space-y-1">
               {tree.map((node) => (
-                <TreeNode key={node.id} node={node} />
+                <TreeNode key={node.id} node={node} localeTag={localeTag} />
               ))}
             </div>
           )}

@@ -10,12 +10,13 @@ import { Link } from 'react-router-dom';
 import { UsdtMonogram } from '@/components/UsdtMonogram';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { useTranslation } from 'react-i18next';
 
 type Plan = {
   id: string;
   name: string;
   days: number;
-  daily: number; // percent
+  daily: number;
   min: number;
   max: number | null;
   popular?: boolean;
@@ -29,7 +30,6 @@ type WithdrawalMode = {
   active?: boolean;
 };
 
-// Fallback usato SOLO se il DB non ha piani attivi (es. configurazione iniziale).
 const FALLBACK_PLANS: Plan[] = [
   { id: 'basic', name: 'Basic', days: 90, daily: 1.00, min: 50,  max: 200 },
   { id: 'plus',  name: 'Plus',  days: 90, daily: 1.50, min: 300, max: 800, popular: true },
@@ -37,11 +37,11 @@ const FALLBACK_PLANS: Plan[] = [
   { id: 'elite', name: 'Elite', days: 90, daily: 2.50, min: 500, max: 1500 },
 ];
 
-const fmt = (n: number) =>
-  n.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
 export default function SimulatorPage() {
-  // Piani reali dal DB (RLS: leggibili anche da anon)
+  const { t, i18n } = useTranslation();
+  const localeTag = i18n.language === 'zh' ? 'zh-CN' : i18n.language;
+  const fmt = (n: number) => n.toLocaleString(localeTag, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
   const { data: dbPlans = [], isLoading: plansLoading } = useQuery({
     queryKey: ['public_simulator_plans'],
     queryFn: async () => {
@@ -56,7 +56,6 @@ export default function SimulatorPage() {
     staleTime: 0,
   });
 
-  // Config prelievi (RPC pubblica)
   const { data: withdrawalModes = [] } = useQuery({
     queryKey: ['public_simulator_withdrawal_config'],
     queryFn: async () => {
@@ -74,7 +73,6 @@ export default function SimulatorPage() {
 
   const plans: Plan[] = useMemo(() => {
     if (!dbPlans.length) return FALLBACK_PLANS;
-    // Marca "popular" sul piano centrale
     const mapped = dbPlans.map((p) => ({
       id: p.id,
       name: p.name,
@@ -91,7 +89,6 @@ export default function SimulatorPage() {
   const [planId, setPlanId] = useState<string>('');
   const [amount, setAmount] = useState<number>(500);
 
-  // Seleziona di default il piano "popular" o il primo
   useEffect(() => {
     if (!planId && plans.length) {
       const def = plans.find((p) => p.popular) ?? plans[0];
@@ -130,7 +127,7 @@ export default function SimulatorPage() {
         <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-3">
           <Link to="/" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground">
             <ArrowLeft className="h-4 w-4" />
-            Indietro
+            {t('simulator.back')}
           </Link>
           <div className="flex items-center gap-2">
             <UsdtMonogram size={28} letter="U" />
@@ -143,33 +140,32 @@ export default function SimulatorPage() {
         <div className="mb-6 text-center">
           <Badge className="mb-3 inline-flex items-center gap-1 bg-primary/10 text-primary hover:bg-primary/15">
             <Sparkles className="h-3 w-3" />
-            Simulatore
+            {t('simulator.badge')}
           </Badge>
           <h1 className="font-display text-3xl font-bold tracking-tight">
-            Simula il tuo investimento
+            {t('simulator.title')}
           </h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Scegli un piano, imposta l'importo e vedi il rendimento stimato in tempo reale.
+            {t('simulator.subtitle')}
           </p>
         </div>
 
         {plansLoading && (
-          <div className="mb-6 text-center text-sm text-muted-foreground">Caricamento piani…</div>
+          <div className="mb-6 text-center text-sm text-muted-foreground">{t('simulator.loadingPlans')}</div>
         )}
 
         {!plansLoading && !plans.length && (
           <Card className="mb-6 border-dashed">
             <CardContent className="p-6 text-center text-sm text-muted-foreground">
-              Nessun piano attivo disponibile al momento.
+              {t('simulator.noPlans')}
             </CardContent>
           </Card>
         )}
 
         {plan && (
           <>
-            {/* Piani */}
             <div className="mb-6">
-              <Label className="mb-3 block text-sm font-medium">Piano</Label>
+              <Label className="mb-3 block text-sm font-medium">{t('simulator.planLabel')}</Label>
               <div className={`grid grid-cols-2 gap-2 sm:grid-cols-${Math.min(plans.length, 5)}`}>
                 {plans.map((p) => {
                   const active = p.id === planId;
@@ -189,13 +185,13 @@ export default function SimulatorPage() {
                     >
                       {p.popular && (
                         <span className="absolute -top-2 right-2 rounded-full bg-primary px-2 py-0.5 text-[0.6rem] font-semibold text-primary-foreground">
-                          TOP
+                          {t('simulator.top')}
                         </span>
                       )}
                       <div className="text-sm font-semibold">{p.name}</div>
-                      <div className="mt-1 text-xs text-muted-foreground">{p.days} gg</div>
+                      <div className="mt-1 text-xs text-muted-foreground">{t('simulator.planDays', { days: p.days })}</div>
                       <div className="mt-1 text-xs font-medium text-primary">
-                        {p.daily.toString().replace('.', ',')}%/gg
+                        {p.daily.toString().replace('.', ',')}{t('simulator.ratePerDay')}
                       </div>
                     </button>
                   );
@@ -203,15 +199,14 @@ export default function SimulatorPage() {
               </div>
             </div>
 
-            {/* Importo */}
             <Card className="mb-6">
               <CardContent className="p-5">
                 <div className="mb-4 flex items-center justify-between">
                   <Label htmlFor="amount" className="text-sm font-medium">
-                    Importo (USDT)
+                    {t('simulator.amountLabel')}
                   </Label>
                   <span className="text-xs text-muted-foreground">
-                    Min {plan.min} · Max {plan.max ? fmt(plan.max) : '∞'}
+                    {t('simulator.minMax', { min: plan.min, max: plan.max ? fmt(plan.max) : '∞' })}
                   </span>
                 </div>
                 <div className="flex items-center gap-3">
@@ -260,27 +255,25 @@ export default function SimulatorPage() {
               </CardContent>
             </Card>
 
-            {/* Risultati */}
             <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-              <StatCard icon={<Calendar className="h-4 w-4" />} label="Durata" value={`${plan.days} gg`} />
-              <StatCard icon={<TrendingUp className="h-4 w-4" />} label="Rendita giornaliera" value={`${fmt(sim.dailyEarn)} USDT`} />
-              <StatCard icon={<Calculator className="h-4 w-4" />} label="Rendimento totale" value={`+${fmt(sim.totalEarn)} USDT`} highlight />
-              <StatCard icon={<Sparkles className="h-4 w-4" />} label="ROI" value={`+${sim.roiPct.toFixed(2).replace('.', ',')}%`} highlight />
+              <StatCard icon={<Calendar className="h-4 w-4" />} label={t('simulator.duration')} value={t('simulator.planDays', { days: plan.days })} />
+              <StatCard icon={<TrendingUp className="h-4 w-4" />} label={t('simulator.dailyEarn')} value={`${fmt(sim.dailyEarn)} USDT`} />
+              <StatCard icon={<Calculator className="h-4 w-4" />} label={t('simulator.totalReturn')} value={`+${fmt(sim.totalEarn)} USDT`} highlight />
+              <StatCard icon={<Sparkles className="h-4 w-4" />} label={t('simulator.roi')} value={`+${sim.roiPct.toFixed(2).replace('.', ',')}%`} highlight />
             </div>
 
-            {/* Riepilogo finale */}
             <Card className="mb-6 overflow-hidden border-primary/30 bg-gradient-to-br from-primary/10 via-primary/5 to-transparent">
               <CardContent className="p-5">
                 <div className="flex items-center justify-between">
                   <div>
                     <div className="text-xs uppercase tracking-wider text-muted-foreground">
-                      Saldo finale stimato
+                      {t('simulator.finalBalanceLabel')}
                     </div>
                     <div className="mt-1 font-display text-3xl font-bold">
                       {fmt(sim.finalBalance)} <span className="text-base text-muted-foreground">USDT</span>
                     </div>
                     <div className="mt-1 text-xs text-muted-foreground">
-                      Capitale {fmt(clampedAmount)} + interessi {fmt(sim.totalEarn)}
+                      {t('simulator.breakdown', { cap: fmt(clampedAmount), int: fmt(sim.totalEarn) })}
                     </div>
                   </div>
                   <UsdtMonogram size={56} letter="U" />
@@ -288,13 +281,12 @@ export default function SimulatorPage() {
               </CardContent>
             </Card>
 
-            {/* Simulazione prelievo (fee dinamiche da admin) */}
             {withdrawalModes.length > 0 && (
               <Card className="mb-6">
                 <CardContent className="p-5">
                   <div className="mb-3 flex items-center gap-2 text-sm font-medium">
                     <Coins className="h-4 w-4 text-primary" />
-                    Stima prelievo del saldo finale
+                    {t('simulator.withdrawSim')}
                   </div>
                   <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
                     {withdrawalModes.map((m) => {
@@ -306,9 +298,9 @@ export default function SimulatorPage() {
                             <span className="text-sm font-semibold">{m.label}</span>
                             <Badge variant="outline" className="text-[0.6rem]">{m.hours}h</Badge>
                           </div>
-                          <div className="mt-1 text-[0.7rem] text-muted-foreground">Fee {m.fee_pct}%</div>
+                          <div className="mt-1 text-[0.7rem] text-muted-foreground">{t('simulator.feeLabel', { pct: m.fee_pct })}</div>
                           <div className="mt-2 text-base font-bold text-primary">{fmt(net)} USDT</div>
-                          <div className="text-[0.65rem] text-muted-foreground">Fee: -{fmt(fee)}</div>
+                          <div className="text-[0.65rem] text-muted-foreground">{t('simulator.feeMinus', { val: fmt(fee) })}</div>
                         </div>
                       );
                     })}
@@ -317,10 +309,9 @@ export default function SimulatorPage() {
               </Card>
             )}
 
-            {/* Grafico */}
             <Card className="mb-6">
               <CardContent className="p-5">
-                <div className="mb-3 text-sm font-medium">Crescita giornaliera</div>
+                <div className="mb-3 text-sm font-medium">{t('simulator.growth')}</div>
                 <Chart series={sim.series} />
               </CardContent>
             </Card>
@@ -329,19 +320,17 @@ export default function SimulatorPage() {
 
         <div className="flex flex-col gap-2 sm:flex-row">
           <Button asChild className="flex-1">
-            <Link to="/login">Inizia ora</Link>
+            <Link to="/login">{t('simulator.startNow')}</Link>
           </Button>
           <Button asChild variant="outline" className="flex-1">
-            <Link to="/invest">Esplora i piani</Link>
+            <Link to="/invest">{t('simulator.explorePlans')}</Link>
           </Button>
         </div>
 
         <p className="mt-4 flex items-start gap-1.5 text-center text-[0.7rem] leading-relaxed text-muted-foreground">
           <Info className="h-3 w-3 mt-0.5 shrink-0" />
           <span>
-            Strumento di simulazione: i risultati sono stime basate sui parametri attuali del piano
-            e sulle fee di prelievo configurate. Non costituiscono garanzia di rendimento e non
-            generano operazioni reali.
+            {t('simulator.disclaimer')}
           </span>
         </p>
       </main>

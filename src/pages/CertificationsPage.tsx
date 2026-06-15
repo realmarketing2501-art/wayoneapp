@@ -1,16 +1,17 @@
 import { motion } from 'framer-motion';
-import { Award, Download, ExternalLink, ShieldCheck, FileText, CheckCircle2 } from 'lucide-react';
+import { Award, Download, ShieldCheck, FileText, CheckCircle2 } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useTranslation } from 'react-i18next';
 
 const CERT_IMG = '/certifications/wayone-financial-dealer-license.jpg';
 const CERT_PDF = '/certifications/wayone-financial-dealer-license.pdf';
 
 export default function CertificationsPage() {
+  const { t } = useTranslation();
   return (
     <div className="space-y-5 p-4">
-      {/* Hero */}
       <motion.section
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
@@ -23,19 +24,18 @@ export default function CertificationsPage() {
           </div>
           <div className="min-w-0">
             <p className="text-[0.65rem] uppercase tracking-wider text-muted-foreground">
-              Trasparenza e conformità
+              {t('certifications.transparency')}
             </p>
             <h1 className="font-display mt-1 text-xl font-bold usdt-gold-text">
-              Certificazioni WAYONE
+              {t('certifications.title')}
             </h1>
             <p className="mt-1.5 text-xs text-muted-foreground">
-              Documenti ufficiali, licenze e attestati che regolano l'operatività della piattaforma.
+              {t('certifications.subtitle')}
             </p>
           </div>
         </div>
       </motion.section>
 
-      {/* Certificate card */}
       <motion.section
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
@@ -53,7 +53,7 @@ export default function CertificationsPage() {
               variant="secondary"
               className="absolute top-3 right-3 gap-1 bg-emerald-500/15 text-emerald-500 backdrop-blur"
             >
-              <CheckCircle2 className="h-3 w-3" /> Verificato
+              <CheckCircle2 className="h-3 w-3" /> {t('certifications.verified')}
             </Badge>
           </div>
           <CardContent className="space-y-3 p-4">
@@ -63,30 +63,30 @@ export default function CertificationsPage() {
               </div>
               <div className="min-w-0 flex-1">
                 <p className="font-display text-sm font-bold text-foreground">
-                  Financial Dealer License
+                  {t('certifications.licenseName')}
                 </p>
                 <p className="text-[0.7rem] text-muted-foreground">
-                  Saint Vincent and the Grenadines — SVG FSA
+                  {t('certifications.jurisdiction')}
                 </p>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-2 rounded-lg border border-border/60 bg-card/40 p-3">
-              <Info label="Entità" value="Way One Std" />
-              <Info label="Registrazione" value="09310 FSA" />
-              <Info label="N° licenza" value="U.FrB 5001018" />
-              <Info label="Stato" value="Attiva" valueClass="text-emerald-500" />
+              <Info label={t('certifications.entityLabel')} value={t('certifications.entityValue')} />
+              <Info label={t('certifications.registrationLabel')} value={t('certifications.registrationValue')} />
+              <Info label={t('certifications.licenseNumberLabel')} value={t('certifications.licenseNumberValue')} />
+              <Info label={t('certifications.statusLabel')} value={t('certifications.statusActive')} valueClass="text-emerald-500" />
             </div>
 
             <div className="grid grid-cols-2 gap-2">
               <Button asChild className="usdt-btn-gold h-10 gap-2">
                 <a href={CERT_PDF} target="_blank" rel="noopener noreferrer">
-                  <FileText className="h-4 w-4" /> Apri PDF
+                  <FileText className="h-4 w-4" /> {t('certifications.openPdf')}
                 </a>
               </Button>
               <Button asChild variant="outline" className="h-10 gap-2">
                 <a href={CERT_PDF} download="WAYONE_Financial_Dealer_License.pdf">
-                  <Download className="h-4 w-4" /> Scarica
+                  <Download className="h-4 w-4" /> {t('certifications.download')}
                 </a>
               </Button>
             </div>
@@ -94,27 +94,17 @@ export default function CertificationsPage() {
         </Card>
       </motion.section>
 
-      {/* Compliance highlights */}
       <section className="usdt-card p-4 space-y-3">
-        <h2 className="font-display text-sm font-bold">Conformità operativa</h2>
+        <h2 className="font-display text-sm font-bold">{t('certifications.complianceTitle')}</h2>
         <div className="space-y-2.5">
-          <Bullet
-            title="Custodia USDT 1:1"
-            desc="Ogni saldo utente è coperto in USDT con rapporto 1:1, tracciato su ledger interno append-only."
-          />
-          <Bullet
-            title="Sicurezza dei movimenti"
-            desc="Tutte le operazioni finanziarie passano da RPC server-side con lock atomici, per evitare doppie esecuzioni."
-          />
-          <Bullet
-            title="Tracciabilità on-chain"
-            desc="Depositi e prelievi USDT (TRC-20 / ERC-20) sono verificabili tramite TXID sulla blockchain."
-          />
+          <Bullet title={t('certifications.bullet1Title')} desc={t('certifications.bullet1Desc')} />
+          <Bullet title={t('certifications.bullet2Title')} desc={t('certifications.bullet2Desc')} />
+          <Bullet title={t('certifications.bullet3Title')} desc={t('certifications.bullet3Desc')} />
         </div>
       </section>
 
       <p className="text-center text-[0.65rem] text-muted-foreground">
-        Per richieste di verifica documentale scrivi a{' '}
+        {t('certifications.contactNote')}{' '}
         <a href="mailto:compliance@wayone.xyz" className="text-primary underline">
           compliance@wayone.xyz
         </a>

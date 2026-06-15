@@ -7,8 +7,10 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { CheckCircle2, Gift } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
 
 export default function TaskCenterPage() {
+  const { t } = useTranslation();
   const { user } = useAuth();
 
   const { data: templates = [] } = useQuery({
@@ -41,12 +43,12 @@ export default function TaskCenterPage() {
   return (
     <div className="space-y-6 p-4">
       <div className="flex items-center justify-between">
-        <h2 className="font-display text-xl font-bold">Task Center</h2>
-        <Badge variant="outline" className="gap-1"><Gift className="h-3.5 w-3.5" /> Bonus USDT</Badge>
+        <h2 className="font-display text-xl font-bold">{t('taskCenter.title')}</h2>
+        <Badge variant="outline" className="gap-1"><Gift className="h-3.5 w-3.5" /> {t('taskCenter.badgeBonus')}</Badge>
       </div>
 
       <div>
-        <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground">Giornaliere</h3>
+        <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground">{t('taskCenter.sectionDaily')}</h3>
         <div className="space-y-2">
           {dailyTasks.map(task => {
             const { progress, completed } = getProgress(task.id);
@@ -63,17 +65,17 @@ export default function TaskCenterPage() {
                     <p className="font-display text-sm font-bold text-primary">+{Number(task.reward).toFixed(1)}</p>
                     <p className="text-xs text-muted-foreground">USDT</p>
                   </div>
-                  {!completed && <Button size="sm">Vai</Button>}
+                  {!completed && <Button size="sm">{t('taskCenter.go')}</Button>}
                 </CardContent>
               </Card>
             );
           })}
-          {dailyTasks.length === 0 && <p className="text-center text-sm text-muted-foreground py-4">Nessuna task disponibile</p>}
+          {dailyTasks.length === 0 && <p className="text-center text-sm text-muted-foreground py-4">{t('taskCenter.empty')}</p>}
         </div>
       </div>
 
       <div>
-        <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground">Settimanali</h3>
+        <h3 className="mb-3 text-sm font-semibold uppercase tracking-wider text-muted-foreground">{t('taskCenter.sectionWeekly')}</h3>
         <div className="space-y-2">
           {weeklyTasks.map(task => {
             const { progress, completed } = getProgress(task.id);
@@ -97,7 +99,7 @@ export default function TaskCenterPage() {
               </Card>
             );
           })}
-          {weeklyTasks.length === 0 && <p className="text-center text-sm text-muted-foreground py-4">Nessuna task disponibile</p>}
+          {weeklyTasks.length === 0 && <p className="text-center text-sm text-muted-foreground py-4">{t('taskCenter.empty')}</p>}
         </div>
       </div>
     </div>
