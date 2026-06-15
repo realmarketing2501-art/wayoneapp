@@ -280,29 +280,47 @@ export type Database = {
       fund_investments: {
         Row: {
           amount: number
+          completed_at: string | null
           created_at: string
+          daily_rate: number | null
+          days_remaining: number | null
+          duration_days: number | null
           fund_id: string
           id: string
+          last_payout_at: string | null
           status: string
           total_earned: number | null
+          updated_at: string
           user_id: string
         }
         Insert: {
           amount: number
+          completed_at?: string | null
           created_at?: string
+          daily_rate?: number | null
+          days_remaining?: number | null
+          duration_days?: number | null
           fund_id: string
           id?: string
+          last_payout_at?: string | null
           status?: string
           total_earned?: number | null
+          updated_at?: string
           user_id: string
         }
         Update: {
           amount?: number
+          completed_at?: string | null
           created_at?: string
+          daily_rate?: number | null
+          days_remaining?: number | null
+          duration_days?: number | null
           fund_id?: string
           id?: string
+          last_payout_at?: string | null
           status?: string
           total_earned?: number | null
+          updated_at?: string
           user_id?: string
         }
         Relationships: [
@@ -1120,6 +1138,7 @@ export type Database = {
         Args: { p_withdrawal_id: string }
         Returns: boolean
       }
+      admin_wipe_demo_data: { Args: { p_confirm: string }; Returns: Json }
       award_level_bonus: {
         Args: {
           p_level: Database["public"]["Enums"]["level_name"]
@@ -1172,6 +1191,7 @@ export type Database = {
         Args: { p_amount: number; p_fund_id: string; p_user_id: string }
         Returns: string
       }
+      is_demo_mode: { Args: never; Returns: boolean }
       process_daily_returns: {
         Args: never
         Returns: {
