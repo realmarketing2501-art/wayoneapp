@@ -199,10 +199,18 @@ function UsersTab() {
     onError: (e: Error) => toast({ title: 'Errore', description: e.message, variant: 'destructive' }),
   });
 
-  const filtered = profiles.filter(p =>
-    p.username.toLowerCase().includes(search.toLowerCase()) ||
-    p.referral_code.toLowerCase().includes(search.toLowerCase())
-  );
+  const filtered = profiles
+    .filter(p =>
+      (p.username.toLowerCase().includes(search.toLowerCase()) ||
+       p.referral_code.toLowerCase().includes(search.toLowerCase())) &&
+      (statusFilter === 'all'
+        || (statusFilter === 'suspended' && p.is_suspended)
+        || (statusFilter === 'active' && !p.is_suspended))
+    )
+    .sort((a, b) => Number(b.is_suspended) - Number(a.is_suspended));
+
+  const totalSuspended = profiles.filter(p => p.is_suspended).length;
+  const totalActive = profiles.length - totalSuspended;
 
   return (
     <div className="space-y-3">
@@ -210,9 +218,41 @@ function UsersTab() {
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input placeholder="Cerca utente..." className="pl-9" value={search} onChange={e => setSearch(e.target.value)} />
       </div>
+      <div className="flex gap-1.5 flex-wrap">
+        <Button
+          size="sm"
+          variant={statusFilter === 'all' ? 'default' : 'outline'}
+          className="h-7 text-[0.65rem]"
+          onClick={() => setStatusFilter('all')}
+        >
+          Tutti ({profiles.length})
+        </Button>
+        <Button
+          size="sm"
+          variant={statusFilter === 'active' ? 'default' : 'outline'}
+          className="h-7 text-[0.65rem]"
+          onClick={() => setStatusFilter('active')}
+        >
+          Attivi ({totalActive})
+        </Button>
+        <Button
+          size="sm"
+          variant={statusFilter === 'suspended' ? 'destructive' : 'outline'}
+          className="h-7 text-[0.65rem]"
+          onClick={() => setStatusFilter('suspended')}
+        >
+          Sospesi ({totalSuspended})
+        </Button>
+      </div>
       <div className="space-y-1.5 max-h-[60vh] overflow-y-auto">
+        {filtered.length === 0 && (
+          <p className="text-center text-xs text-muted-foreground py-6">
+            {statusFilter === 'suspended' ? 'Nessun utente sospeso.' : 'Nessun utente trovato.'}
+          </p>
+        )}
         {filtered.map(p => (
-          <Card key={p.id} className={p.is_suspended ? 'opacity-60 border-destructive/30' : ''}>
+          <Card key={p.id} className={p.is_suspended ? 'opacity-70 border-destructive/40 bg-destructive/5' : ''}>
+
             <CardContent className="p-3 space-y-2">
               <div className="flex items-center justify-between">
                 <div className="min-w-0">
