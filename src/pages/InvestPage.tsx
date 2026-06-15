@@ -12,6 +12,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { useTranslation } from 'react-i18next';
 
 type Plan = {
   id: string;
@@ -24,13 +25,15 @@ type Plan = {
   status: string;
 };
 
-const fmt = (n: number) => n.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-
 export default function InvestPage() {
+  const { t, i18n } = useTranslation();
   const { data: profile } = useProfile();
   const { user } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
+
+  const localeTag = i18n.language === 'zh' ? 'zh-CN' : i18n.language;
+  const fmt = (n: number) => n.toLocaleString(localeTag, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
   const { data: plans = [] } = useQuery({
     queryKey: ['investment_plans'],
@@ -74,7 +77,7 @@ export default function InvestPage() {
 
   const investMutation = useMutation({
     mutationFn: async () => {
-      if (!selected) throw new Error('Nessun piano selezionato');
+      if (!selected) throw new Error(t('invest.errNoPlan'));
       const { data, error } = await supabase.rpc('create_investment', {
         p_user_id: user!.id,
         p_plan_id: selected.id,
@@ -88,47 +91,45 @@ export default function InvestPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['investments'] });
       queryClient.invalidateQueries({ queryKey: ['profile'] });
-      toast({ title: 'Investimento creato!', description: 'Il primo accredito interessi arriverà fra 24 ore.' });
+      toast({ title: t('invest.toastCreatedTitle'), description: t('invest.toastCreatedDesc') });
       setAmount('');
     },
-    onError: (e: Error) => toast({ title: 'Errore', description: e.message, variant: 'destructive' }),
+    onError: (e: Error) => toast({ title: t('invest.errorTitle'), description: e.message, variant: 'destructive' }),
   });
 
   const validation: { ok: boolean; error?: string } = useMemo(() => {
-    if (!selected) return { ok: false, error: 'Seleziona un piano' };
+    if (!selected) return { ok: false, error: t('invest.errSelectPlan') };
     if (!numericAmount) return { ok: false };
     if (selected.min_invest && numericAmount < selected.min_invest)
-      return { ok: false, error: `Minimo ${selected.min_invest} USDT` };
+      return { ok: false, error: t('invest.errMin', { min: selected.min_invest }) };
     if (selected.max_invest && numericAmount > selected.max_invest)
-      return { ok: false, error: `Massimo ${selected.max_invest} USDT` };
+      return { ok: false, error: t('invest.errMax', { max: selected.max_invest }) };
     if (numericAmount > Number(profile?.balance_available ?? 0))
-      return { ok: false, error: 'Saldo insufficiente' };
+      return { ok: false, error: t('invest.errInsufficient') };
     return { ok: true };
-  }, [selected, numericAmount, profile?.balance_available]);
+  }, [selected, numericAmount, profile?.balance_available, t]);
 
   const handleInvest = () => {
-    if (!user) return toast({ title: 'Accedi per investire', variant: 'destructive' });
-    if (!validation.ok) return toast({ title: 'Verifica importo', description: validation.error, variant: 'destructive' });
+    if (!user) return toast({ title: t('invest.toastLoginRequired'), variant: 'destructive' });
+    if (!validation.ok) return toast({ title: t('invest.toastVerifyAmount'), description: validation.error, variant: 'destructive' });
     investMutation.mutate();
   };
 
   return (
     <div className="space-y-5 p-4">
-      {/* Saldo */}
       <Card className="border-primary/20">
         <CardContent className="p-4">
-          <p className="text-xs text-muted-foreground">Saldo disponibile</p>
+          <p className="text-xs text-muted-foreground">{t('invest.availableBalance')}</p>
           <p className="font-display text-2xl font-bold text-primary">
             {fmt(Number(profile?.balance_available ?? 0))} <span className="text-sm text-muted-foreground">USDT</span>
           </p>
         </CardContent>
       </Card>
 
-      {/* Piani */}
       <div>
         <div className="mb-2 flex items-center gap-2">
           <Sparkles className="h-4 w-4 text-primary" />
-          <h3 className="font-display text-base font-semibold">Scegli un piano</h3>
+          <h3 className="font-display text-base font-semibold">{t('invest.choosePlan')}</h3>
         </div>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
           {plans.map((p) => {
@@ -144,12 +145,12 @@ export default function InvestPage() {
                 )}
               >
                 <div className="text-sm font-display font-bold">{p.name}</div>
-                <div className="text-[0.65rem] text-muted-foreground">{d} giorni</div>
+                <div className="text-[0.65rem] text-muted-foreground">{t('invest.planDays', { days: d })}</div>
                 <div className="mt-1 text-xs font-semibold text-primary">
-                  {String(p.daily_return).replace('.', ',')}%/gg
+                  {String(p.daily_return).replace('.', ',')}{t('invest.planRatePerDay')}
                 </div>
                 <div className="mt-1 text-[0.6rem] text-muted-foreground">
-                  Min {p.min_invest} · Max {p.max_invest && p.max_invest >= 1000000 ? '∞' : p.max_invest}
+                  {t('invest.planMinMax', { min: p.min_invest, max: p.max_invest && p.max_invest >= 1000000 ? '∞' : p.max_invest })}
                 </div>
               </button>
             );
@@ -157,22 +158,21 @@ export default function InvestPage() {
         </div>
       </div>
 
-      {/* Form investimento */}
       <Card>
         <CardContent className="p-4 space-y-4">
           <div className="flex items-center gap-2">
             <Calculator className="h-4 w-4 text-primary" />
-            <h3 className="font-display text-base font-semibold">Nuovo investimento</h3>
+            <h3 className="font-display text-base font-semibold">{t('invest.newInvestment')}</h3>
           </div>
 
           <div>
             <Label className="text-xs text-muted-foreground mb-1.5 block">
-              Importo (USDT){selected && ` · range ${selected.min_invest}–${selected.max_invest && selected.max_invest >= 1000000 ? '∞' : selected.max_invest}`}
+              {t('invest.amountLabel')}{selected && t('invest.amountRange', { min: selected.min_invest, max: selected.max_invest && selected.max_invest >= 1000000 ? '∞' : selected.max_invest })}
             </Label>
             <Input
               type="number"
               inputMode="decimal"
-              placeholder="es. 250"
+              placeholder={t('invest.amountPlaceholder')}
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
             />
@@ -181,11 +181,11 @@ export default function InvestPage() {
           {numericAmount > 0 && selected && (
             <div className="grid grid-cols-2 gap-2">
               <div className="rounded-lg bg-secondary p-3">
-                <p className="text-[0.65rem] text-muted-foreground">Giornaliero</p>
+                <p className="text-[0.65rem] text-muted-foreground">{t('invest.daily')}</p>
                 <p className="font-display text-base font-semibold text-primary">+{fmt(dailyEarn)} USDT</p>
               </div>
               <div className="rounded-lg bg-secondary p-3">
-                <p className="text-[0.65rem] text-muted-foreground">Totale ({days}gg)</p>
+                <p className="text-[0.65rem] text-muted-foreground">{t('invest.total', { days })}</p>
                 <p className="font-display text-base font-semibold text-accent">+{fmt(totalEarn)} USDT</p>
               </div>
             </div>
@@ -198,15 +198,14 @@ export default function InvestPage() {
           )}
 
           <Button className="w-full" onClick={handleInvest} disabled={investMutation.isPending || !validation.ok}>
-            {investMutation.isPending ? 'Creazione...' : 'Conferma Investimento'}
+            {investMutation.isPending ? t('invest.creating') : t('invest.confirmInvest')}
           </Button>
         </CardContent>
       </Card>
 
-      {/* I miei investimenti */}
       {user && investments.length > 0 && (
         <div>
-          <h3 className="mb-3 font-display text-base font-semibold">I miei investimenti</h3>
+          <h3 className="mb-3 font-display text-base font-semibold">{t('invest.myInvestments')}</h3>
           <div className="space-y-2">
             {investments.map((inv) => {
               const progress = inv.duration_days
@@ -219,14 +218,14 @@ export default function InvestPage() {
                       <div className="min-w-0">
                         <p className="text-sm font-medium text-foreground truncate">{inv.plan_name}</p>
                         <p className="text-xs text-muted-foreground">
-                          {Number(inv.amount).toFixed(2)} USDT · {inv.daily_rate}%/gg ·{' '}
-                          {inv.days_remaining > 0 ? `${inv.days_remaining}gg restanti` : 'Completato'}
+                          {Number(inv.amount).toFixed(2)} USDT · {inv.daily_rate}{t('invest.planRatePerDay')} ·{' '}
+                          {inv.days_remaining > 0 ? t('invest.daysRemaining', { n: inv.days_remaining }) : t('invest.completed')}
                         </p>
                       </div>
                       <div className="text-right shrink-0">
                         <p className="text-sm font-semibold text-primary">+{Number(inv.earned).toFixed(2)}</p>
                         <Badge variant={inv.status === 'active' ? 'default' : 'secondary'} className="text-[0.6rem]">
-                          {inv.status === 'active' ? 'Attivo' : 'Completato'}
+                          {inv.status === 'active' ? t('invest.active') : t('invest.completed')}
                         </Badge>
                       </div>
                     </div>

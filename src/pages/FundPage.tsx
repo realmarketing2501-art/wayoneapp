@@ -13,6 +13,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useProfile } from '@/hooks/useProfile';
 import { useToast } from '@/hooks/use-toast';
 import { Calendar, TrendingUp } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 type Fund = {
   id: string; name: string; badge: string; total_return: number; duration: number;
@@ -21,12 +22,14 @@ type Fund = {
 };
 
 export default function FundPage() {
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
   const { data: profile } = useProfile();
   const { toast } = useToast();
   const qc = useQueryClient();
   const [buying, setBuying] = useState<Fund | null>(null);
   const [amount, setAmount] = useState<string>('');
+  const localeTag = i18n.language === 'zh' ? 'zh-CN' : i18n.language;
 
   const { data: funds = [] } = useQuery({
     queryKey: ['special_funds'],
@@ -54,7 +57,7 @@ export default function FundPage() {
 
   const invest = useMutation({
     mutationFn: async () => {
-      if (!user || !buying) throw new Error('Accedi per investire');
+      if (!user || !buying) throw new Error(t('fund.errLoginRequired'));
       const amt = parseFloat(amount);
       const { data, error } = await supabase.rpc('invest_in_fund', {
         p_user_id: user.id, p_fund_id: buying.id, p_amount: amt,
@@ -66,10 +69,10 @@ export default function FundPage() {
       qc.invalidateQueries({ queryKey: ['special_funds'] });
       qc.invalidateQueries({ queryKey: ['profile'] });
       qc.invalidateQueries({ queryKey: ['my_fund_investments'] });
-      toast({ title: 'Quota acquistata', description: `${amount} USDT investiti nel fondo ${buying?.name}.` });
+      toast({ title: t('fund.toastBoughtTitle'), description: t('fund.toastBoughtDesc', { amount, name: buying?.name }) });
       setBuying(null); setAmount('');
     },
-    onError: (e: Error) => toast({ title: 'Errore acquisto', description: e.message, variant: 'destructive' }),
+    onError: (e: Error) => toast({ title: t('fund.errorTitle'), description: e.message, variant: 'destructive' }),
   });
 
   function FundCard({ fund }: { fund: Fund }) {
@@ -84,12 +87,12 @@ export default function FundPage() {
             </div>
             <div className="text-right">
               <p className="font-display text-xl font-bold text-primary">{fund.total_return}%</p>
-              <p className="text-xs text-muted-foreground">rendimento totale</p>
+              <p className="text-xs text-muted-foreground">{t('fund.totalReturn')}</p>
             </div>
           </div>
           <div className="mt-3 flex gap-4 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1"><Calendar className="h-3.5 w-3.5" />{fund.duration}gg</span>
-            <span className="flex items-center gap-1"><TrendingUp className="h-3.5 w-3.5" />{fund.min_invest}–{Number(fund.max_invest).toLocaleString()} USDT</span>
+            <span className="flex items-center gap-1"><Calendar className="h-3.5 w-3.5" />{t('fund.daysShort', { n: fund.duration })}</span>
+            <span className="flex items-center gap-1"><TrendingUp className="h-3.5 w-3.5" />{t('fund.rangeUsdt', { min: fund.min_invest, max: Number(fund.max_invest).toLocaleString() })}</span>
           </div>
           <div className="mt-3">
             <div className="flex justify-between text-xs text-muted-foreground">
@@ -98,10 +101,10 @@ export default function FundPage() {
             </div>
             <Progress value={pct} className="mt-1 h-2" />
           </div>
-          {fund.status === 'issuing' && <Button className="mt-3 w-full" onClick={() => { setBuying(fund); setAmount(String(fund.min_invest)); }}>Acquista</Button>}
-          {fund.status === 'upcoming' && <Button className="mt-3 w-full" variant="secondary" disabled>In arrivo — {fund.open_date}</Button>}
-          {fund.status === 'sold_out' && <Button className="mt-3 w-full" variant="secondary" disabled>Esaurito</Button>}
-          {fund.status === 'ended' && <Button className="mt-3 w-full" variant="secondary" disabled>Terminato</Button>}
+          {fund.status === 'issuing' && <Button className="mt-3 w-full" onClick={() => { setBuying(fund); setAmount(String(fund.min_invest)); }}>{t('fund.buy')}</Button>}
+          {fund.status === 'upcoming' && <Button className="mt-3 w-full" variant="secondary" disabled>{t('fund.comingSoon', { date: fund.open_date })}</Button>}
+          {fund.status === 'sold_out' && <Button className="mt-3 w-full" variant="secondary" disabled>{t('fund.soldOut')}</Button>}
+          {fund.status === 'ended' && <Button className="mt-3 w-full" variant="secondary" disabled>{t('fund.ended')}</Button>}
         </CardContent>
       </Card>
     );
@@ -109,12 +112,12 @@ export default function FundPage() {
 
   return (
     <div className="space-y-6 p-4">
-      <h2 className="font-display text-xl font-bold">Fondi Speciali</h2>
+      <h2 className="font-display text-xl font-bold">{t('fund.title')}</h2>
 
       {myFunds.length > 0 && (
         <Card>
           <CardContent className="p-4 space-y-3">
-            <h3 className="font-display text-sm font-semibold">I miei fondi</h3>
+            <h3 className="font-display text-sm font-semibold">{t('fund.myFunds')}</h3>
             <div className="space-y-2">
               {myFunds.map((mf) => {
                 const sf = mf.special_funds || {};
@@ -127,25 +130,25 @@ export default function FundPage() {
                       <div className="min-w-0">
                         <p className="font-semibold text-foreground truncate">{sf.name}</p>
                         <p className="text-[0.65rem] text-muted-foreground">
-                          {Number(mf.amount).toLocaleString()} USDT · {mf.daily_rate}% /gg · {sf.total_return}% totale
+                          {Number(mf.amount).toLocaleString()} USDT · {mf.daily_rate}% /gg · {sf.total_return}% {t('fund.totalReturn')}
                         </p>
                       </div>
                       <Badge variant={mf.status === 'completed' ? 'secondary' : 'default'} className="text-[0.55rem]">
-                        {mf.status === 'completed' ? 'Completato' : 'Attivo'}
+                        {mf.status === 'completed' ? t('fund.statusCompleted') : t('fund.statusActive')}
                       </Badge>
                     </div>
                     <div className="grid grid-cols-3 gap-2 text-[0.65rem]">
                       <div>
-                        <p className="text-muted-foreground">Maturato</p>
+                        <p className="text-muted-foreground">{t('fund.earned')}</p>
                         <p className="font-semibold text-primary">+{Number(mf.total_earned ?? 0).toFixed(2)} USDT</p>
                       </div>
                       <div>
-                        <p className="text-muted-foreground">Giorni</p>
+                        <p className="text-muted-foreground">{t('fund.days')}</p>
                         <p className="font-semibold">{elapsed}/{totalDays}</p>
                       </div>
                       <div>
-                        <p className="text-muted-foreground">Ultimo</p>
-                        <p className="font-semibold">{mf.last_payout_at ? new Date(mf.last_payout_at).toLocaleDateString('it-IT') : '—'}</p>
+                        <p className="text-muted-foreground">{t('fund.last')}</p>
+                        <p className="font-semibold">{mf.last_payout_at ? new Date(mf.last_payout_at).toLocaleDateString(localeTag) : '—'}</p>
                       </div>
                     </div>
                     <Progress value={pct} className="h-1.5" />
@@ -159,16 +162,16 @@ export default function FundPage() {
 
       <Tabs defaultValue="issuing">
         <TabsList className="w-full">
-          <TabsTrigger value="issuing" className="flex-1">In corso</TabsTrigger>
-          <TabsTrigger value="upcoming" className="flex-1">In arrivo</TabsTrigger>
-          <TabsTrigger value="sold_out" className="flex-1">Esauriti</TabsTrigger>
-          <TabsTrigger value="ended" className="flex-1">Terminati</TabsTrigger>
+          <TabsTrigger value="issuing" className="flex-1">{t('fund.tabIssuing')}</TabsTrigger>
+          <TabsTrigger value="upcoming" className="flex-1">{t('fund.tabUpcoming')}</TabsTrigger>
+          <TabsTrigger value="sold_out" className="flex-1">{t('fund.tabSoldOut')}</TabsTrigger>
+          <TabsTrigger value="ended" className="flex-1">{t('fund.tabEnded')}</TabsTrigger>
         </TabsList>
         {(['issuing', 'upcoming', 'sold_out', 'ended'] as const).map(status => (
           <TabsContent key={status} value={status} className="space-y-3">
             {funds.filter(f => f.status === status).map(f => <FundCard key={f.id} fund={f} />)}
             {funds.filter(f => f.status === status).length === 0 && (
-              <p className="py-8 text-center text-sm text-muted-foreground">Nessun fondo disponibile</p>
+              <p className="py-8 text-center text-sm text-muted-foreground">{t('fund.empty')}</p>
             )}
           </TabsContent>
         ))}
@@ -176,25 +179,25 @@ export default function FundPage() {
 
       <Dialog open={!!buying} onOpenChange={(o) => { if (!o) { setBuying(null); setAmount(''); } }}>
         <DialogContent>
-          <DialogHeader><DialogTitle>Acquista quote · {buying?.name}</DialogTitle></DialogHeader>
+          <DialogHeader><DialogTitle>{t('fund.dialogTitle', { name: buying?.name })}</DialogTitle></DialogHeader>
           {buying && (
             <div className="space-y-3">
               <div className="rounded-md bg-secondary p-3 text-xs space-y-1">
-                <div className="flex justify-between"><span className="text-muted-foreground">Rendimento</span><span className="font-semibold">{buying.total_return}% in {buying.duration}gg</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Range</span><span>{buying.min_invest}–{Number(buying.max_invest).toLocaleString()} USDT</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Disponibili nel fondo</span><span>{(Number(buying.goal) - Number(buying.raised)).toLocaleString()} USDT</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">Tuo saldo disponibile</span><span>{Number(profile?.balance_available ?? 0).toFixed(2)} USDT</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">{t('fund.dialogReturn')}</span><span className="font-semibold">{t('fund.dialogReturnVal', { pct: buying.total_return, days: buying.duration })}</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">{t('fund.dialogRange')}</span><span>{t('fund.rangeUsdt', { min: buying.min_invest, max: Number(buying.max_invest).toLocaleString() })}</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">{t('fund.dialogAvailable')}</span><span>{(Number(buying.goal) - Number(buying.raised)).toLocaleString()} USDT</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">{t('fund.dialogYourBalance')}</span><span>{Number(profile?.balance_available ?? 0).toFixed(2)} USDT</span></div>
               </div>
               <div>
-                <Label className="text-xs">Importo (USDT)</Label>
+                <Label className="text-xs">{t('fund.dialogAmount')}</Label>
                 <Input type="number" inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} min={buying.min_invest} max={buying.max_invest} />
               </div>
             </div>
           )}
           <DialogFooter className="gap-2">
-            <Button variant="outline" onClick={() => setBuying(null)}>Annulla</Button>
+            <Button variant="outline" onClick={() => setBuying(null)}>{t('fund.dialogCancel')}</Button>
             <Button onClick={() => invest.mutate()} disabled={invest.isPending || !amount || !user}>
-              {invest.isPending ? 'Acquisto…' : 'Conferma acquisto'}
+              {invest.isPending ? t('fund.buying') : t('fund.dialogConfirm')}
             </Button>
           </DialogFooter>
         </DialogContent>

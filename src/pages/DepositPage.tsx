@@ -9,6 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Copy, Wallet, ArrowDownToLine, Clock, Info, Loader2, CheckCircle, AlertTriangle, RefreshCw } from 'lucide-react';
 import { QRCodeSVG } from 'qrcode.react';
+import { useTranslation } from 'react-i18next';
 
 const networks = [
   { id: 'TRC-20', label: 'TRC-20 (Tron)', fee: '~1 USDT', time: '~3 min' },
@@ -18,6 +19,7 @@ const networks = [
 const PRESET_AMOUNTS = [50, 100, 250, 500, 1000, 2500];
 
 export default function DepositPage() {
+  const { t, i18n } = useTranslation();
   const [selectedNetwork, setSelectedNetwork] = useState(networks[0]);
   const [amount, setAmount] = useState('');
   const [showQR, setShowQR] = useState(false);
@@ -25,7 +27,6 @@ export default function DepositPage() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Fetch user's intents (wallet_address è incluso nel record dell'intent, niente lettura diretta di api_integrations)
   const { data: activeIntents = [], refetch: refetchIntents } = useQuery({
     queryKey: ['deposit-intents', user?.id],
     queryFn: async () => {
@@ -49,7 +50,7 @@ export default function DepositPage() {
   const createIntent = useMutation({
     mutationFn: async () => {
       const amt = parseFloat(amount);
-      if (!amt || amt < 50) throw new Error('Importo minimo 50 USD');
+      if (!amt || amt < 50) throw new Error(t('deposit.errMinAmount'));
       const { error } = await supabase.rpc('create_deposit_intent', {
         p_amount_usd: amt,
         p_network: selectedNetwork.id,
@@ -59,54 +60,57 @@ export default function DepositPage() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['deposit-intents'] });
       setAmount('');
-      toast({ title: 'Deposito avviato', description: 'Invia l\'importo esatto al wallet mostrato sotto. Rilevamento automatico via blockchain.' });
+      toast({ title: t('deposit.toastStartedTitle'), description: t('deposit.toastStartedDesc') });
     },
-    onError: (e: Error) => toast({ title: 'Errore', description: e.message, variant: 'destructive' }),
+    onError: (e: Error) => toast({ title: t('deposit.errorTitle'), description: e.message, variant: 'destructive' }),
   });
 
   const copyAddress = () => {
     if (!activeWallet) return;
     navigator.clipboard.writeText(activeWallet);
-    toast({ title: 'Indirizzo copiato!' });
+    toast({ title: t('deposit.toastAddressCopied') });
   };
 
   const statusConfig: Record<string, { label: string; variant: 'default' | 'secondary' | 'destructive' | 'outline'; icon: any }> = {
-    pending: { label: 'In attesa pagamento', variant: 'secondary', icon: Clock },
-    matched: { label: 'Confermato', variant: 'default', icon: CheckCircle },
-    expired: { label: 'Scaduto', variant: 'outline', icon: AlertTriangle },
-    cancelled: { label: 'Annullato', variant: 'destructive', icon: AlertTriangle },
+    pending: { label: t('deposit.statusPending'), variant: 'secondary', icon: Clock },
+    matched: { label: t('deposit.statusMatched'), variant: 'default', icon: CheckCircle },
+    expired: { label: t('deposit.statusExpired'), variant: 'outline', icon: AlertTriangle },
+    cancelled: { label: t('deposit.statusCancelled'), variant: 'destructive', icon: AlertTriangle },
   };
+
+  const localeTag = i18n.language === 'zh' ? 'zh-CN' : i18n.language;
 
   return (
     <div className="space-y-5 p-4">
-      <h2 className="font-display text-lg font-bold text-foreground sm:text-xl">Deposita USDT</h2>
+      <h2 className="font-display text-lg font-bold text-foreground sm:text-xl">{t('deposit.title')}</h2>
 
       <div className="flex items-start gap-2 rounded-lg border border-primary/20 bg-primary/5 p-3">
         <Info className="h-4 w-4 shrink-0 text-primary mt-0.5" />
         <p className="text-xs text-muted-foreground">
-          Scegli l'importo e avvia il deposito. Il sistema genera in automatico l'importo esatto da inviare e il wallet di destinazione, e accredita appena rileva la transazione.
+          {t('deposit.info')}
         </p>
       </div>
 
-      {/* Pending intent: wallet + importo univoco (dati letti dall'intent dell'utente) */}
       {lastPending && (
         <Card className="border-accent/30 bg-accent/5">
           <CardContent className="p-3.5 space-y-3">
             <div className="flex items-center gap-2">
               <Loader2 className="h-4 w-4 animate-spin text-accent" />
-              <p className="text-sm font-semibold text-foreground">Deposito in attesa di conferma blockchain</p>
+              <p className="text-sm font-semibold text-foreground">{t('deposit.pendingTitle')}</p>
             </div>
 
             <div className="rounded-lg bg-secondary p-2.5 text-center">
-              <p className="text-[0.65rem] text-muted-foreground">Invia ESATTAMENTE</p>
+              <p className="text-[0.65rem] text-muted-foreground">{t('deposit.sendExactly')}</p>
               <p className="text-xl font-bold text-foreground font-mono">{Number(lastPending.amount_usdt).toFixed(2)} USDT</p>
-              <p className="text-[0.6rem] text-muted-foreground">su rete {lastPending.network} · scade {new Date(lastPending.expires_at).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}</p>
+              <p className="text-[0.6rem] text-muted-foreground">
+                {t('deposit.onNetworkExpires', { network: lastPending.network, time: new Date(lastPending.expires_at).toLocaleTimeString(localeTag, { hour: '2-digit', minute: '2-digit' }) })}
+              </p>
             </div>
 
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <Wallet className="h-4 w-4 text-primary" />
-                <p className="text-xs font-medium text-foreground">Wallet di destinazione</p>
+                <p className="text-xs font-medium text-foreground">{t('deposit.walletDest')}</p>
               </div>
               <div className="flex gap-2">
                 <div className="flex-1 overflow-hidden rounded-lg bg-background px-3 py-2 font-mono text-[0.65rem] text-muted-foreground break-all sm:text-xs">
@@ -117,7 +121,7 @@ export default function DepositPage() {
                 </Button>
               </div>
               <Button variant="ghost" size="sm" className="w-full text-xs" onClick={() => setShowQR(!showQR)}>
-                {showQR ? 'Nascondi QR' : 'Mostra QR Code'}
+                {showQR ? t('deposit.hideQR') : t('deposit.showQR')}
               </Button>
               {showQR && activeWallet && (
                 <div className="flex justify-center rounded-lg bg-white p-3">
@@ -126,13 +130,12 @@ export default function DepositPage() {
               )}
             </div>
             <p className="text-[0.65rem] text-muted-foreground">
-              ⚠️ L'importo deve corrispondere ESATTAMENTE per essere riconosciuto. Il watcher controlla la blockchain ogni 5 minuti.
+              {t('deposit.exactMatchWarn')}
             </p>
           </CardContent>
         </Card>
       )}
 
-      {/* Network selector */}
       <div className="grid grid-cols-2 gap-2">
         {networks.map((n) => (
           <Button
@@ -142,15 +145,14 @@ export default function DepositPage() {
             onClick={() => setSelectedNetwork(n)}
           >
             <span className="text-sm font-semibold">{n.id}</span>
-            <span className="text-[0.6rem] opacity-70">Fee rete: {n.fee}</span>
+            <span className="text-[0.6rem] opacity-70">{t('deposit.networkFee', { fee: n.fee })}</span>
           </Button>
         ))}
       </div>
 
-      {/* Amount selection */}
       <Card>
         <CardContent className="p-3.5 space-y-3 sm:p-4">
-          <p className="text-sm font-medium text-foreground">Importo deposito (USD)</p>
+          <p className="text-sm font-medium text-foreground">{t('deposit.amountUsd')}</p>
           <div className="grid grid-cols-3 gap-2">
             {PRESET_AMOUNTS.map((a) => (
               <Button
@@ -165,10 +167,10 @@ export default function DepositPage() {
             ))}
           </div>
           <div className="flex items-center gap-2">
-            <span className="text-xs text-muted-foreground shrink-0">Oppure:</span>
+            <span className="text-xs text-muted-foreground shrink-0">{t('deposit.or')}</span>
             <Input
               type="number"
-              placeholder="Importo personalizzato (min 50)"
+              placeholder={t('deposit.customAmountPlaceholder')}
               value={PRESET_AMOUNTS.includes(Number(amount)) ? '' : amount}
               onChange={(e) => setAmount(e.target.value)}
               className="text-sm"
@@ -177,7 +179,6 @@ export default function DepositPage() {
         </CardContent>
       </Card>
 
-      {/* Confirm button — NON dipende dalla lettura di api_integrations */}
       <Button
         className="w-full"
         size="lg"
@@ -185,17 +186,17 @@ export default function DepositPage() {
         disabled={createIntent.isPending || !amount || Number(amount) < 50}
       >
         <ArrowDownToLine className="mr-2 h-4 w-4" />
-        {createIntent.isPending ? 'Creazione...' : `Inizia Deposito ${amount ? `$${Number(amount).toLocaleString()}` : ''}`}
+        {createIntent.isPending ? t('deposit.creating') : `${t('deposit.startDeposit')} ${amount ? `$${Number(amount).toLocaleString()}` : ''}`}
       </Button>
 
       <Button variant="ghost" size="sm" className="w-full text-xs" onClick={() => refetchIntents()}>
-        <RefreshCw className="mr-1.5 h-3 w-3" /> Aggiorna stato depositi
+        <RefreshCw className="mr-1.5 h-3 w-3" /> {t('deposit.refreshStatus')}
       </Button>
 
       {activeIntents.length > 0 && (
         <Card>
           <CardContent className="p-3.5 sm:p-4">
-            <h3 className="font-display text-sm font-semibold text-foreground mb-3">I tuoi depositi</h3>
+            <h3 className="font-display text-sm font-semibold text-foreground mb-3">{t('deposit.myDeposits')}</h3>
             <div className="space-y-2.5">
               {activeIntents.map((intent: any) => {
                 const sc = statusConfig[intent.status] || statusConfig.pending;
@@ -207,7 +208,7 @@ export default function DepositPage() {
                         {Number(intent.amount_usdt).toFixed(2)} USDT
                       </p>
                       <p className="text-[0.65rem] text-muted-foreground truncate">
-                        ${Number(intent.amount_usd).toLocaleString()} · {intent.network} · {new Date(intent.created_at).toLocaleDateString('it-IT')}
+                        ${Number(intent.amount_usd).toLocaleString()} · {intent.network} · {new Date(intent.created_at).toLocaleDateString(localeTag)}
                       </p>
                     </div>
                     <Badge variant={sc.variant} className="shrink-0 text-[0.6rem] gap-1">
