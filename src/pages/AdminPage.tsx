@@ -122,12 +122,14 @@ function DashboardTab() {
 
 function UsersTab() {
   const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'active' | 'suspended'>('all');
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [creditAmount, setCreditAmount] = useState<Record<string, string>>({});
   const [creditNote, setCreditNote] = useState<Record<string, string>>({});
   const { data: demoOn = false } = useDemoMode();
+
 
 
   const creditMutation = useMutation({
