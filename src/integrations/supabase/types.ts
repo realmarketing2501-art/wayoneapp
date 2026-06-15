@@ -1214,6 +1214,7 @@ export type Database = {
         Returns: undefined
       }
       record_signup_event: { Args: { p_payload: Json }; Returns: string }
+      refresh_fund_statuses: { Args: never; Returns: number }
       system_consistency_check: {
         Args: never
         Returns: {

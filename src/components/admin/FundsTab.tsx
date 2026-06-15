@@ -26,6 +26,12 @@ type Fund = {
 };
 
 const STATUSES = ['upcoming', 'issuing', 'sold_out', 'ended'];
+const STATUS_LABEL: Record<string, string> = {
+  upcoming: 'In arrivo',
+  issuing: 'Attivo (acquistabile)',
+  sold_out: 'Esaurito (goal raggiunto)',
+  ended: 'Terminato (scaduto)',
+};
 
 const EMPTY: Omit<Fund, 'id'> = {
   name: '',
@@ -107,10 +113,10 @@ export default function FundsTab() {
     <div className="grid grid-cols-2 gap-2">
       <div className="col-span-2"><Label className="text-[0.6rem] text-muted-foreground">Nome</Label><Input value={f.name} onChange={(e) => onChange({ name: e.target.value })} className="h-7 text-xs" /></div>
       <div><Label className="text-[0.6rem] text-muted-foreground">Badge</Label><Input value={f.badge} onChange={(e) => onChange({ badge: e.target.value })} className="h-7 text-xs" /></div>
-      <div><Label className="text-[0.6rem] text-muted-foreground">Status</Label>
+      <div><Label className="text-[0.6rem] text-muted-foreground">Status (auto da date e goal)</Label>
         <Select value={f.status} onValueChange={(v) => onChange({ status: v })}>
           <SelectTrigger className="h-7 text-xs"><SelectValue /></SelectTrigger>
-          <SelectContent>{STATUSES.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}</SelectContent>
+          <SelectContent>{STATUSES.map((s) => <SelectItem key={s} value={s}>{STATUS_LABEL[s]}</SelectItem>)}</SelectContent>
         </Select>
       </div>
       <div><Label className="text-[0.6rem] text-muted-foreground">Rendim. tot %</Label><Input type="number" step="0.1" value={f.total_return} onChange={(e) => onChange({ total_return: parseFloat(e.target.value) || 0 })} className="h-7 text-xs" /></div>
@@ -162,7 +168,7 @@ export default function FundsTab() {
               <div className="flex items-center justify-between gap-2">
                 <div>
                   <p className="text-sm font-semibold">{f.name}</p>
-                  <Badge variant="secondary" className="text-[0.55rem]">{f.status}</Badge>
+                  <Badge variant="secondary" className="text-[0.55rem]">{STATUS_LABEL[f.status] ?? f.status}</Badge>
                 </div>
                 <div className="flex gap-1.5">
                   {dirty && (
