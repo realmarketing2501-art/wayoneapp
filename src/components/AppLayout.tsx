@@ -1,5 +1,5 @@
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { Home, TrendingUp, Users, Wallet, User, LogIn, Bell, ShieldCheck } from 'lucide-react';
+import { Home, TrendingUp, Users, Landmark, User, LogIn, Bell, ShieldCheck, FlaskConical } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import HeaderLanguageButton from './HeaderLanguageButton';
 import { useAuth } from '@/contexts/AuthContext';
@@ -8,6 +8,7 @@ import GuestBanner from './GuestBanner';
 import CryptoTicker from './CryptoTicker';
 import { useAutoTrackSession } from '@/hooks/useTrackSignup';
 import { useTranslation } from 'react-i18next';
+import { useDemoMode } from '@/hooks/useDemoMode';
 
 export default function AppLayout() {
   const location = useLocation();
@@ -15,10 +16,11 @@ export default function AppLayout() {
   const { user } = useAuth();
   const { t } = useTranslation();
   useAutoTrackSession();
+  const { data: demoMode } = useDemoMode();
 
   const publicTabs = [
     { path: '/home', icon: Home, label: t('nav.home') },
-    { path: '/fund', icon: Wallet, label: t('nav.wallet') },
+    { path: '/fund', icon: Landmark, label: t('nav.wallet') },
     { path: '/invest', icon: TrendingUp, label: t('nav.invest') },
     { path: '/network', icon: Users, label: t('nav.referral') },
   ];
@@ -58,6 +60,12 @@ export default function AppLayout() {
           </div>
         </div>
         <CryptoTicker />
+        {demoMode && (
+          <div className="flex items-center justify-center gap-2 bg-amber-500/15 px-3 py-1.5 text-[0.7rem] font-semibold text-amber-600 dark:text-amber-400 border-t border-amber-500/30">
+            <FlaskConical className="h-3.5 w-3.5" />
+            <span>MODALITÀ DEMO ATTIVA · I dati sono di prova</span>
+          </div>
+        )}
       </header>
 
       <main className="flex-1 overflow-y-auto pb-24">
