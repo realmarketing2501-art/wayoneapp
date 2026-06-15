@@ -130,7 +130,7 @@ export default function FundPage() {
                       <div className="min-w-0">
                         <p className="font-semibold text-foreground truncate">{sf.name}</p>
                         <p className="text-[0.65rem] text-muted-foreground">
-                          {Number(mf.amount).toLocaleString()} USDT · {mf.daily_rate}% /gg · {sf.total_return}% {t('fund.totalReturn')}
+                          {Number(mf.amount).toLocaleString()} USDT · {mf.daily_rate}%{t('fund.ratePerDay')} · {sf.total_return}% {t('fund.totalReturn')}
                         </p>
                       </div>
                       <Badge variant={mf.status === 'completed' ? 'secondary' : 'default'} className="text-[0.55rem]">

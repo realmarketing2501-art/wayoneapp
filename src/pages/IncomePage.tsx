@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { useProfile } from '@/hooks/useProfile';
@@ -8,8 +7,10 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { useTranslation } from 'react-i18next';
 
 export default function IncomePage() {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { data: profile } = useProfile();
   const [period, setPeriod] = useState<7 | 30 | 90>(7);
@@ -46,7 +47,7 @@ export default function IncomePage() {
     <div className="flex items-center justify-between border-b border-border py-2.5 last:border-0">
       <div className="flex items-center gap-2">
         <Badge variant={record.type === 'interest' ? 'default' : record.type === 'team' ? 'secondary' : 'outline'} className="text-[0.6rem]">
-          {record.type === 'interest' ? 'Interessi' : record.type === 'team' ? 'Team' : 'Bonus'}
+          {record.type === 'interest' ? t('income.catInterest') : record.type === 'team' ? t('income.catTeam') : t('income.catBonus')}
         </Badge>
         <span className="text-xs text-muted-foreground">{record.date}</span>
       </div>
@@ -58,26 +59,25 @@ export default function IncomePage() {
     <div className="space-y-5 p-4">
       <Card className="glow-green border-primary/20">
         <CardContent className="p-4 text-center sm:p-5">
-          <p className="text-xs text-muted-foreground sm:text-sm">Reddito Cumulativo Totale</p>
+          <p className="text-xs text-muted-foreground sm:text-sm">{t('income.cumulativeTotal')}</p>
           <p className="font-display text-3xl font-bold text-primary sm:text-4xl">{Number(profile?.total_earned ?? 0).toLocaleString()}</p>
           <p className="text-xs text-muted-foreground sm:text-sm">USDT</p>
         </CardContent>
       </Card>
 
       <div className="grid grid-cols-3 gap-2">
-        <Card><CardContent className="p-2.5 text-center sm:p-3"><p className="text-[0.6rem] text-muted-foreground sm:text-xs">Interessi</p><p className="font-display text-sm font-bold text-primary sm:text-base">{totals.interest.toFixed(2)}</p></CardContent></Card>
-        <Card><CardContent className="p-2.5 text-center sm:p-3"><p className="text-[0.6rem] text-muted-foreground sm:text-xs">Team</p><p className="font-display text-sm font-bold text-accent sm:text-base">{totals.team.toFixed(2)}</p></CardContent></Card>
-        <Card><CardContent className="p-2.5 text-center sm:p-3"><p className="text-[0.6rem] text-muted-foreground sm:text-xs">Bonus</p><p className="font-display text-sm font-bold text-way-diamond sm:text-base">{totals.bonus.toFixed(2)}</p></CardContent></Card>
+        <Card><CardContent className="p-2.5 text-center sm:p-3"><p className="text-[0.6rem] text-muted-foreground sm:text-xs">{t('income.catInterest')}</p><p className="font-display text-sm font-bold text-primary sm:text-base">{totals.interest.toFixed(2)}</p></CardContent></Card>
+        <Card><CardContent className="p-2.5 text-center sm:p-3"><p className="text-[0.6rem] text-muted-foreground sm:text-xs">{t('income.catTeam')}</p><p className="font-display text-sm font-bold text-accent sm:text-base">{totals.team.toFixed(2)}</p></CardContent></Card>
+        <Card><CardContent className="p-2.5 text-center sm:p-3"><p className="text-[0.6rem] text-muted-foreground sm:text-xs">{t('income.catBonus')}</p><p className="font-display text-sm font-bold text-way-diamond sm:text-base">{totals.bonus.toFixed(2)}</p></CardContent></Card>
       </div>
 
-      {/* Chart */}
       <Card>
         <CardContent className="p-3 sm:p-4">
           <div className="mb-3 flex items-center justify-between">
-            <p className="text-sm font-medium">Reddito Giornaliero</p>
+            <p className="text-sm font-medium">{t('income.dailyIncome')}</p>
             <div className="flex gap-1">
               {([7, 30, 90] as const).map(p => (
-                <Button key={p} size="sm" variant={period === p ? 'default' : 'secondary'} onClick={() => setPeriod(p)} className="h-7 px-2 text-xs">{p}gg</Button>
+                <Button key={p} size="sm" variant={period === p ? 'default' : 'secondary'} onClick={() => setPeriod(p)} className="h-7 px-2 text-xs">{t('income.periodDays', { n: p })}</Button>
               ))}
             </div>
           </div>
@@ -101,12 +101,11 @@ export default function IncomePage() {
         </CardContent>
       </Card>
 
-      {/* Records */}
       <Card>
         <CardContent className="p-3 sm:p-4">
-          <h3 className="mb-2 text-sm font-semibold text-foreground">Storico</h3>
+          <h3 className="mb-2 text-sm font-semibold text-foreground">{t('income.history')}</h3>
           {records.length === 0 ? (
-            <p className="py-4 text-center text-sm text-muted-foreground">Nessun reddito registrato</p>
+            <p className="py-4 text-center text-sm text-muted-foreground">{t('income.empty')}</p>
           ) : (
             <div className="max-h-64 overflow-y-auto">
               {records.slice(0, 50).map(r => <IncomeItem key={r.id} record={r} />)}
