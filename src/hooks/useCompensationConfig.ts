@@ -25,7 +25,7 @@ function useAdminSettingPublic<T>(key: string, fallback: T) {
       if (error || !data) return fallback;
       try { return JSON.parse(data as unknown as string) as T; } catch { return fallback; }
     },
-    staleTime: 5 * 60 * 1000,
+    staleTime: 0,
   });
 }
 

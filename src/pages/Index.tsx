@@ -51,7 +51,7 @@ export default function Index() {
       if (error) throw error;
       return data ?? [];
     },
-    staleTime: 60_000,
+    staleTime: 0,
   });
 
   const plans = useMemo<PhonePlan[]>(() => {
