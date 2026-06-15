@@ -1,5 +1,5 @@
 export default {
-  nav: { home: '首页', wallet: '钱包', invest: '投资', referral: '推荐', profile: '我的', login: '登录' },
+  nav: { home: '首页', wallet: '基金', invest: '投资', referral: '推荐', profile: '我的', login: '登录' },
   common: {
     loading: '加载中...', save: '保存', cancel: '取消', confirm: '确认', back: '返回',
     close: '关闭', copy: '复制', copied: '已复制！', download: '下载', share: '分享',
