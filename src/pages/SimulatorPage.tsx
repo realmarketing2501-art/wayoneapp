@@ -31,9 +31,10 @@ type WithdrawalMode = {
 
 // Fallback usato SOLO se il DB non ha piani attivi (es. configurazione iniziale).
 const FALLBACK_PLANS: Plan[] = [
-  { id: 'silver',   name: 'Silver',   days: 45, daily: 0.50, min: 50, max: 2000 },
-  { id: 'gold',     name: 'Gold',     days: 60, daily: 0.60, min: 50, max: 5000, popular: true },
-  { id: 'diamond',  name: 'Diamond',  days: 90, daily: 0.90, min: 50, max: null },
+  { id: 'basic', name: 'Basic', days: 90, daily: 1.00, min: 50,  max: 200 },
+  { id: 'plus',  name: 'Plus',  days: 90, daily: 1.50, min: 300, max: 800, popular: true },
+  { id: 'pro',   name: 'Pro',   days: 90, daily: 2.00, min: 400, max: 1000 },
+  { id: 'elite', name: 'Elite', days: 90, daily: 2.50, min: 500, max: 1500 },
 ];
 
 const fmt = (n: number) =>
