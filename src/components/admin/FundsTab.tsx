@@ -168,7 +168,7 @@ export default function FundsTab() {
               <div className="flex items-center justify-between gap-2">
                 <div>
                   <p className="text-sm font-semibold">{f.name}</p>
-                  <Badge variant="secondary" className="text-[0.55rem]">{f.status}</Badge>
+                  <Badge variant="secondary" className="text-[0.55rem]">{STATUS_LABEL[f.status] ?? f.status}</Badge>
                 </div>
                 <div className="flex gap-1.5">
                   {dirty && (
