@@ -189,8 +189,7 @@ function UsersTab() {
     onError: (e: Error) => toast({ title: 'Errore', description: e.message, variant: 'destructive' }),
   });
 
-    onError: (e: Error) => toast({ title: 'Errore', description: e.message, variant: 'destructive' }),
-  });
+
 
   const deleteMutation = useMutation({
     mutationFn: async (userId: string) => {
