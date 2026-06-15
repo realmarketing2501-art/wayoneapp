@@ -157,6 +157,17 @@ function UsersTab() {
     },
   });
 
+  const { data: levelsList = [] } = useQuery({
+    queryKey: ['admin_levels'],
+    queryFn: async () => {
+      const { data, error } = await supabase.from('levels').select('id, name, ordine').order('ordine');
+      if (error) throw error;
+      return data;
+    },
+  });
+  const levelName = (id: string | null | undefined) =>
+    levelsList.find(l => l.id === id)?.name ?? id ?? '—';
+
   const suspendMutation = useMutation({
     mutationFn: async ({ userId, suspend }: { userId: string; suspend: boolean }) => {
       const { error } = await supabase.from('profiles').update({ is_suspended: suspend }).eq('user_id', userId);
