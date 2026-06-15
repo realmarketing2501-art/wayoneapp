@@ -36,7 +36,7 @@ export function useLevels() {
       if (error) throw error;
       return (data ?? []) as LevelConfig[];
     },
-    staleTime: 5 * 60 * 1000,
+    staleTime: 0,
   });
 }
 

@@ -53,7 +53,7 @@ export default function SimulatorPage() {
       if (error) throw error;
       return data ?? [];
     },
-    staleTime: 60_000,
+    staleTime: 0,
   });
 
   // Config prelievi (RPC pubblica)
@@ -69,7 +69,7 @@ export default function SimulatorPage() {
         return [];
       }
     },
-    staleTime: 60_000,
+    staleTime: 0,
   });
 
   const plans: Plan[] = useMemo(() => {
