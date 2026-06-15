@@ -217,7 +217,7 @@ function UsersTab() {
                   <p className="text-[0.6rem] text-muted-foreground">{p.referral_code} · {new Date(p.created_at).toLocaleDateString('it-IT')}</p>
                 </div>
                 <div className="text-right shrink-0">
-                  <Badge variant="outline" className="text-[0.6rem]">{p.level}</Badge>
+                  <Badge variant="outline" className="text-[0.6rem]">{levelName(p.level)}</Badge>
                   <p className="text-[0.6rem] text-muted-foreground mt-0.5">{Number(p.balance).toLocaleString()} USDT</p>
                 </div>
               </div>
