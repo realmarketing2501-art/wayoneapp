@@ -26,6 +26,12 @@ type Fund = {
 };
 
 const STATUSES = ['upcoming', 'issuing', 'sold_out', 'ended'];
+const STATUS_LABEL: Record<string, string> = {
+  upcoming: 'In arrivo',
+  issuing: 'Attivo (acquistabile)',
+  sold_out: 'Esaurito (goal raggiunto)',
+  ended: 'Terminato (scaduto)',
+};
 
 const EMPTY: Omit<Fund, 'id'> = {
   name: '',
