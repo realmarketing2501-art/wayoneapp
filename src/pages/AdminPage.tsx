@@ -265,8 +265,18 @@ function UsersTab() {
                     step="1"
                     placeholder="USDT (+/-)"
                     className="h-9 text-xs"
+                    id={`credit-amount-${p.user_id}`}
                     value={creditAmount[p.user_id] ?? ''}
                     onChange={e => setCreditAmount(s => ({ ...s, [p.user_id]: e.target.value }))}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter') {
+                        const raw = creditAmount[p.user_id];
+                        const amt = parseFloat(raw || '');
+                        if (isFinite(amt) && amt !== 0) {
+                          creditMutation.mutate({ userId: p.user_id, amount: amt, note: creditNote[p.user_id] || '' });
+                        }
+                      }
+                    }}
                   />
                   <Input
                     type="text"
@@ -284,7 +294,13 @@ function UsersTab() {
                       const raw = creditAmount[p.user_id];
                       const amt = parseFloat(raw || '');
                       if (!isFinite(amt) || amt === 0) {
-                        toast({ title: 'Importo non valido', description: 'Inserisci un numero diverso da 0', variant: 'destructive' });
+                        toast({
+                          title: 'Importo non valido per questo utente',
+                          description: `Inserisci l'importo nel campo USDT della riga di ${p.username || p.user_id.slice(0,8)} (ogni riga ha il suo campo).`,
+                          variant: 'destructive',
+                        });
+                        const el = document.getElementById(`credit-amount-${p.user_id}`) as HTMLInputElement | null;
+                        el?.focus();
                         return;
                       }
                       creditMutation.mutate({ userId: p.user_id, amount: amt, note: creditNote[p.user_id] || '' });
@@ -294,6 +310,7 @@ function UsersTab() {
                       ? '...'
                       : (parseFloat(creditAmount[p.user_id] || '0') < 0 ? 'Debita' : 'Accredita')}
                   </Button>
+
                 </div>
                 {!demoOn && (
                   <p className="text-[0.55rem] text-muted-foreground italic">
