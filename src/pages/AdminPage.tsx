@@ -115,22 +115,24 @@ function UsersTab() {
   const queryClient = useQueryClient();
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
   const [creditAmount, setCreditAmount] = useState<Record<string, string>>({});
+  const [creditNote, setCreditNote] = useState<Record<string, string>>({});
   const { data: demoOn = false } = useDemoMode();
 
 
   const creditMutation = useMutation({
-    mutationFn: async ({ userId, amount }: { userId: string; amount: number }) => {
+    mutationFn: async ({ userId, amount, note }: { userId: string; amount: number; note: string }) => {
       const { error } = await supabase.rpc('admin_credit_user', {
         p_user_id: userId,
         p_amount: amount,
-        p_note: 'Credito test admin',
+        p_note: note || (demoOn ? 'Accredito demo admin' : 'Accredito admin'),
       });
       if (error) throw error;
     },
     onSuccess: (_, { userId }) => {
       queryClient.invalidateQueries({ queryKey: ['admin_profiles'] });
       setCreditAmount(s => ({ ...s, [userId]: '' }));
-      toast({ title: 'Saldo aggiornato' });
+      setCreditNote(s => ({ ...s, [userId]: '' }));
+      toast({ title: demoOn ? 'Saldo demo aggiornato' : 'Saldo reale aggiornato' });
     },
     onError: (e: Error) => toast({ title: 'Errore', description: e.message, variant: 'destructive' }),
   });
@@ -222,15 +224,30 @@ function UsersTab() {
                   </Button>
                 )}
               </div>
-              {demoOn ? (
+              <div className="space-y-1.5 rounded border border-border/40 p-1.5 bg-muted/30">
+                <div className="flex items-center justify-between">
+                  <span className="text-[0.6rem] font-semibold text-muted-foreground uppercase tracking-wide">
+                    Accredito / Debito USDT
+                  </span>
+                  <Badge variant={demoOn ? 'secondary' : 'default'} className="text-[0.55rem] h-4 px-1.5">
+                    {demoOn ? 'DEMO' : 'REALE'}
+                  </Badge>
+                </div>
                 <div className="flex gap-1.5 items-center">
                   <Input
                     type="number"
                     step="1"
                     placeholder="USDT (+/-)"
-                    className="h-7 text-[0.65rem] flex-1"
+                    className="h-7 text-[0.65rem] w-24"
                     value={creditAmount[p.user_id] ?? ''}
                     onChange={e => setCreditAmount(s => ({ ...s, [p.user_id]: e.target.value }))}
+                  />
+                  <Input
+                    type="text"
+                    placeholder={demoOn ? 'Nota (test, ricarica demo...)' : 'Motivo (premio, rimborso, bug...)'}
+                    className="h-7 text-[0.65rem] flex-1"
+                    value={creditNote[p.user_id] ?? ''}
+                    onChange={e => setCreditNote(s => ({ ...s, [p.user_id]: e.target.value }))}
                   />
                   <Button
                     size="sm"
@@ -239,17 +256,18 @@ function UsersTab() {
                     onClick={() => {
                       const amt = parseFloat(creditAmount[p.user_id] || '');
                       if (!isFinite(amt) || amt === 0) return;
-                      creditMutation.mutate({ userId: p.user_id, amount: amt });
+                      creditMutation.mutate({ userId: p.user_id, amount: amt, note: creditNote[p.user_id] || '' });
                     }}
                   >
-                    Accredita
+                    {parseFloat(creditAmount[p.user_id] || '0') < 0 ? 'Debita' : 'Accredita'}
                   </Button>
                 </div>
-              ) : (
-                <p className="text-[0.6rem] text-muted-foreground italic">
-                  Attiva la Modalità Demo per accreditare USDT di test.
-                </p>
-              )}
+                {!demoOn && (
+                  <p className="text-[0.55rem] text-muted-foreground italic">
+                    Operazione reale: registrata nel ledger e visibile all'utente.
+                  </p>
+                )}
+              </div>
             </CardContent>
           </Card>
         ))}
