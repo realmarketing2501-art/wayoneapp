@@ -11,6 +11,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { useTranslation } from 'react-i18next';
 import LanguageSelector from '@/components/LanguageSelector';
+import { toast } from 'sonner';
 
 export default function ProfilePage() {
   const { data: profile } = useProfile();
@@ -33,10 +34,10 @@ export default function ProfilePage() {
     navigate('/login');
   };
 
-  const menuItems = [
-    { icon: FileCheck, label: t('profile.kyc'), desc: t('profile.kycDesc'), path: null },
-    { icon: Shield, label: t('profile.security'), desc: t('profile.securityDesc'), path: null },
-    { icon: Wallet, label: t('profile.wallets'), desc: t('profile.walletsDesc'), path: null },
+  const menuItems: Array<{ icon: any; label: string; desc: string; path: string | null; soon?: boolean }> = [
+    { icon: FileCheck, label: t('profile.kyc'), desc: t('profile.kycDesc'), path: null, soon: true },
+    { icon: Shield, label: t('profile.security'), desc: t('profile.securityDesc'), path: '/security' },
+    { icon: Wallet, label: t('profile.wallets'), desc: t('profile.walletsDesc'), path: null, soon: true },
     { icon: Award, label: t('profile.levels'), desc: t('profile.levelsDesc'), path: '/qualifiche' },
     { icon: ShieldCheck, label: 'Certificazioni', desc: 'Licenze e documenti ufficiali WAYONE', path: '/certifications' },
     { icon: HelpCircle, label: t('profile.faq'), desc: t('profile.faqDesc'), path: '/faq' },
@@ -111,7 +112,10 @@ export default function ProfilePage() {
         {menuItems.map(item => (
           <button
             key={item.label}
-            onClick={() => item.path && navigate(item.path)}
+            onClick={() => {
+              if (item.path) navigate(item.path);
+              else if (item.soon) toast.info('Funzione in arrivo', { description: `${item.label} sarà disponibile a breve.` });
+            }}
             className="flex w-full items-center gap-3 rounded-xl border border-border bg-card p-3.5 transition-colors hover:border-primary/30 active:scale-[0.98]"
           >
             <item.icon className="h-5 w-5 shrink-0 text-primary" />
@@ -119,6 +123,9 @@ export default function ProfilePage() {
               <p className="text-sm font-medium text-foreground">{item.label}</p>
               <p className="text-xs text-muted-foreground">{item.desc}</p>
             </div>
+            {item.soon && (
+              <span className="rounded-full bg-muted px-2 py-0.5 text-[0.6rem] font-medium text-muted-foreground">Presto</span>
+            )}
             <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground" />
           </button>
         ))}
