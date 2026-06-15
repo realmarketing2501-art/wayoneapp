@@ -259,7 +259,7 @@ function UsersTab() {
                       creditMutation.mutate({ userId: p.user_id, amount: amt, note: creditNote[p.user_id] || '' });
                     }}
                   >
-                    {amtSign(creditAmount[p.user_id])}
+                    {parseFloat(creditAmount[p.user_id] || '0') < 0 ? 'Debita' : 'Accredita'}
                   </Button>
                 </div>
                 {!demoOn && (
