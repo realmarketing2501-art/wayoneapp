@@ -273,15 +273,23 @@ function UsersTab() {
                   />
                   <Button
                     size="sm"
-                    className="h-7 text-[0.65rem]"
+                    type="button"
+                    className="h-7 text-[0.65rem] shrink-0"
                     disabled={creditMutation.isPending || !creditAmount[p.user_id]}
                     onClick={() => {
-                      const amt = parseFloat(creditAmount[p.user_id] || '');
-                      if (!isFinite(amt) || amt === 0) return;
+                      const raw = creditAmount[p.user_id];
+                      const amt = parseFloat(raw || '');
+                      console.log('[admin_credit_user] click', { userId: p.user_id, raw, amt, demoOn });
+                      if (!isFinite(amt) || amt === 0) {
+                        toast({ title: 'Importo non valido', description: 'Inserisci un numero diverso da 0', variant: 'destructive' });
+                        return;
+                      }
                       creditMutation.mutate({ userId: p.user_id, amount: amt, note: creditNote[p.user_id] || '' });
                     }}
                   >
-                    {parseFloat(creditAmount[p.user_id] || '0') < 0 ? 'Debita' : 'Accredita'}
+                    {creditMutation.isPending && creditMutation.variables?.userId === p.user_id
+                      ? '...'
+                      : (parseFloat(creditAmount[p.user_id] || '0') < 0 ? 'Debita' : 'Accredita')}
                   </Button>
                 </div>
                 {!demoOn && (
