@@ -1,0 +1,1 @@
+ALTER TABLE public.special_funds DROP CONSTRAINT IF EXISTS special_funds_badge_check;
