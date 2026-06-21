@@ -10,6 +10,7 @@ export interface ReferralNode {
   has_confirmed_deposit: boolean;
   created_at: string;
   direct_referrals: number;
+  referred_by_username: string | null;
   children: ReferralNode[];
 }
 
