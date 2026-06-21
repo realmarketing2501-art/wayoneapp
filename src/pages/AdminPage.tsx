@@ -205,13 +205,18 @@ function UsersTab() {
   });
 
   const filtered = profiles
-    .filter(p =>
-      (p.username.toLowerCase().includes(search.toLowerCase()) ||
-       p.referral_code.toLowerCase().includes(search.toLowerCase())) &&
-      (statusFilter === 'all'
+    .filter(p => {
+      const q = search.toLowerCase();
+      const matches = !q
+        || (p.username ?? '').toLowerCase().includes(q)
+        || (p.referral_code ?? '').toLowerCase().includes(q)
+        || (p.email ?? '').toLowerCase().includes(q)
+        || (p.referred_by_username ?? '').toLowerCase().includes(q)
+        || (p.referred_by_email ?? '').toLowerCase().includes(q);
+      return matches && (statusFilter === 'all'
         || (statusFilter === 'suspended' && p.is_suspended)
-        || (statusFilter === 'active' && !p.is_suspended))
-    )
+        || (statusFilter === 'active' && !p.is_suspended));
+    })
     .sort((a, b) => Number(b.is_suspended) - Number(a.is_suspended));
 
   const totalSuspended = profiles.filter(p => p.is_suspended).length;
