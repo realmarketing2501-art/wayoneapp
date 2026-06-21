@@ -1130,6 +1130,29 @@ export type Database = {
         Returns: boolean
       }
       admin_delete_user: { Args: { p_user_id: string }; Returns: boolean }
+      admin_list_users: {
+        Args: never
+        Returns: {
+          balance: number
+          balance_available: number
+          balance_locked: number
+          created_at: string
+          direct_referrals: number
+          email: string
+          has_confirmed_deposit: boolean
+          id: string
+          is_suspended: boolean
+          level: string
+          production: number
+          referral_code: string
+          referred_by: string
+          referred_by_email: string
+          referred_by_username: string
+          units: number
+          user_id: string
+          username: string
+        }[]
+      }
       admin_reject_manual_deposit: {
         Args: { p_deposit_id: string }
         Returns: boolean
@@ -1143,6 +1166,7 @@ export type Database = {
         Returns: boolean
       }
       admin_wipe_demo_data: { Args: { p_confirm: string }; Returns: Json }
+      attach_referral_code: { Args: { p_code: string }; Returns: boolean }
       award_level_bonus: {
         Args: {
           p_level: Database["public"]["Enums"]["level_name"]
@@ -1180,6 +1204,7 @@ export type Database = {
           id: string
           level: string
           referred_by: string
+          referred_by_username: string
           user_id: string
           username: string
         }[]

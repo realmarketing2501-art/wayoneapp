@@ -157,9 +157,9 @@ function UsersTab() {
   const { data: profiles = [] } = useQuery({
     queryKey: ['admin_profiles'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
+      const { data, error } = await supabase.rpc('admin_list_users');
       if (error) throw error;
-      return data;
+      return (data ?? []) as any[];
     },
   });
 
@@ -205,13 +205,18 @@ function UsersTab() {
   });
 
   const filtered = profiles
-    .filter(p =>
-      (p.username.toLowerCase().includes(search.toLowerCase()) ||
-       p.referral_code.toLowerCase().includes(search.toLowerCase())) &&
-      (statusFilter === 'all'
+    .filter(p => {
+      const q = search.toLowerCase();
+      const matches = !q
+        || (p.username ?? '').toLowerCase().includes(q)
+        || (p.referral_code ?? '').toLowerCase().includes(q)
+        || (p.email ?? '').toLowerCase().includes(q)
+        || (p.referred_by_username ?? '').toLowerCase().includes(q)
+        || (p.referred_by_email ?? '').toLowerCase().includes(q);
+      return matches && (statusFilter === 'all'
         || (statusFilter === 'suspended' && p.is_suspended)
-        || (statusFilter === 'active' && !p.is_suspended))
-    )
+        || (statusFilter === 'active' && !p.is_suspended));
+    })
     .sort((a, b) => Number(b.is_suspended) - Number(a.is_suspended));
 
   const totalSuspended = profiles.filter(p => p.is_suspended).length;
@@ -221,7 +226,7 @@ function UsersTab() {
     <div className="space-y-3">
       <div className="relative">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input placeholder="Cerca utente..." className="pl-9" value={search} onChange={e => setSearch(e.target.value)} />
+        <Input placeholder="Cerca username, email, referral, invitante..." className="pl-9" value={search} onChange={e => setSearch(e.target.value)} />
       </div>
       <div className="flex gap-1.5 flex-wrap">
         <Button
@@ -265,7 +270,11 @@ function UsersTab() {
                     <p className="font-medium text-foreground text-sm truncate">{p.username}</p>
                     {p.is_suspended && <Badge variant="destructive" className="text-[0.55rem]">Sospeso</Badge>}
                   </div>
-                  <p className="text-[0.6rem] text-muted-foreground">{p.referral_code} · {new Date(p.created_at).toLocaleDateString('it-IT')}</p>
+                  <p className="text-[0.6rem] text-muted-foreground truncate">{p.referral_code} · {new Date(p.created_at).toLocaleDateString('it-IT')}</p>
+                  <p className="text-[0.65rem] text-foreground/80 truncate mt-0.5">✉ {p.email ?? '—'}</p>
+                  {p.referred_by_username && (
+                    <p className="text-[0.6rem] text-muted-foreground truncate">↑ invitato da {p.referred_by_username}{p.referred_by_email ? ` (${p.referred_by_email})` : ''}</p>
+                  )}
                 </div>
                 <div className="text-right shrink-0">
                   <Badge variant="outline" className="text-[0.6rem]">{levelName(p.level)}</Badge>

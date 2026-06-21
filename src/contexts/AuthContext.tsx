@@ -19,16 +19,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const tryAttachPendingRef = async (uid: string) => {
+      try {
+        const code = typeof window !== 'undefined' ? localStorage.getItem('pending_ref') : null;
+        if (!code) return;
+        const { data, error } = await supabase.rpc('attach_referral_code', { p_code: code });
+        if (!error) {
+          localStorage.removeItem('pending_ref');
+        }
+      } catch { /* ignore */ }
+    };
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
+      if (session?.user) {
+        setTimeout(() => tryAttachPendingRef(session.user.id), 0);
+      }
     });
 
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
       setLoading(false);
+      if (session?.user) {
+        setTimeout(() => tryAttachPendingRef(session.user.id), 0);
+      }
     });
 
     return () => subscription.unsubscribe();

@@ -45,7 +45,7 @@ function TreeNode({ node, depth = 0, localeTag }: { node: ReferralNode; depth?: 
               {levelLabel}
             </Badge>
           </div>
-          <div className="flex items-center gap-2 mt-0.5">
+          <div className="flex items-center gap-2 mt-0.5 flex-wrap">
             {node.has_confirmed_deposit ? (
               <span className="flex items-center gap-1 text-[0.6rem] text-green-500">
                 <CheckCircle2 className="h-3 w-3" /> {t('network.nodeActive')}
@@ -58,6 +58,9 @@ function TreeNode({ node, depth = 0, localeTag }: { node: ReferralNode; depth?: 
             <span className="text-[0.6rem] text-muted-foreground">· {joinDate}</span>
             {node.direct_referrals > 0 && (
               <span className="text-[0.6rem] text-muted-foreground">· {t('network.nodeRefShort', { n: node.direct_referrals })}</span>
+            )}
+            {node.referred_by_username && (
+              <span className="text-[0.6rem] text-muted-foreground">· invitato da <span className="font-medium text-foreground/80">{node.referred_by_username}</span></span>
             )}
           </div>
         </div>
