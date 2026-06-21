@@ -13,7 +13,7 @@ import { useTranslation } from 'react-i18next';
 
 export default function LoginPage() {
   const [searchParams] = useSearchParams();
-  const refFromUrl = searchParams.get('ref') || '';
+  const refFromUrl = searchParams.get('ref') || (typeof window !== 'undefined' ? localStorage.getItem('pending_ref') || '' : '');
   const [isLogin, setIsLogin] = useState(!refFromUrl);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -26,6 +26,11 @@ export default function LoginPage() {
   const { toast } = useToast();
   const { t } = useTranslation();
 
+  // Persist referral so it survives OAuth redirect
+  if (typeof window !== 'undefined' && refFromUrl) {
+    localStorage.setItem('pending_ref', refFromUrl);
+  }
+
   if (user) {
     navigate('/home', { replace: true });
     return null;
@@ -33,6 +38,7 @@ export default function LoginPage() {
 
   const handleGoogle = async () => {
     setGoogleLoading(true);
+    if (referral) localStorage.setItem('pending_ref', referral);
     const result = await lovable.auth.signInWithOAuth('google', {
       redirect_uri: window.location.origin + '/home',
     });
@@ -42,7 +48,6 @@ export default function LoginPage() {
       return;
     }
     if (result.redirected) return; // browser navigates away
-    // Token-based flow: session is set, track and go
     trackAuthEvent('signup');
     navigate('/home');
   };
