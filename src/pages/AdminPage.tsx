@@ -270,7 +270,11 @@ function UsersTab() {
                     <p className="font-medium text-foreground text-sm truncate">{p.username}</p>
                     {p.is_suspended && <Badge variant="destructive" className="text-[0.55rem]">Sospeso</Badge>}
                   </div>
-                  <p className="text-[0.6rem] text-muted-foreground">{p.referral_code} · {new Date(p.created_at).toLocaleDateString('it-IT')}</p>
+                  <p className="text-[0.6rem] text-muted-foreground truncate">{p.referral_code} · {new Date(p.created_at).toLocaleDateString('it-IT')}</p>
+                  <p className="text-[0.65rem] text-foreground/80 truncate mt-0.5">✉ {p.email ?? '—'}</p>
+                  {p.referred_by_username && (
+                    <p className="text-[0.6rem] text-muted-foreground truncate">↑ invitato da {p.referred_by_username}{p.referred_by_email ? ` (${p.referred_by_email})` : ''}</p>
+                  )}
                 </div>
                 <div className="text-right shrink-0">
                   <Badge variant="outline" className="text-[0.6rem]">{levelName(p.level)}</Badge>
