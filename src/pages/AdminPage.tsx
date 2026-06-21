@@ -157,9 +157,9 @@ function UsersTab() {
   const { data: profiles = [] } = useQuery({
     queryKey: ['admin_profiles'],
     queryFn: async () => {
-      const { data, error } = await supabase.from('profiles').select('*').order('created_at', { ascending: false });
+      const { data, error } = await supabase.rpc('admin_list_users');
       if (error) throw error;
-      return data;
+      return (data ?? []) as any[];
     },
   });
 
