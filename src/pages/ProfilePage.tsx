@@ -35,6 +35,7 @@ export default function ProfilePage() {
   };
 
   const menuItems: Array<{ icon: any; label: string; desc: string; path: string | null; soon?: boolean }> = [
+    { icon: BarChart3, label: 'Report unificato', desc: 'Entrate, uscite, investimenti, fondi e referral con filtri', path: '/report' },
     { icon: FileCheck, label: t('profile.kyc'), desc: t('profile.kycDesc'), path: null, soon: true },
     { icon: Shield, label: t('profile.security'), desc: t('profile.securityDesc'), path: '/security' },
     { icon: Wallet, label: t('profile.wallets'), desc: t('profile.walletsDesc'), path: null, soon: true },
