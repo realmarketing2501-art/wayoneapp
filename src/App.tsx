@@ -25,6 +25,7 @@ import QualifichePage from "./pages/QualifichePage";
 import SimulatorPage from "./pages/SimulatorPage";
 import FaqPage from "./pages/FaqPage";
 import CertificationsPage from "./pages/CertificationsPage";
+import ReportPage from "./pages/ReportPage";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
