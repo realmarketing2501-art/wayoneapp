@@ -25,6 +25,7 @@ import QualifichePage from "./pages/QualifichePage";
 import SimulatorPage from "./pages/SimulatorPage";
 import FaqPage from "./pages/FaqPage";
 import CertificationsPage from "./pages/CertificationsPage";
+import ReportPage from "./pages/ReportPage";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -61,6 +62,7 @@ const App = () => (
                 <Route path="/security" element={<SecurityPage />} />
                 <Route path="/tasks" element={<TaskCenterPage />} />
                 <Route path="/deposit" element={<DepositPage />} />
+                <Route path="/report" element={<ReportPage />} />
                 <Route path="/admin" element={<AdminPage />} />
               </Route>
               <Route path="*" element={<NotFound />} />
