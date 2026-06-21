@@ -48,6 +48,7 @@ export function useReferralTree() {
           has_confirmed_deposit: !!p.has_confirmed_deposit,
           created_at: p.created_at as string,
           direct_referrals: (p.direct_referrals as number) ?? 0,
+          referred_by_username: ((p as Record<string, unknown>).referred_by_username as string | null) ?? null,
           children: buildChildren(p.id as string),
         }));
 
@@ -59,6 +60,7 @@ export function useReferralTree() {
         has_confirmed_deposit: !!p.has_confirmed_deposit,
         created_at: p.created_at as string,
         direct_referrals: (p.direct_referrals as number) ?? 0,
+        referred_by_username: ((p as Record<string, unknown>).referred_by_username as string | null) ?? null,
         children: buildChildren(p.id as string),
       }));
     },
