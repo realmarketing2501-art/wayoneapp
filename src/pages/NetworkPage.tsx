@@ -122,8 +122,27 @@ export default function NetworkPage() {
   const production = Number(profile?.production ?? 0);
   const progress = computeProgress(levels, userLevel, units, production);
 
+  // Compute per-level counts (entire downline) from the tree
+  const levelCounts: Record<number, { total: number; active: number }> = {};
+  let totalNetwork = 0;
+  let totalActiveNetwork = 0;
+  const walk = (nodes: ReferralNode[], depth: number) => {
+    for (const n of nodes) {
+      levelCounts[depth] = levelCounts[depth] ?? { total: 0, active: 0 };
+      levelCounts[depth].total += 1;
+      totalNetwork += 1;
+      if (n.has_confirmed_deposit) {
+        levelCounts[depth].active += 1;
+        totalActiveNetwork += 1;
+      }
+      if (n.children?.length) walk(n.children, depth + 1);
+    }
+  };
+  if (tree) walk(tree, 1);
+  const maxDepth = Math.max(1, ...Object.keys(levelCounts).map(Number));
+
   const stats = [
-    { icon: Users, label: t('network.statUnits'), value: units },
+    { icon: Users, label: 'Unità qualificanti (L1 attivi)', value: units },
     { icon: DollarSign, label: t('network.statProduction'), value: `${production.toLocaleString()} USDT` },
     { icon: Users, label: t('network.statDirectReferrals'), value: profile?.direct_referrals ?? 0 },
     { icon: Award, label: t('network.statLevelBonus'), value: `${progress?.current.bonus_valore ?? 0} USDT` },
@@ -144,6 +163,36 @@ export default function NetworkPage() {
           </Card>
         ))}
       </div>
+
+      <Card className="border-primary/20">
+        <CardContent className="p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-semibold text-foreground flex items-center gap-2">
+              <Users className="h-4 w-4 text-primary" /> Rete per livello
+            </p>
+            <Badge variant="secondary" className="text-[0.65rem]">
+              Totale {totalActiveNetwork}/{totalNetwork} attivi
+            </Badge>
+          </div>
+          <p className="text-[0.7rem] text-muted-foreground -mt-1">
+            Le commissioni referral vengono pagate fino al L4. Solo i diretti (L1) con investimento attivo contano come "Unità qualificanti" per la promozione di livello.
+          </p>
+          <div className="grid grid-cols-4 gap-2">
+            {Array.from({ length: Math.max(4, maxDepth) }, (_, i) => i + 1).map((d) => {
+              const c = levelCounts[d] ?? { total: 0, active: 0 };
+              return (
+                <div key={d} className="rounded-lg bg-secondary/60 p-2 text-center">
+                  <p className="text-[0.6rem] text-muted-foreground">L{d}</p>
+                  <p className="font-display text-base font-bold text-foreground leading-tight">{c.total}</p>
+                  <p className="text-[0.6rem] text-green-500">{c.active} attivi</p>
+                </div>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
+
+
 
       {progress && progress.next && (
         <Card className="border-primary/20">
