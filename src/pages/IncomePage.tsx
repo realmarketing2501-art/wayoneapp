@@ -44,7 +44,7 @@ export default function IncomePage() {
   const totals = {
     interest: sumBy('interest'),
     fund_interest: sumBy('fund_interest'),
-    team: sumBy('team') + sumBy('level_bonus'),
+    team: sumBy('referral_commission') + sumBy('team') + sumBy('level_bonus'),
     bonus: sumBy('bonus'),
   };
 
@@ -57,7 +57,7 @@ export default function IncomePage() {
       date: `${d.getDate()}/${d.getMonth() + 1}`,
       interest: dayRecords.filter(r => resolveType(r.type) === 'interest').reduce((s, r) => s + Number(r.amount), 0),
       fund: dayRecords.filter(r => resolveType(r.type) === 'fund_interest').reduce((s, r) => s + Number(r.amount), 0),
-      team: dayRecords.filter(r => ['team','level_bonus'].includes(resolveType(r.type))).reduce((s, r) => s + Number(r.amount), 0),
+      team: dayRecords.filter(r => ['referral_commission','team','level_bonus'].includes(resolveType(r.type))).reduce((s, r) => s + Number(r.amount), 0),
     };
   });
 
