@@ -10,15 +10,14 @@ import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'rec
 import { useTranslation } from 'react-i18next';
 import { Info, TrendingUp, Sparkles, Users, Award } from 'lucide-react';
 
-type IncomeType = 'interest' | 'fund_interest' | 'referral_commission' | 'team' | 'level_bonus' | 'bonus';
+type IncomeType = 'interest' | 'fund_interest' | 'team' | 'level_bonus' | 'bonus';
 
 const TYPE_META: Record<IncomeType, { label: string; color: string; icon: any; desc: string }> = {
-  interest:            { label: 'Investimento',   color: 'bg-primary/15 text-primary border-primary/30',          icon: TrendingUp, desc: 'Interesse giornaliero generato dai tuoi pacchetti di investimento.' },
-  fund_interest:       { label: 'Fondo Speciale', color: 'bg-way-diamond/15 text-way-diamond border-way-diamond/30', icon: Sparkles,   desc: 'Rendimento giornaliero generato dalle quote in un Fondo Speciale.' },
-  referral_commission: { label: 'Referral 1.5%',  color: 'bg-accent/15 text-accent border-accent/30',             icon: Users,      desc: '1.5% sui guadagni di ogni tuo diretto L1 (investimenti e fondi).' },
-  team:                { label: 'Referral',       color: 'bg-accent/15 text-accent border-accent/30',             icon: Users,      desc: 'Commissioni dalla tua rete (storico).' },
-  level_bonus:         { label: 'Bonus livello (storico)', color: 'bg-amber-500/15 text-amber-400 border-amber-500/30', icon: Award, desc: 'Bonus di qualifica del vecchio sistema MLM (non più attivo).' },
-  bonus:               { label: 'Bonus',          color: 'bg-muted text-foreground border-border',                icon: Award,      desc: 'Bonus promozionale o accredito straordinario.' },
+  interest:      { label: 'Investimento',   color: 'bg-primary/15 text-primary border-primary/30',          icon: TrendingUp, desc: 'Interesse giornaliero generato dai tuoi pacchetti di investimento (Silver, Gold, Platinum, Elite).' },
+  fund_interest: { label: 'Fondo Speciale', color: 'bg-way-diamond/15 text-way-diamond border-way-diamond/30', icon: Sparkles,   desc: 'Rendimento giornaliero generato dalle quote acquistate in un Fondo Speciale.' },
+  team:          { label: 'Referral',       color: 'bg-accent/15 text-accent border-accent/30',             icon: Users,      desc: 'Commissioni provenienti dalla tua rete (utenti che si sono iscritti con il tuo codice).' },
+  level_bonus:   { label: 'Bonus Livello',  color: 'bg-amber-500/15 text-amber-400 border-amber-500/30',    icon: Award,      desc: 'Bonus una-tantum erogato quando avanzi di rango MLM (Beta, Alpha, Sigma…).' },
+  bonus:         { label: 'Bonus',          color: 'bg-muted text-foreground border-border',                icon: Award,      desc: 'Bonus promozionale o accredito straordinario.' },
 };
 
 const resolveType = (t: string): IncomeType => (TYPE_META as any)[t] ? (t as IncomeType) : 'bonus';
@@ -44,7 +43,7 @@ export default function IncomePage() {
   const totals = {
     interest: sumBy('interest'),
     fund_interest: sumBy('fund_interest'),
-    team: sumBy('referral_commission') + sumBy('team') + sumBy('level_bonus'),
+    team: sumBy('team') + sumBy('level_bonus'),
     bonus: sumBy('bonus'),
   };
 
@@ -57,7 +56,7 @@ export default function IncomePage() {
       date: `${d.getDate()}/${d.getMonth() + 1}`,
       interest: dayRecords.filter(r => resolveType(r.type) === 'interest').reduce((s, r) => s + Number(r.amount), 0),
       fund: dayRecords.filter(r => resolveType(r.type) === 'fund_interest').reduce((s, r) => s + Number(r.amount), 0),
-      team: dayRecords.filter(r => ['referral_commission','team','level_bonus'].includes(resolveType(r.type))).reduce((s, r) => s + Number(r.amount), 0),
+      team: dayRecords.filter(r => ['team','level_bonus'].includes(resolveType(r.type))).reduce((s, r) => s + Number(r.amount), 0),
     };
   });
 

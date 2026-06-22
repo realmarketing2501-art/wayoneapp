@@ -39,10 +39,9 @@ const TYPE_META: Record<string, { label: string; icon: any; color: string; group
   fund_unlock:        { label: 'Sblocco fondo',       icon: Unlock,        color: 'text-way-diamond',      group: 'Investimenti' },
   fund_investment:    { label: 'Investimento fondo',  icon: Sparkles,      color: 'text-way-diamond',      group: 'Investimenti' },
   fund_refund:        { label: 'Rimborso fondo',      icon: Unlock,        color: 'text-primary',          group: 'Investimenti' },
-  team:                 { label: 'Commissione referral',icon: Users,         color: 'text-accent',           group: 'Network' },
-  referral_commission:  { label: 'Commissione referral',icon: Users,         color: 'text-accent',           group: 'Network' },
-  bonus:                { label: 'Bonus',                icon: Award,         color: 'text-amber-400',        group: 'Network' },
-  level_bonus:          { label: 'Bonus livello (storico)', icon: Award,     color: 'text-amber-400',        group: 'Network' },
+  team:               { label: 'Commissione referral',icon: Users,         color: 'text-accent',           group: 'Network' },
+  bonus:              { label: 'Bonus livello',       icon: Award,         color: 'text-amber-400',        group: 'Network' },
+  level_bonus:        { label: 'Bonus livello',       icon: Award,         color: 'text-amber-400',        group: 'Network' },
 };
 
 const metaFor = (t: string) => TYPE_META[t] ?? { label: t, icon: Wallet, color: 'text-foreground', group: 'Altro' };
