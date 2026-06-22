@@ -122,8 +122,27 @@ export default function NetworkPage() {
   const production = Number(profile?.production ?? 0);
   const progress = computeProgress(levels, userLevel, units, production);
 
+  // Compute per-level counts (entire downline) from the tree
+  const levelCounts: Record<number, { total: number; active: number }> = {};
+  let totalNetwork = 0;
+  let totalActiveNetwork = 0;
+  const walk = (nodes: ReferralNode[], depth: number) => {
+    for (const n of nodes) {
+      levelCounts[depth] = levelCounts[depth] ?? { total: 0, active: 0 };
+      levelCounts[depth].total += 1;
+      totalNetwork += 1;
+      if (n.has_confirmed_deposit) {
+        levelCounts[depth].active += 1;
+        totalActiveNetwork += 1;
+      }
+      if (n.children?.length) walk(n.children, depth + 1);
+    }
+  };
+  if (tree) walk(tree, 1);
+  const maxDepth = Math.max(1, ...Object.keys(levelCounts).map(Number));
+
   const stats = [
-    { icon: Users, label: t('network.statUnits'), value: units },
+    { icon: Users, label: 'Unità qualificanti (L1 attivi)', value: units },
     { icon: DollarSign, label: t('network.statProduction'), value: `${production.toLocaleString()} USDT` },
     { icon: Users, label: t('network.statDirectReferrals'), value: profile?.direct_referrals ?? 0 },
     { icon: Award, label: t('network.statLevelBonus'), value: `${progress?.current.bonus_valore ?? 0} USDT` },
