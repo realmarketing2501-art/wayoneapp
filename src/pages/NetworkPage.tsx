@@ -164,6 +164,36 @@ export default function NetworkPage() {
         ))}
       </div>
 
+      <Card className="border-primary/20">
+        <CardContent className="p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <p className="text-sm font-semibold text-foreground flex items-center gap-2">
+              <Users className="h-4 w-4 text-primary" /> Rete per livello
+            </p>
+            <Badge variant="secondary" className="text-[0.65rem]">
+              Totale {totalActiveNetwork}/{totalNetwork} attivi
+            </Badge>
+          </div>
+          <p className="text-[0.7rem] text-muted-foreground -mt-1">
+            Le commissioni referral vengono pagate fino al L4. Solo i diretti (L1) con investimento attivo contano come "Unità qualificanti" per la promozione di livello.
+          </p>
+          <div className="grid grid-cols-4 gap-2">
+            {Array.from({ length: Math.max(4, maxDepth) }, (_, i) => i + 1).map((d) => {
+              const c = levelCounts[d] ?? { total: 0, active: 0 };
+              return (
+                <div key={d} className="rounded-lg bg-secondary/60 p-2 text-center">
+                  <p className="text-[0.6rem] text-muted-foreground">L{d}</p>
+                  <p className="font-display text-base font-bold text-foreground leading-tight">{c.total}</p>
+                  <p className="text-[0.6rem] text-green-500">{c.active} attivi</p>
+                </div>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
+
+
+
       {progress && progress.next && (
         <Card className="border-primary/20">
           <CardContent className="p-4 space-y-3">
