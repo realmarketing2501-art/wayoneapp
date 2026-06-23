@@ -11,6 +11,9 @@ export interface ReferralNode {
   created_at: string;
   direct_referrals: number;
   referred_by_username: string | null;
+  active_investments: number;
+  total_invested: number;
+  total_earned: number;
   children: ReferralNode[];
 }
 
@@ -49,6 +52,9 @@ export function useReferralTree() {
           created_at: p.created_at as string,
           direct_referrals: (p.direct_referrals as number) ?? 0,
           referred_by_username: ((p as Record<string, unknown>).referred_by_username as string | null) ?? null,
+          active_investments: Number((p as Record<string, unknown>).active_investments ?? 0),
+          total_invested: Number((p as Record<string, unknown>).total_invested ?? 0),
+          total_earned: Number((p as Record<string, unknown>).total_earned ?? 0),
           children: buildChildren(p.id as string),
         }));
 
@@ -61,6 +67,9 @@ export function useReferralTree() {
         created_at: p.created_at as string,
         direct_referrals: (p.direct_referrals as number) ?? 0,
         referred_by_username: ((p as Record<string, unknown>).referred_by_username as string | null) ?? null,
+        active_investments: Number((p as Record<string, unknown>).active_investments ?? 0),
+        total_invested: Number((p as Record<string, unknown>).total_invested ?? 0),
+        total_earned: Number((p as Record<string, unknown>).total_earned ?? 0),
         children: buildChildren(p.id as string),
       }));
     },

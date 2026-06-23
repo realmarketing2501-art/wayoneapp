@@ -1197,6 +1197,7 @@ export type Database = {
       get_referral_tree: {
         Args: { max_depth?: number }
         Returns: {
+          active_investments: number
           created_at: string
           depth: number
           direct_referrals: number
@@ -1205,6 +1206,8 @@ export type Database = {
           level: string
           referred_by: string
           referred_by_username: string
+          total_earned: number
+          total_invested: number
           user_id: string
           username: string
         }[]
@@ -1221,6 +1224,16 @@ export type Database = {
         Returns: string
       }
       is_demo_mode: { Args: never; Returns: boolean }
+      pay_referral_commission: {
+        Args: {
+          p_earn_amount: number
+          p_earner_user_id: string
+          p_ref_id: string
+          p_ref_type: string
+          p_source_label: string
+        }
+        Returns: number
+      }
       process_daily_returns: {
         Args: never
         Returns: {
