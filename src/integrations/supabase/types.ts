@@ -1197,6 +1197,7 @@ export type Database = {
       get_referral_tree: {
         Args: { max_depth?: number }
         Returns: {
+          active_investments: number
           created_at: string
           depth: number
           direct_referrals: number
@@ -1205,6 +1206,8 @@ export type Database = {
           level: string
           referred_by: string
           referred_by_username: string
+          total_earned: number
+          total_invested: number
           user_id: string
           username: string
         }[]
