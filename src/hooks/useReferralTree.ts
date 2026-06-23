@@ -27,7 +27,8 @@ export function useReferralTree() {
 
       // Fetch only the caller's downline via security-definer RPC.
       const { data: rows, error } = await supabase.rpc('get_referral_tree', { max_depth: 6 });
-      if (error || !rows) return [];
+      if (error) throw error;
+      if (!rows) return [];
 
       type Row = (typeof rows)[number];
       const byParent = new Map<string, Row[]>();
