@@ -63,6 +63,17 @@ function TreeNode({ node, depth = 0, localeTag }: { node: ReferralNode; depth?: 
               <span className="text-[0.6rem] text-muted-foreground">· invitato da <span className="font-medium text-foreground/80">{node.referred_by_username}</span></span>
             )}
           </div>
+          <div className="flex items-center gap-2 mt-1 flex-wrap">
+            <Badge variant="outline" className="text-[0.6rem] px-1.5 py-0 border-primary/30 text-primary">
+              {node.active_investments} {node.active_investments === 1 ? 'investimento' : 'investimenti'}
+            </Badge>
+            <span className="text-[0.6rem] text-muted-foreground">
+              Capitale: <span className="font-medium text-foreground">{node.total_invested.toLocaleString(undefined, { maximumFractionDigits: 2 })} USDT</span>
+            </span>
+            <span className="text-[0.6rem] text-muted-foreground">
+              Guadagni: <span className="font-medium text-green-500">+{node.total_earned.toLocaleString(undefined, { maximumFractionDigits: 2 })} USDT</span>
+            </span>
+          </div>
         </div>
       </div>
 
