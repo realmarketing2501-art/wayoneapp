@@ -39,7 +39,7 @@ export default function QualifichePage() {
                   </div>
                   <div className="rounded-md bg-secondary p-2">
                     <p className="text-muted-foreground text-[0.65rem]">{t('qualifiche.productionRequired')}</p>
-                    <p className="font-semibold text-foreground">{l.produzione_richiesta ? `${Number(l.produzione_richiesta).toLocaleString()} USDT` : '—'}</p>
+                    <p className="font-semibold text-foreground">{l.produzione_richiesta ? `${Number(l.produzione_richiesta).toLocaleString()} USDC` : '—'}</p>
                   </div>
                   <div className="rounded-md bg-secondary p-2">
                     <p className="text-muted-foreground text-[0.65rem]">{t('qualifiche.yield45')}</p>
@@ -55,7 +55,7 @@ export default function QualifichePage() {
                   </div>
                   <div className="rounded-md bg-secondary p-2">
                     <p className="text-muted-foreground text-[0.65rem]">{t('qualifiche.bonusValue')}</p>
-                    <p className="font-semibold text-foreground">{l.bonus_valore.toLocaleString()} USDT</p>
+                    <p className="font-semibold text-foreground">{l.bonus_valore.toLocaleString()} USDC</p>
                   </div>
                 </div>
                 {(l.investimento_min != null || l.investimento_max != null) && (

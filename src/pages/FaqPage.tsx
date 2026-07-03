@@ -15,14 +15,14 @@ type FaqDict = Record<string, { general: FaqItem[]; deposit: FaqItem[]; invest: 
 const FAQ: FaqDict = {
   it: {
     general: [
-      { q: "Cos'è WayOne?", a: "WayOne è una piattaforma di investimento in USDT (Tether) che permette di generare rendite giornaliere su piani configurati dall'amministrazione e di costruire una rete di referral con bonus dedicati." },
-      { q: 'In quale valuta si opera?', a: 'Tutti gli importi sono espressi in USDT con rapporto fisso 1:1 USD. Non vengono mai effettuate conversioni in altre valute fiat o crypto.' },
+      { q: "Cos'è WayOne?", a: "WayOne è una piattaforma di investimento in USDC (Tether) che permette di generare rendite giornaliere su piani configurati dall'amministrazione e di costruire una rete di referral con bonus dedicati." },
+      { q: 'In quale valuta si opera?', a: 'Tutti gli importi sono espressi in USDC con rapporto fisso 1:1 USD. Non vengono mai effettuate conversioni in altre valute fiat o crypto.' },
       { q: "Devo registrarmi per usare l'app?", a: 'Puoi navigare le pagine informative e il simulatore senza account. Per depositare, investire e prelevare devi accedere.' },
     ],
     deposit: [
       { q: "Qual è il deposito minimo?", a: "L'importo minimo è indicato nella schermata Wallet → Deposita ed è aggiornato in tempo reale." },
-      { q: 'Come deposito USDT?', a: 'Vai in Wallet → Deposita, scegli l\'importo, ottieni un indirizzo TRC-20 con un suffisso univoco. Invia esattamente la cifra mostrata: il sistema riconosce la transazione automaticamente.' },
-      { q: 'Quali reti sono supportate?', a: 'Attualmente USDT su rete TRC-20 (Tron).' },
+      { q: 'Come deposito USDC?', a: 'Vai in Wallet → Deposita, scegli l\'importo, ottieni un indirizzo TRC-20 con un suffisso univoco. Invia esattamente la cifra mostrata: il sistema riconosce la transazione automaticamente.' },
+      { q: 'Quali reti sono supportate?', a: 'Attualmente USDC su rete TRC-20 (Tron).' },
       { q: "Quanto tempo serve per accreditare?", a: "L'accredito è automatico dopo le conferme di rete (in genere pochi minuti)." },
     ],
     invest: [
@@ -53,14 +53,14 @@ const FAQ: FaqDict = {
   },
   en: {
     general: [
-      { q: 'What is WayOne?', a: 'WayOne is a USDT (Tether) investment platform that lets you earn daily yields on admin-configured plans and build a referral network with dedicated bonuses.' },
-      { q: 'Which currency is used?', a: 'All amounts are in USDT at a fixed 1:1 USD ratio. No fiat or crypto conversions are performed.' },
+      { q: 'What is WayOne?', a: 'WayOne is a USDC (Tether) investment platform that lets you earn daily yields on admin-configured plans and build a referral network with dedicated bonuses.' },
+      { q: 'Which currency is used?', a: 'All amounts are in USDC at a fixed 1:1 USD ratio. No fiat or crypto conversions are performed.' },
       { q: 'Do I need to register?', a: 'You can browse info pages and the simulator without an account. Sign in to deposit, invest and withdraw.' },
     ],
     deposit: [
       { q: 'What is the minimum deposit?', a: 'The minimum amount is shown in Wallet → Deposit and is always up to date.' },
-      { q: 'How do I deposit USDT?', a: 'Go to Wallet → Deposit, choose an amount, get a TRC-20 address with a unique suffix. Send the exact displayed amount: the system credits automatically.' },
-      { q: 'Which networks are supported?', a: 'Currently USDT on TRC-20 (Tron).' },
+      { q: 'How do I deposit USDC?', a: 'Go to Wallet → Deposit, choose an amount, get a TRC-20 address with a unique suffix. Send the exact displayed amount: the system credits automatically.' },
+      { q: 'Which networks are supported?', a: 'Currently USDC on TRC-20 (Tron).' },
       { q: 'How long does crediting take?', a: 'Automatic after network confirmations (usually a few minutes).' },
     ],
     invest: [
@@ -91,14 +91,14 @@ const FAQ: FaqDict = {
   },
   es: {
     general: [
-      { q: '¿Qué es WayOne?', a: 'WayOne es una plataforma de inversión en USDT (Tether) que permite generar rendimientos diarios en planes configurados por la administración y construir una red de referidos con bonos dedicados.' },
-      { q: '¿Qué moneda se usa?', a: 'Todos los importes están en USDT con paridad fija 1:1 con USD. No hay conversiones fiat o cripto.' },
+      { q: '¿Qué es WayOne?', a: 'WayOne es una plataforma de inversión en USDC (Tether) que permite generar rendimientos diarios en planes configurados por la administración y construir una red de referidos con bonos dedicados.' },
+      { q: '¿Qué moneda se usa?', a: 'Todos los importes están en USDC con paridad fija 1:1 con USD. No hay conversiones fiat o cripto.' },
       { q: '¿Debo registrarme?', a: 'Puedes navegar las páginas informativas y el simulador sin cuenta. Para depositar, invertir y retirar debes iniciar sesión.' },
     ],
     deposit: [
       { q: '¿Cuál es el depósito mínimo?', a: 'El importe mínimo se muestra en Billetera → Depositar y está siempre actualizado.' },
-      { q: '¿Cómo depositar USDT?', a: 'Ve a Billetera → Depositar, elige importe, obtén una dirección TRC-20 con sufijo único. Envía el importe exacto mostrado: el sistema acredita automáticamente.' },
-      { q: '¿Qué redes se admiten?', a: 'Actualmente USDT en TRC-20 (Tron).' },
+      { q: '¿Cómo depositar USDC?', a: 'Ve a Billetera → Depositar, elige importe, obtén una dirección TRC-20 con sufijo único. Envía el importe exacto mostrado: el sistema acredita automáticamente.' },
+      { q: '¿Qué redes se admiten?', a: 'Actualmente USDC en TRC-20 (Tron).' },
       { q: '¿Cuánto tarda el abono?', a: 'Automático tras las confirmaciones (normalmente pocos minutos).' },
     ],
     invest: [
@@ -129,14 +129,14 @@ const FAQ: FaqDict = {
   },
   fr: {
     general: [
-      { q: "Qu'est-ce que WayOne ?", a: "WayOne est une plateforme d'investissement en USDT (Tether) qui permet de générer des rendements quotidiens sur des plans configurés par l'administration et de bâtir un réseau de parrainage avec des bonus dédiés." },
-      { q: 'Quelle devise ?', a: 'Tous les montants sont en USDT au ratio fixe 1:1 USD. Aucune conversion fiat ou crypto.' },
+      { q: "Qu'est-ce que WayOne ?", a: "WayOne est une plateforme d'investissement en USDC (Tether) qui permet de générer des rendements quotidiens sur des plans configurés par l'administration et de bâtir un réseau de parrainage avec des bonus dédiés." },
+      { q: 'Quelle devise ?', a: 'Tous les montants sont en USDC au ratio fixe 1:1 USD. Aucune conversion fiat ou crypto.' },
       { q: "Dois-je m'inscrire ?", a: 'Vous pouvez parcourir les pages informatives et le simulateur sans compte. Pour déposer, investir et retirer, connectez-vous.' },
     ],
     deposit: [
       { q: 'Quel est le dépôt minimum ?', a: 'Le montant minimum est affiché dans Portefeuille → Déposer et toujours à jour.' },
-      { q: 'Comment déposer USDT ?', a: 'Allez dans Portefeuille → Déposer, choisissez un montant, obtenez une adresse TRC-20 avec un suffixe unique. Envoyez le montant exact affiché : le système crédite automatiquement.' },
-      { q: 'Réseaux supportés ?', a: 'Actuellement USDT sur TRC-20 (Tron).' },
+      { q: 'Comment déposer USDC ?', a: 'Allez dans Portefeuille → Déposer, choisissez un montant, obtenez une adresse TRC-20 avec un suffixe unique. Envoyez le montant exact affiché : le système crédite automatiquement.' },
+      { q: 'Réseaux supportés ?', a: 'Actuellement USDC sur TRC-20 (Tron).' },
       { q: 'Délai de crédit ?', a: 'Automatique après confirmations réseau (généralement quelques minutes).' },
     ],
     invest: [
@@ -167,14 +167,14 @@ const FAQ: FaqDict = {
   },
   zh: {
     general: [
-      { q: 'WayOne 是什么？', a: 'WayOne 是一个 USDT（泰达币）投资平台，可在管理员配置的计划中产生每日收益，并通过专属奖金构建推荐网络。' },
-      { q: '使用什么货币？', a: '所有金额均以 USDT 计价，与 USD 1:1 固定比率，不进行任何法币或加密货币转换。' },
+      { q: 'WayOne 是什么？', a: 'WayOne 是一个 USDC（泰达币）投资平台，可在管理员配置的计划中产生每日收益，并通过专属奖金构建推荐网络。' },
+      { q: '使用什么货币？', a: '所有金额均以 USDC 计价，与 USD 1:1 固定比率，不进行任何法币或加密货币转换。' },
       { q: '需要注册吗？', a: '可以无账户浏览信息页面和模拟器。充值、投资和提现需要登录。' },
     ],
     deposit: [
       { q: '最低充值金额是多少？', a: '最低金额显示在 钱包 → 充值 页面，始终保持最新。' },
-      { q: '如何充值 USDT？', a: '前往 钱包 → 充值，选择金额，获取带有唯一后缀的 TRC-20 地址。发送显示的精确金额：系统自动入账。' },
-      { q: '支持哪些网络？', a: '目前为 TRC-20 (Tron) 上的 USDT。' },
+      { q: '如何充值 USDC？', a: '前往 钱包 → 充值，选择金额，获取带有唯一后缀的 TRC-20 地址。发送显示的精确金额：系统自动入账。' },
+      { q: '支持哪些网络？', a: '目前为 TRC-20 (Tron) 上的 USDC。' },
       { q: '入账需要多长时间？', a: '网络确认后自动入账（通常几分钟）。' },
     ],
     invest: [

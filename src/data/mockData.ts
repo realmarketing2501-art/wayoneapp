@@ -161,7 +161,7 @@ export interface Task {
 export const mockTasks: Task[] = [
   { id: 't1', title: 'Daily Login', description: 'Accedi alla piattaforma', reward: 0.5, progress: 1, total: 1, type: 'daily', completed: true },
   { id: 't2', title: 'Share Referral Link', description: 'Condividi il tuo link referral', reward: 1.0, progress: 0, total: 1, type: 'daily', completed: false },
-  { id: 't3', title: 'Make a Deposit', description: 'Effettua un deposito di almeno 50 USDT', reward: 2.0, progress: 0, total: 1, type: 'daily', completed: false },
+  { id: 't3', title: 'Make a Deposit', description: 'Effettua un deposito di almeno 50 USDC', reward: 2.0, progress: 0, total: 1, type: 'daily', completed: false },
   { id: 't4', title: '7-Day Streak', description: 'Accedi per 7 giorni consecutivi', reward: 10.0, progress: 5, total: 7, type: 'weekly', completed: false },
   { id: 't5', title: 'Invite 3 Friends', description: 'Invita 3 amici questa settimana', reward: 15.0, progress: 1, total: 3, type: 'weekly', completed: false },
 ];

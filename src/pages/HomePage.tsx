@@ -152,7 +152,7 @@ export default function HomePage() {
           <div>
             <p className="text-[0.65rem] uppercase tracking-wider text-muted-foreground">{t('home.earned')}</p>
             <p className="font-display mt-0.5 text-base font-bold text-foreground">
-              +{totalEarned.toFixed(2)} <span className="text-xs text-muted-foreground">USDT</span>
+              +{totalEarned.toFixed(2)} <span className="text-xs text-muted-foreground">USDC</span>
             </p>
           </div>
           <div>
@@ -204,7 +204,7 @@ export default function HomePage() {
             value={activeInvestment?.plan_name ?? t('common.none')}
             sub={
               activeInvestment
-                ? `${Number(activeInvestment.amount).toFixed(0)} USDT · ${activeInvestment.duration_days}d`
+                ? `${Number(activeInvestment.amount).toFixed(0)} USDC · ${activeInvestment.duration_days}d`
                 : t('home.startInvesting')
             }
           />
@@ -310,7 +310,7 @@ function TxRow({ tx }: { tx: any }) {
         </div>
       </div>
       <p className={`font-display text-sm font-bold ${isIn ? 'text-emerald-400' : 'text-rose-400'}`}>
-        {isIn ? '+' : '-'}{Number(tx.amount).toFixed(2)} USDT
+        {isIn ? '+' : '-'}{Number(tx.amount).toFixed(2)} USDC
       </p>
     </div>
   );

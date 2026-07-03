@@ -96,7 +96,7 @@ export default function FundPage() {
           </div>
           <div className="mt-3">
             <div className="flex justify-between text-xs text-muted-foreground">
-              <span>{Number(fund.raised).toLocaleString()} / {Number(fund.goal).toLocaleString()} USDT</span>
+              <span>{Number(fund.raised).toLocaleString()} / {Number(fund.goal).toLocaleString()} USDC</span>
               <span>{pct}%</span>
             </div>
             <Progress value={pct} className="mt-1 h-2" />
@@ -130,7 +130,7 @@ export default function FundPage() {
                       <div className="min-w-0">
                         <p className="font-semibold text-foreground truncate">{sf.name}</p>
                         <p className="text-[0.65rem] text-muted-foreground">
-                          {Number(mf.amount).toLocaleString()} USDT · {mf.daily_rate}%{t('fund.ratePerDay')} · {sf.total_return}% {t('fund.totalReturn')}
+                          {Number(mf.amount).toLocaleString()} USDC · {mf.daily_rate}%{t('fund.ratePerDay')} · {sf.total_return}% {t('fund.totalReturn')}
                         </p>
                       </div>
                       <Badge variant={mf.status === 'completed' ? 'secondary' : 'default'} className="text-[0.55rem]">
@@ -140,7 +140,7 @@ export default function FundPage() {
                     <div className="grid grid-cols-3 gap-2 text-[0.65rem]">
                       <div>
                         <p className="text-muted-foreground">{t('fund.earned')}</p>
-                        <p className="font-semibold text-primary">+{Number(mf.total_earned ?? 0).toFixed(2)} USDT</p>
+                        <p className="font-semibold text-primary">+{Number(mf.total_earned ?? 0).toFixed(2)} USDC</p>
                       </div>
                       <div>
                         <p className="text-muted-foreground">{t('fund.days')}</p>
@@ -185,8 +185,8 @@ export default function FundPage() {
               <div className="rounded-md bg-secondary p-3 text-xs space-y-1">
                 <div className="flex justify-between"><span className="text-muted-foreground">{t('fund.dialogReturn')}</span><span className="font-semibold">{t('fund.dialogReturnVal', { pct: buying.total_return, days: buying.duration })}</span></div>
                 <div className="flex justify-between"><span className="text-muted-foreground">{t('fund.dialogRange')}</span><span>{t('fund.rangeUsdt', { min: buying.min_invest, max: Number(buying.max_invest).toLocaleString() })}</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">{t('fund.dialogAvailable')}</span><span>{(Number(buying.goal) - Number(buying.raised)).toLocaleString()} USDT</span></div>
-                <div className="flex justify-between"><span className="text-muted-foreground">{t('fund.dialogYourBalance')}</span><span>{Number(profile?.balance_available ?? 0).toFixed(2)} USDT</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">{t('fund.dialogAvailable')}</span><span>{(Number(buying.goal) - Number(buying.raised)).toLocaleString()} USDC</span></div>
+                <div className="flex justify-between"><span className="text-muted-foreground">{t('fund.dialogYourBalance')}</span><span>{Number(profile?.balance_available ?? 0).toFixed(2)} USDC</span></div>
               </div>
               <div>
                 <Label className="text-xs">{t('fund.dialogAmount')}</Label>

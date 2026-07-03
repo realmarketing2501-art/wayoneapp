@@ -68,10 +68,10 @@ function TreeNode({ node, depth = 0, localeTag }: { node: ReferralNode; depth?: 
               {node.active_investments} {node.active_investments === 1 ? 'investimento' : 'investimenti'}
             </Badge>
             <span className="text-[0.6rem] text-muted-foreground">
-              Capitale: <span className="font-medium text-foreground">{node.total_invested.toLocaleString(undefined, { maximumFractionDigits: 2 })} USDT</span>
+              Capitale: <span className="font-medium text-foreground">{node.total_invested.toLocaleString(undefined, { maximumFractionDigits: 2 })} USDC</span>
             </span>
             <span className="text-[0.6rem] text-muted-foreground">
-              Guadagni: <span className="font-medium text-green-500">+{node.total_earned.toLocaleString(undefined, { maximumFractionDigits: 2 })} USDT</span>
+              Guadagni: <span className="font-medium text-green-500">+{node.total_earned.toLocaleString(undefined, { maximumFractionDigits: 2 })} USDC</span>
             </span>
           </div>
         </div>
@@ -154,9 +154,9 @@ export default function NetworkPage() {
 
   const stats = [
     { icon: Users, label: 'Unità qualificanti (L1 attivi)', value: units },
-    { icon: DollarSign, label: t('network.statProduction'), value: `${production.toLocaleString()} USDT` },
+    { icon: DollarSign, label: t('network.statProduction'), value: `${production.toLocaleString()} USDC` },
     { icon: Users, label: t('network.statDirectReferrals'), value: profile?.direct_referrals ?? 0 },
-    { icon: Award, label: t('network.statLevelBonus'), value: `${progress?.current.bonus_valore ?? 0} USDT` },
+    { icon: Award, label: t('network.statLevelBonus'), value: `${progress?.current.bonus_valore ?? 0} USDC` },
   ];
 
   return (
@@ -238,7 +238,7 @@ export default function NetworkPage() {
               <div className="flex items-center justify-between text-[0.7rem] mb-1">
                 <span className="text-muted-foreground">{t('network.statProduction')}</span>
                 <span className="font-medium text-foreground">
-                  {production.toLocaleString()} / {Number(progress.next.produzione_richiesta).toLocaleString()} USDT
+                  {production.toLocaleString()} / {Number(progress.next.produzione_richiesta).toLocaleString()} USDC
                   {progress.productionMissing > 0 && (
                     <span className="text-muted-foreground ml-1">(-{progress.productionMissing.toLocaleString()})</span>
                   )}

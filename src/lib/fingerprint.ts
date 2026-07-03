@@ -42,7 +42,7 @@ function canvasFp(): string {
     ctx.textBaseline = 'top';
     ctx.font = '14px Arial';
     ctx.fillStyle = '#069';
-    ctx.fillText('USDT-fp-🔒', 2, 2);
+    ctx.fillText('USDC-fp-🔒', 2, 2);
     ctx.strokeStyle = '#f60';
     ctx.strokeRect(0, 0, 50, 30);
     return c.toDataURL().slice(-80);

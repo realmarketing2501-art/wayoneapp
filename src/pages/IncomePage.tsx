@@ -83,7 +83,7 @@ export default function IncomePage() {
         <CardContent className="p-4 text-center sm:p-5">
           <p className="text-xs text-muted-foreground sm:text-sm">{t('income.cumulativeTotal')}</p>
           <p className="font-display text-3xl font-bold text-primary sm:text-4xl">{Number(profile?.total_earned ?? 0).toLocaleString()}</p>
-          <p className="text-xs text-muted-foreground sm:text-sm">USDT</p>
+          <p className="text-xs text-muted-foreground sm:text-sm">USDC</p>
         </CardContent>
       </Card>
 
