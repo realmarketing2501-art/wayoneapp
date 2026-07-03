@@ -63,7 +63,7 @@ export default function TaskCenterPage() {
                   </div>
                   <div className="text-right">
                     <p className="font-display text-sm font-bold text-primary">+{Number(task.reward).toFixed(1)}</p>
-                    <p className="text-xs text-muted-foreground">USDT</p>
+                    <p className="text-xs text-muted-foreground">USDC</p>
                   </div>
                   {!completed && <Button size="sm">{t('taskCenter.go')}</Button>}
                 </CardContent>
@@ -93,7 +93,7 @@ export default function TaskCenterPage() {
                   </div>
                   <div className="text-right">
                     <p className="font-display text-sm font-bold text-accent">+{Number(task.reward).toFixed(1)}</p>
-                    <p className="text-xs text-muted-foreground">USDT</p>
+                    <p className="text-xs text-muted-foreground">USDC</p>
                   </div>
                 </CardContent>
               </Card>

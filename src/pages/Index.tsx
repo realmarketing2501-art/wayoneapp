@@ -17,10 +17,10 @@ const bonusIcons = [Users, Star, Crown, Wallet, Wallet, Wallet];
 // Nessun fallback statico: se non ci sono piani attivi mostriamo un empty-state.
 
 const referralLevels = [
-  { level: 'L1', pct: '4%',   on1000: '+40 USDT' },
-  { level: 'L2', pct: '2%',   on1000: '+20 USDT' },
-  { level: 'L3', pct: '1%',   on1000: '+10 USDT' },
-  { level: 'L4', pct: '0,5%', on1000: '+5 USDT' },
+  { level: 'L1', pct: '4%',   on1000: '+40 USDC' },
+  { level: 'L2', pct: '2%',   on1000: '+20 USDC' },
+  { level: 'L3', pct: '1%',   on1000: '+10 USDC' },
+  { level: 'L4', pct: '0,5%', on1000: '+5 USDC' },
 ];
 
 type Item = { title: string; desc: string };
@@ -84,7 +84,7 @@ export default function Index() {
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2.5">
             <UsdtMonogram size={36} letter="U" />
-            <span className="font-display text-2xl font-bold usdt-gold-text">USDT</span>
+            <span className="font-display text-2xl font-bold usdt-gold-text">USDC</span>
           </div>
           <div className="flex items-center gap-1.5">
             <HeaderLanguageButton />
@@ -141,7 +141,7 @@ export default function Index() {
             {[
               { value: '24/7', label: t('landing.stats.operative') },
               { value: '4', label: t('landing.stats.plans') },
-              { value: '1:1', label: 'USD ↔ USDT' },
+              { value: '1:1', label: 'USD ↔ USDC' },
             ].map((s) => (
               <div key={s.label} className="text-center">
                 <p className="font-display text-3xl font-bold usdt-gold-text">{s.value}</p>
@@ -275,8 +275,8 @@ export default function Index() {
                       ROI {p.roi}
                     </div>
                     <div className="mt-4 space-y-1 text-xs text-muted-foreground">
-                      <p>{t('landing.plans.min')}: <span className="text-foreground">{p.min} USDT</span></p>
-                      <p>{t('landing.plans.max')}: <span className="text-foreground">{p.max === '__UNLIMITED__' ? t('landing.plans.unlimited') : `${p.max} USDT`}</span></p>
+                      <p>{t('landing.plans.min')}: <span className="text-foreground">{p.min} USDC</span></p>
+                      <p>{t('landing.plans.max')}: <span className="text-foreground">{p.max === '__UNLIMITED__' ? t('landing.plans.unlimited') : `${p.max} USDC`}</span></p>
                     </div>
                   </motion.div>
                 ))}
@@ -436,7 +436,7 @@ export default function Index() {
         <div className="mx-auto max-w-6xl px-4 text-center">
           <div className="flex items-center justify-center gap-2">
             <UsdtMonogram size={24} letter="U" />
-            <span className="font-display text-lg font-bold usdt-gold-text">USDT</span>
+            <span className="font-display text-lg font-bold usdt-gold-text">USDC</span>
           </div>
           <div className="mt-3 flex flex-wrap items-center justify-center gap-3 text-xs text-muted-foreground">
             <button onClick={() => navigate('/certifications')} className="hover:text-primary hover:underline">
@@ -448,7 +448,7 @@ export default function Index() {
             </button>
           </div>
           <p className="mt-2 text-xs text-muted-foreground">
-            © {new Date().getFullYear()} USDT. {t('landing.footer.rights')}
+            © {new Date().getFullYear()} USDC. {t('landing.footer.rights')}
           </p>
         </div>
       </footer>

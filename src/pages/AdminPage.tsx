@@ -278,7 +278,7 @@ function UsersTab() {
                 </div>
                 <div className="text-right shrink-0">
                   <Badge variant="outline" className="text-[0.6rem]">{levelName(p.level)}</Badge>
-                  <p className="text-[0.6rem] text-muted-foreground mt-0.5">{Number(p.balance).toLocaleString()} USDT</p>
+                  <p className="text-[0.6rem] text-muted-foreground mt-0.5">{Number(p.balance).toLocaleString()} USDC</p>
                 </div>
               </div>
               <div className="flex gap-1.5">
@@ -309,7 +309,7 @@ function UsersTab() {
               <div className="space-y-1.5 rounded border border-border/40 p-1.5 bg-muted/30">
                 <div className="flex items-center justify-between">
                   <span className="text-[0.6rem] font-semibold text-muted-foreground uppercase tracking-wide">
-                    Accredito / Debito USDT
+                    Accredito / Debito USDC
                   </span>
                   <Badge variant={demoOn ? 'secondary' : 'default'} className="text-[0.55rem] h-4 px-1.5">
                     {demoOn ? 'DEMO' : 'REALE'}
@@ -319,7 +319,7 @@ function UsersTab() {
                   <Input
                     type="number"
                     step="1"
-                    placeholder="USDT (+/-)"
+                    placeholder="USDC (+/-)"
                     className="h-9 text-xs"
                     id={`credit-amount-${p.user_id}`}
                     value={creditAmount[p.user_id] ?? ''}
@@ -352,7 +352,7 @@ function UsersTab() {
                       if (!isFinite(amt) || amt === 0) {
                         toast({
                           title: 'Importo non valido per questo utente',
-                          description: `Inserisci l'importo nel campo USDT della riga di ${p.username || p.user_id.slice(0,8)} (ogni riga ha il suo campo).`,
+                          description: `Inserisci l'importo nel campo USDC della riga di ${p.username || p.user_id.slice(0,8)} (ogni riga ha il suo campo).`,
                           variant: 'destructive',
                         });
                         const el = document.getElementById(`credit-amount-${p.user_id}`) as HTMLInputElement | null;
@@ -434,7 +434,7 @@ function DepositsTab() {
                 <CardContent className="p-3">
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <div className="min-w-0">
-                      <p className="text-sm font-semibold text-foreground">{Number(d.amount).toLocaleString()} USDT</p>
+                      <p className="text-sm font-semibold text-foreground">{Number(d.amount).toLocaleString()} USDC</p>
                       <p className="text-[0.6rem] text-muted-foreground">{d.network} · {new Date(d.created_at).toLocaleDateString('it-IT')}</p>
                       {d.tx_hash && <p className="text-[0.6rem] text-muted-foreground truncate">TxHash: {d.tx_hash}</p>}
                     </div>
@@ -463,7 +463,7 @@ function DepositsTab() {
               <CardContent className="p-3">
                 <div className="flex items-center justify-between gap-2">
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-foreground">{Number(d.amount).toLocaleString()} USDT</p>
+                    <p className="text-sm font-medium text-foreground">{Number(d.amount).toLocaleString()} USDC</p>
                     <p className="text-[0.6rem] text-muted-foreground">{d.network} · {new Date(d.created_at).toLocaleDateString('it-IT')}</p>
                   </div>
                   <Badge variant={d.status === 'confirmed' ? 'default' : 'destructive'} className="text-[0.6rem] shrink-0">{d.status}</Badge>
@@ -533,7 +533,7 @@ function WithdrawalsTab() {
                 <CardContent className="p-3">
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <div className="min-w-0">
-                      <p className="text-sm font-semibold text-foreground">{Number(w.amount).toLocaleString()} USDT</p>
+                      <p className="text-sm font-semibold text-foreground">{Number(w.amount).toLocaleString()} USDC</p>
                       <p className="text-[0.6rem] text-muted-foreground">Netto: {Number(w.net).toFixed(2)} · Fee: {Number(w.fee).toFixed(2)}</p>
                       <p className="text-[0.6rem] text-muted-foreground truncate">{w.wallet_address}</p>
                     </div>
@@ -562,7 +562,7 @@ function WithdrawalsTab() {
               <CardContent className="p-3">
                 <div className="flex items-center justify-between gap-2">
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-foreground">{Number(w.amount).toLocaleString()} USDT</p>
+                    <p className="text-sm font-medium text-foreground">{Number(w.amount).toLocaleString()} USDC</p>
                     <p className="text-[0.6rem] text-muted-foreground">{w.type} · {new Date(w.created_at).toLocaleDateString('it-IT')}</p>
                   </div>
                   <Badge variant={w.status === 'completed' ? 'default' : 'destructive'} className="text-[0.6rem] shrink-0">{w.status}</Badge>
@@ -618,8 +618,8 @@ function WalletSettingsTab() {
   const settingsFields = [
     { key: 'company_wallet_trc20', label: 'Wallet Aziendale TRC-20', placeholder: 'T...' },
     { key: 'company_wallet_erc20', label: 'Wallet Aziendale ERC-20', placeholder: '0x...' },
-    { key: 'min_deposit_usdt', label: 'Deposito Minimo (USDT)', placeholder: '50' },
-    { key: 'min_withdraw_usdt', label: 'Prelievo Minimo (USDT)', placeholder: '10' },
+    { key: 'min_deposit_usdt', label: 'Deposito Minimo (USDC)', placeholder: '50' },
+    { key: 'min_withdraw_usdt', label: 'Prelievo Minimo (USDC)', placeholder: '10' },
     { key: 'withdraw_fee_pct', label: 'Fee Prelievo (%)', placeholder: '5' },
     { key: 'min_confirmations', label: 'Conferme Minime Blockchain', placeholder: '6' },
   ];

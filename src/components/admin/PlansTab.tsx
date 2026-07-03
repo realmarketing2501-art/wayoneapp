@@ -97,7 +97,7 @@ function FieldGrid({ p, onChange }: { p: Omit<Plan, 'id'>; onChange: (v: Partial
         />
       </div>
       <div>
-        <Label className="text-[0.6rem] text-muted-foreground">Min USDT</Label>
+        <Label className="text-[0.6rem] text-muted-foreground">Min USDC</Label>
         <Input
           type="number"
           inputMode="decimal"
@@ -107,7 +107,7 @@ function FieldGrid({ p, onChange }: { p: Omit<Plan, 'id'>; onChange: (v: Partial
         />
       </div>
       <div>
-        <Label className="text-[0.6rem] text-muted-foreground">Max USDT</Label>
+        <Label className="text-[0.6rem] text-muted-foreground">Max USDC</Label>
         <Input
           type="number"
           inputMode="decimal"

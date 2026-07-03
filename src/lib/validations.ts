@@ -42,7 +42,7 @@ export function validateInvestment(input: InvestmentValidationInput): Investment
     const min = level.investimento_min ?? 50;
     const max = level.investimento_max ?? 100;
     if (amount < min || amount > max) {
-      return { ok: false, error: `Per Gamma l'investimento deve essere compreso tra ${min} e ${max} USDT` };
+      return { ok: false, error: `Per Gamma l'investimento deve essere compreso tra ${min} e ${max} USDC` };
     }
   }
 
@@ -53,7 +53,7 @@ export function validateInvestment(input: InvestmentValidationInput): Investment
     }
     const max = level.investimento_max ?? 100;
     if (amount > max) {
-      return { ok: false, error: `Per Beta l'investimento massimo è ${max} USDT` };
+      return { ok: false, error: `Per Beta l'investimento massimo è ${max} USDC` };
     }
   }
 
@@ -64,7 +64,7 @@ export function validateInvestment(input: InvestmentValidationInput): Investment
   }
 
   if (amount > availableBalance) {
-    return { ok: false, error: `Saldo insufficiente: hai ${availableBalance.toFixed(2)} USDT disponibili` };
+    return { ok: false, error: `Saldo insufficiente: hai ${availableBalance.toFixed(2)} USDC disponibili` };
   }
 
   return { ok: true };

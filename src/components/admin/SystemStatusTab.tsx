@@ -201,7 +201,7 @@ export default function SystemStatusTab() {
           </div>
 
           <div className="grid grid-cols-1 gap-2 border-t border-border pt-3 sm:grid-cols-3">
-            <JobRow icon={Database} label="Ultimo deposito accreditato" value={fmtTime(lastMatchedDeposit?.updated_at)} hint={lastMatchedDeposit ? `${lastMatchedDeposit.amount_usd} USDT · ${lastMatchedDeposit.network}` : ''} />
+            <JobRow icon={Database} label="Ultimo deposito accreditato" value={fmtTime(lastMatchedDeposit?.updated_at)} hint={lastMatchedDeposit ? `${lastMatchedDeposit.amount_usd} USDC · ${lastMatchedDeposit.network}` : ''} />
             <JobRow icon={TrendingUp} label="Ultimo daily-returns" value={fmtTime(lastDailyPayout)} hint="cron 02:00 UTC" />
             <JobRow icon={Clock} label="In attesa" value={`${pendingCounts?.pendingIntents ?? 0} D · ${pendingCounts?.pendingWithdrawals ?? 0} W`} hint={`${pendingCounts?.openAnomalies ?? 0} anomalie aperte`} />
           </div>

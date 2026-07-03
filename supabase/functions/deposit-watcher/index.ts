@@ -5,9 +5,9 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// USDT contract addresses
-const USDT_TRC20_CONTRACT = "TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t";
-const USDT_ERC20_CONTRACT = "0xdAC17F958D2ee523a2206206994597C13D831ec7";
+// USDC contract addresses
+const USDC_TRC20_CONTRACT = "TEkxiTehnzSmSe2XqrBj4w32RUN966rdz8";
+const USDC_ERC20_CONTRACT = "0xA0b86991c6218b36c1D19D4a2e9Eb0cE3606eB48";
 const MIN_CONFIRMATIONS_TRC20 = 19;
 const MIN_CONFIRMATIONS_ERC20 = 12;
 
@@ -98,12 +98,12 @@ async function watchTRC20(supabase: any, config: Record<string, string>) {
 
   await supabase.from("watcher_state").update({ status: "syncing", last_sync_at: new Date().toISOString() }).eq("network", "TRC-20");
 
-  // Query TRC20 USDT transfers TO company wallet
+  // Query TRC20 USDC transfers TO company wallet
   const minTimestamp = state?.last_block_timestamp
     ? new Date(state.last_block_timestamp).getTime()
     : Date.now() - 3600000; // last hour if first run
 
-  const url = `${api_url.replace(/\/$/, "")}/v1/accounts/${company_wallet}/transactions/trc20?only_to=true&limit=50&min_timestamp=${minTimestamp}&contract_address=${USDT_TRC20_CONTRACT}`;
+  const url = `${api_url.replace(/\/$/, "")}/v1/accounts/${company_wallet}/transactions/trc20?only_to=true&limit=50&min_timestamp=${minTimestamp}&contract_address=${USDC_TRC20_CONTRACT}`;
 
   const res = await fetch(url, {
     headers: { "TRON-PRO-API-KEY": api_key },
@@ -120,7 +120,7 @@ async function watchTRC20(supabase: any, config: Record<string, string>) {
   let latestBlock = state?.last_block_number || 0;
 
   for (const tx of txs) {
-    const amount = parseInt(tx.value || "0") / 1e6; // USDT has 6 decimals on TRC20
+    const amount = parseInt(tx.value || "0") / 1e6; // USDC has 6 decimals on TRC20
     const txHash = tx.transaction_id;
     const toAddr = tx.to;
     const fromAddr = tx.from;
@@ -136,7 +136,7 @@ async function watchTRC20(supabase: any, config: Record<string, string>) {
       from_address: fromAddr,
       to_address: toAddr,
       amount,
-      token: "USDT",
+      token: "USDC",
       confirmations: MIN_CONFIRMATIONS_TRC20, // TronGrid returns confirmed txs
       block_number: blockNum,
       block_timestamp: blockTs,
@@ -193,7 +193,7 @@ async function watchERC20(supabase: any, config: Record<string, string>) {
   // Scan from last known block (or last 100 blocks)
   const fromBlock = state?.last_block_number ? Number(state.last_block_number) + 1 : latestBlock - 100;
 
-  // Use eth_getLogs to find USDT Transfer events TO company wallet
+  // Use eth_getLogs to find USDC Transfer events TO company wallet
   // Transfer(address,address,uint256) topic
   const transferTopic = "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef";
   const paddedWallet = "0x" + walletLower.slice(2).padStart(64, "0");
@@ -207,7 +207,7 @@ async function watchERC20(supabase: any, config: Record<string, string>) {
       params: [{
         fromBlock: "0x" + fromBlock.toString(16),
         toBlock: "0x" + latestBlock.toString(16),
-        address: USDT_ERC20_CONTRACT,
+        address: USDC_ERC20_CONTRACT,
         topics: [transferTopic, null, paddedWallet],
       }],
       id: 1,
@@ -223,7 +223,7 @@ async function watchERC20(supabase: any, config: Record<string, string>) {
   for (const log of logs) {
     const txHash = log.transactionHash;
     const fromAddr = "0x" + log.topics[1].slice(26);
-    const amount = parseInt(log.data, 16) / 1e6; // USDT has 6 decimals
+    const amount = parseInt(log.data, 16) / 1e6; // USDC has 6 decimals
     const blockNum = parseInt(log.blockNumber, 16);
     const confirmations = latestBlock - blockNum;
 
@@ -235,7 +235,7 @@ async function watchERC20(supabase: any, config: Record<string, string>) {
       from_address: fromAddr,
       to_address: walletLower,
       amount,
-      token: "USDT",
+      token: "USDC",
       confirmations,
       block_number: blockNum,
       status: confirmations >= MIN_CONFIRMATIONS_ERC20 ? "detected" : "pending_confirmations",
@@ -272,7 +272,7 @@ async function matchAndCredit(supabase: any): Promise<number> {
     // 2. Same wallet_address (to_address)
     // 3. Status = pending
     // 4. Not expired
-    // 5. Amount within tight tolerance (±0.05 USDT — covers rounding, not mismatches)
+    // 5. Amount within tight tolerance (±0.05 USDC — covers rounding, not mismatches)
     const { data: intents } = await supabase
       .from("deposit_intents")
       .select("*")
@@ -314,7 +314,7 @@ async function matchAndCredit(supabase: any): Promise<number> {
         .limit(1);
 
       if (amountMismatch && amountMismatch.length > 0) {
-        reason = `Importo non corrispondente: atteso ${amountMismatch[0].amount_usdt} USDT, ricevuto ${tx.amount} USDT (intent: ${amountMismatch[0].id})`;
+        reason = `Importo non corrispondente: atteso ${amountMismatch[0].amount_usdt} USDC, ricevuto ${tx.amount} USDC (intent: ${amountMismatch[0].id})`;
       }
 
       await supabase.from("detected_transactions").update({

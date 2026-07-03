@@ -55,7 +55,7 @@ export default function DemoTab() {
             {demoOn ? <Badge className="text-[0.6rem]">ATTIVA</Badge> : <Badge variant="secondary" className="text-[0.6rem]">SPENTA</Badge>}
           </div>
           <p className="text-xs text-muted-foreground">
-            Quando attiva, gli admin possono accreditare USDT gratuiti agli utenti per testare rete, referral e investimenti.
+            Quando attiva, gli admin possono accreditare USDC gratuiti agli utenti per testare rete, referral e investimenti.
             In produzione tienila spenta.
           </p>
           <div className="flex items-center justify-between rounded-md border p-3">
