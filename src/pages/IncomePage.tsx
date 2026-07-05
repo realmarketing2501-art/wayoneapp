@@ -183,6 +183,7 @@ export default function IncomePage() {
           )}
         </CardContent>
       </Card>
+      <TransactionDetailsDialog open={!!selectedTx} onOpenChange={(v) => !v && setSelectedTx(null)} tx={selectedTx} />
     </div>
   );
 }
