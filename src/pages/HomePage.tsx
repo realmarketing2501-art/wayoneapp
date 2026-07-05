@@ -280,7 +280,7 @@ function RowItem({
   );
 }
 
-function TxRow({ tx }: { tx: any }) {
+function TxRow({ tx, onOpen }: { tx: any; onOpen?: (tx: any) => void }) {
   const { t, i18n } = useTranslation();
   const isIn = tx.direction === 'in';
   const date = new Date(tx.created_at).toLocaleDateString(i18n.language, {
