@@ -250,11 +250,12 @@ export default function HomePage() {
         ) : (
           <div className="space-y-2">
             {recentTx.map((tx: any) => (
-              <TxRow key={tx.id} tx={tx} />
+              <TxRow key={tx.id} tx={tx} onOpen={setSelectedTx} />
             ))}
           </div>
         )}
       </section>
+      <TransactionDetailsDialog open={!!selectedTx} onOpenChange={(v) => !v && setSelectedTx(null)} tx={selectedTx} />
     </div>
   );
 }
