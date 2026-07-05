@@ -66,7 +66,11 @@ export default function IncomePage() {
     const meta = TYPE_META[resolveType(record.type)];
     const Icon = meta.icon;
     return (
-      <div className="flex items-center justify-between border-b border-border py-2.5 last:border-0">
+      <button
+        type="button"
+        onClick={() => setSelectedTx(record as unknown as TxLike)}
+        className="flex w-full items-center justify-between border-b border-border py-2.5 text-left transition-colors last:border-0 hover:bg-muted/30"
+      >
         <div className="flex items-center gap-2">
           <Badge variant="outline" className={`gap-1 text-[0.65rem] ${meta.color}`}>
             <Icon className="h-3 w-3" />
@@ -75,7 +79,7 @@ export default function IncomePage() {
           <span className="text-xs text-muted-foreground">{record.date}</span>
         </div>
         <span className="text-sm font-semibold text-primary">+{Number(record.amount).toFixed(2)}</span>
-      </div>
+      </button>
     );
   };
 
