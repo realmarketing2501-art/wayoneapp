@@ -55,6 +55,7 @@ export default function ReportPage() {
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const [dirFilter, setDirFilter] = useState<string>('all');
   const [period, setPeriod] = useState<'7' | '30' | '90' | '365' | 'all'>('30');
+  const [selectedTx, setSelectedTx] = useState<TxLike | null>(null);
 
   const { data: txs = [], isFetching, refetch } = useQuery({
     queryKey: ['report_tx', user?.id, period],
