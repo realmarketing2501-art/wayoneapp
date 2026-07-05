@@ -266,7 +266,12 @@ export default function ReportPage() {
                   : t.direction === 'in' ? 'text-primary'
                   : 'text-muted-foreground';
                 return (
-                  <div key={t.id} className="flex items-start gap-3 py-2.5">
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => setSelectedTx(t as unknown as TxLike)}
+                    className="flex w-full items-start gap-3 py-2.5 text-left transition-colors hover:bg-muted/30"
+                  >
                     <div className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted ${m.color}`}>
                       <Icon className="h-4 w-4" />
                     </div>
@@ -285,13 +290,14 @@ export default function ReportPage() {
                       <p className={`text-sm font-semibold ${amountColor}`}>{sign}{Number(t.amount).toFixed(2)}</p>
                       <p className="text-[0.6rem] text-muted-foreground">{t.asset}</p>
                     </div>
-                  </div>
+                  </button>
                 );
               })}
             </div>
           )}
         </CardContent>
       </Card>
+      <TransactionDetailsDialog open={!!selectedTx} onOpenChange={(v) => !v && setSelectedTx(null)} tx={selectedTx} />
     </div>
   );
 }
