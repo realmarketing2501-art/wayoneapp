@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useAuth } from '@/contexts/AuthContext';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { TransactionDetailsDialog, type TxLike } from '@/components/TransactionDetailsDialog';
 import {
   ArrowDownLeft, ArrowUpRight, TrendingUp, Sparkles, Users, Award,
   Lock, Unlock, Wallet, Download, Search, RefreshCw, Filter
@@ -54,6 +55,7 @@ export default function ReportPage() {
   const [typeFilter, setTypeFilter] = useState<string>('all');
   const [dirFilter, setDirFilter] = useState<string>('all');
   const [period, setPeriod] = useState<'7' | '30' | '90' | '365' | 'all'>('30');
+  const [selectedTx, setSelectedTx] = useState<TxLike | null>(null);
 
   const { data: txs = [], isFetching, refetch } = useQuery({
     queryKey: ['report_tx', user?.id, period],
@@ -264,7 +266,12 @@ export default function ReportPage() {
                   : t.direction === 'in' ? 'text-primary'
                   : 'text-muted-foreground';
                 return (
-                  <div key={t.id} className="flex items-start gap-3 py-2.5">
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => setSelectedTx(t as unknown as TxLike)}
+                    className="flex w-full items-start gap-3 py-2.5 text-left transition-colors hover:bg-muted/30"
+                  >
                     <div className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted ${m.color}`}>
                       <Icon className="h-4 w-4" />
                     </div>
@@ -283,13 +290,14 @@ export default function ReportPage() {
                       <p className={`text-sm font-semibold ${amountColor}`}>{sign}{Number(t.amount).toFixed(2)}</p>
                       <p className="text-[0.6rem] text-muted-foreground">{t.asset}</p>
                     </div>
-                  </div>
+                  </button>
                 );
               })}
             </div>
           )}
         </CardContent>
       </Card>
+      <TransactionDetailsDialog open={!!selectedTx} onOpenChange={(v) => !v && setSelectedTx(null)} tx={selectedTx} />
     </div>
   );
 }

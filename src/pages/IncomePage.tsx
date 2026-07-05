@@ -9,6 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { useTranslation } from 'react-i18next';
 import { Info, TrendingUp, Sparkles, Users, Award } from 'lucide-react';
+import { TransactionDetailsDialog, type TxLike } from '@/components/TransactionDetailsDialog';
 
 type IncomeType = 'interest' | 'fund_interest' | 'team' | 'level_bonus' | 'bonus';
 
@@ -28,6 +29,7 @@ export default function IncomePage() {
   const { data: profile } = useProfile();
   const [period, setPeriod] = useState<7 | 30 | 90>(7);
   const [showLegend, setShowLegend] = useState(false);
+  const [selectedTx, setSelectedTx] = useState<TxLike | null>(null);
 
   const { data: records = [] } = useQuery({
     queryKey: ['income_records', user?.id],
@@ -64,7 +66,11 @@ export default function IncomePage() {
     const meta = TYPE_META[resolveType(record.type)];
     const Icon = meta.icon;
     return (
-      <div className="flex items-center justify-between border-b border-border py-2.5 last:border-0">
+      <button
+        type="button"
+        onClick={() => setSelectedTx(record as unknown as TxLike)}
+        className="flex w-full items-center justify-between border-b border-border py-2.5 text-left transition-colors last:border-0 hover:bg-muted/30"
+      >
         <div className="flex items-center gap-2">
           <Badge variant="outline" className={`gap-1 text-[0.65rem] ${meta.color}`}>
             <Icon className="h-3 w-3" />
@@ -73,7 +79,7 @@ export default function IncomePage() {
           <span className="text-xs text-muted-foreground">{record.date}</span>
         </div>
         <span className="text-sm font-semibold text-primary">+{Number(record.amount).toFixed(2)}</span>
-      </div>
+      </button>
     );
   };
 
@@ -177,6 +183,7 @@ export default function IncomePage() {
           )}
         </CardContent>
       </Card>
+      <TransactionDetailsDialog open={!!selectedTx} onOpenChange={(v) => !v && setSelectedTx(null)} tx={selectedTx} />
     </div>
   );
 }

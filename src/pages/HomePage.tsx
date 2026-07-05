@@ -14,6 +14,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { UsdtMonogram } from '@/components/UsdtMonogram';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
+import { TransactionDetailsDialog, type TxLike } from '@/components/TransactionDetailsDialog';
 
 function useCountdown() {
   const [timeLeft, setTimeLeft] = useState('');
@@ -48,6 +49,7 @@ export default function HomePage() {
   const { data: profile, isLoading } = useProfile();
   const { user } = useAuth();
   const { t } = useTranslation();
+  const [selectedTx, setSelectedTx] = useState<TxLike | null>(null);
 
   const quickActions = [
     { icon: TrendingUp, label: t('nav.invest'), path: '/invest' },
@@ -249,11 +251,12 @@ export default function HomePage() {
         ) : (
           <div className="space-y-2">
             {recentTx.map((tx: any) => (
-              <TxRow key={tx.id} tx={tx} />
+              <TxRow key={tx.id} tx={tx} onOpen={setSelectedTx} />
             ))}
           </div>
         )}
       </section>
+      <TransactionDetailsDialog open={!!selectedTx} onOpenChange={(v) => !v && setSelectedTx(null)} tx={selectedTx} />
     </div>
   );
 }
@@ -277,7 +280,7 @@ function RowItem({
   );
 }
 
-function TxRow({ tx }: { tx: any }) {
+function TxRow({ tx, onOpen }: { tx: any; onOpen?: (tx: any) => void }) {
   const { t, i18n } = useTranslation();
   const isIn = tx.direction === 'in';
   const date = new Date(tx.created_at).toLocaleDateString(i18n.language, {
@@ -295,7 +298,11 @@ function TxRow({ tx }: { tx: any }) {
     referral: t('home.txReferral'),
   };
   return (
-    <div className="flex items-center justify-between gap-2 border-b border-border/40 pb-2 last:border-0 last:pb-0">
+    <button
+      type="button"
+      onClick={() => onOpen?.(tx)}
+      className="flex w-full items-center justify-between gap-2 border-b border-border/40 pb-2 text-left transition-colors last:border-0 last:pb-0 hover:bg-muted/30"
+    >
       <div className="flex items-center gap-2.5">
         <div
           className={`flex h-8 w-8 items-center justify-center rounded-full ${
@@ -312,6 +319,6 @@ function TxRow({ tx }: { tx: any }) {
       <p className={`font-display text-sm font-bold ${isIn ? 'text-emerald-400' : 'text-rose-400'}`}>
         {isIn ? '+' : '-'}{Number(tx.amount).toFixed(2)} USDC
       </p>
-    </div>
+    </button>
   );
 }
