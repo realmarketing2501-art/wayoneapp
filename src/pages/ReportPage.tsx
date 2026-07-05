@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { useAuth } from '@/contexts/AuthContext';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
+import { TransactionDetailsDialog, type TxLike } from '@/components/TransactionDetailsDialog';
 import {
   ArrowDownLeft, ArrowUpRight, TrendingUp, Sparkles, Users, Award,
   Lock, Unlock, Wallet, Download, Search, RefreshCw, Filter
