@@ -298,7 +298,11 @@ function TxRow({ tx, onOpen }: { tx: any; onOpen?: (tx: any) => void }) {
     referral: t('home.txReferral'),
   };
   return (
-    <div className="flex items-center justify-between gap-2 border-b border-border/40 pb-2 last:border-0 last:pb-0">
+    <button
+      type="button"
+      onClick={() => onOpen?.(tx)}
+      className="flex w-full items-center justify-between gap-2 border-b border-border/40 pb-2 text-left transition-colors last:border-0 last:pb-0 hover:bg-muted/30"
+    >
       <div className="flex items-center gap-2.5">
         <div
           className={`flex h-8 w-8 items-center justify-center rounded-full ${
@@ -315,6 +319,6 @@ function TxRow({ tx, onOpen }: { tx: any; onOpen?: (tx: any) => void }) {
       <p className={`font-display text-sm font-bold ${isIn ? 'text-emerald-400' : 'text-rose-400'}`}>
         {isIn ? '+' : '-'}{Number(tx.amount).toFixed(2)} USDC
       </p>
-    </div>
+    </button>
   );
 }
