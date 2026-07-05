@@ -9,6 +9,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { useTranslation } from 'react-i18next';
 import { Info, TrendingUp, Sparkles, Users, Award } from 'lucide-react';
+import { TransactionDetailsDialog, type TxLike } from '@/components/TransactionDetailsDialog';
 
 type IncomeType = 'interest' | 'fund_interest' | 'team' | 'level_bonus' | 'bonus';
 
