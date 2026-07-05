@@ -49,6 +49,7 @@ export default function HomePage() {
   const { data: profile, isLoading } = useProfile();
   const { user } = useAuth();
   const { t } = useTranslation();
+  const [selectedTx, setSelectedTx] = useState<TxLike | null>(null);
 
   const quickActions = [
     { icon: TrendingUp, label: t('nav.invest'), path: '/invest' },
