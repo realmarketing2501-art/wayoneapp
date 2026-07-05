@@ -14,6 +14,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { UsdtMonogram } from '@/components/UsdtMonogram';
 import { Button } from '@/components/ui/button';
 import { useTranslation } from 'react-i18next';
+import { TransactionDetailsDialog, type TxLike } from '@/components/TransactionDetailsDialog';
 
 function useCountdown() {
   const [timeLeft, setTimeLeft] = useState('');
