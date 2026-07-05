@@ -29,6 +29,7 @@ export default function IncomePage() {
   const { data: profile } = useProfile();
   const [period, setPeriod] = useState<7 | 30 | 90>(7);
   const [showLegend, setShowLegend] = useState(false);
+  const [selectedTx, setSelectedTx] = useState<TxLike | null>(null);
 
   const { data: records = [] } = useQuery({
     queryKey: ['income_records', user?.id],
