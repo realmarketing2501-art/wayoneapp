@@ -14,6 +14,267 @@ export type Database = {
   }
   public: {
     Tables: {
+      _backup_pre_migration_20260710_admin_settings: {
+        Row: {
+          description: string | null
+          key: string | null
+          updated_at: string | null
+          value: string | null
+        }
+        Insert: {
+          description?: string | null
+          key?: string | null
+          updated_at?: string | null
+          value?: string | null
+        }
+        Update: {
+          description?: string | null
+          key?: string | null
+          updated_at?: string | null
+          value?: string | null
+        }
+        Relationships: []
+      }
+      _backup_pre_migration_20260710_income_records: {
+        Row: {
+          amount: number | null
+          created_at: string | null
+          date: string | null
+          id: string | null
+          type: string | null
+          user_id: string | null
+        }
+        Insert: {
+          amount?: number | null
+          created_at?: string | null
+          date?: string | null
+          id?: string | null
+          type?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number | null
+          created_at?: string | null
+          date?: string | null
+          id?: string | null
+          type?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      _backup_pre_migration_20260710_investment_plans: {
+        Row: {
+          created_at: string | null
+          daily_return: number | null
+          duration: number | null
+          duration_days: number | null
+          id: string | null
+          max_invest: number | null
+          min_invest: number | null
+          min_level: Database["public"]["Enums"]["level_name"] | null
+          name: string | null
+          pool_filled: number | null
+          pool_total: number | null
+          status: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          daily_return?: number | null
+          duration?: number | null
+          duration_days?: number | null
+          id?: string | null
+          max_invest?: number | null
+          min_invest?: number | null
+          min_level?: Database["public"]["Enums"]["level_name"] | null
+          name?: string | null
+          pool_filled?: number | null
+          pool_total?: number | null
+          status?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          daily_return?: number | null
+          duration?: number | null
+          duration_days?: number | null
+          id?: string | null
+          max_invest?: number | null
+          min_invest?: number | null
+          min_level?: Database["public"]["Enums"]["level_name"] | null
+          name?: string | null
+          pool_filled?: number | null
+          pool_total?: number | null
+          status?: string | null
+        }
+        Relationships: []
+      }
+      _backup_pre_migration_20260710_investments: {
+        Row: {
+          amount: number | null
+          created_at: string | null
+          daily_rate: number | null
+          days_remaining: number | null
+          duration_days: number | null
+          earned: number | null
+          id: string | null
+          last_payout_at: string | null
+          plan_id: string | null
+          plan_name: string | null
+          start_date: string | null
+          status: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          amount?: number | null
+          created_at?: string | null
+          daily_rate?: number | null
+          days_remaining?: number | null
+          duration_days?: number | null
+          earned?: number | null
+          id?: string | null
+          last_payout_at?: string | null
+          plan_id?: string | null
+          plan_name?: string | null
+          start_date?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number | null
+          created_at?: string | null
+          daily_rate?: number | null
+          days_remaining?: number | null
+          duration_days?: number | null
+          earned?: number | null
+          id?: string | null
+          last_payout_at?: string | null
+          plan_id?: string | null
+          plan_name?: string | null
+          start_date?: string | null
+          status?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      _backup_pre_migration_20260710_profiles: {
+        Row: {
+          avatar_url: string | null
+          balance: number | null
+          balance_available: number | null
+          balance_locked: number | null
+          created_at: string | null
+          direct_referrals: number | null
+          has_confirmed_deposit: boolean | null
+          id: string | null
+          is_suspended: boolean | null
+          language: string | null
+          level: Database["public"]["Enums"]["level_name"] | null
+          network_volume: number | null
+          production: number | null
+          referral_code: string | null
+          referred_by: string | null
+          total_earned: number | null
+          total_network: number | null
+          units: number | null
+          updated_at: string | null
+          user_id: string | null
+          username: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          balance?: number | null
+          balance_available?: number | null
+          balance_locked?: number | null
+          created_at?: string | null
+          direct_referrals?: number | null
+          has_confirmed_deposit?: boolean | null
+          id?: string | null
+          is_suspended?: boolean | null
+          language?: string | null
+          level?: Database["public"]["Enums"]["level_name"] | null
+          network_volume?: number | null
+          production?: number | null
+          referral_code?: string | null
+          referred_by?: string | null
+          total_earned?: number | null
+          total_network?: number | null
+          units?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+          username?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          balance?: number | null
+          balance_available?: number | null
+          balance_locked?: number | null
+          created_at?: string | null
+          direct_referrals?: number | null
+          has_confirmed_deposit?: boolean | null
+          id?: string | null
+          is_suspended?: boolean | null
+          language?: string | null
+          level?: Database["public"]["Enums"]["level_name"] | null
+          network_volume?: number | null
+          production?: number | null
+          referral_code?: string | null
+          referred_by?: string | null
+          total_earned?: number | null
+          total_network?: number | null
+          units?: number | null
+          updated_at?: string | null
+          user_id?: string | null
+          username?: string | null
+        }
+        Relationships: []
+      }
+      _backup_pre_migration_20260710_wallet_transactions: {
+        Row: {
+          amount: number | null
+          asset: string | null
+          balance_after: number | null
+          created_at: string | null
+          description: string | null
+          direction: string | null
+          id: string | null
+          reference_id: string | null
+          reference_type: string | null
+          status: string | null
+          type: string | null
+          user_id: string | null
+        }
+        Insert: {
+          amount?: number | null
+          asset?: string | null
+          balance_after?: number | null
+          created_at?: string | null
+          description?: string | null
+          direction?: string | null
+          id?: string | null
+          reference_id?: string | null
+          reference_type?: string | null
+          status?: string | null
+          type?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          amount?: number | null
+          asset?: string | null
+          balance_after?: number | null
+          created_at?: string | null
+          description?: string | null
+          direction?: string | null
+          id?: string | null
+          reference_id?: string | null
+          reference_type?: string | null
+          status?: string | null
+          type?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       account_anomalies: {
         Row: {
           created_at: string
@@ -367,6 +628,7 @@ export type Database = {
           duration: number
           duration_days: number | null
           id: string
+          is_legacy: boolean
           max_invest: number | null
           min_invest: number | null
           min_level: Database["public"]["Enums"]["level_name"]
@@ -381,6 +643,7 @@ export type Database = {
           duration: number
           duration_days?: number | null
           id?: string
+          is_legacy?: boolean
           max_invest?: number | null
           min_invest?: number | null
           min_level?: Database["public"]["Enums"]["level_name"]
@@ -395,6 +658,7 @@ export type Database = {
           duration?: number
           duration_days?: number | null
           id?: string
+          is_legacy?: boolean
           max_invest?: number | null
           min_invest?: number | null
           min_level?: Database["public"]["Enums"]["level_name"]
@@ -415,6 +679,8 @@ export type Database = {
           earned: number
           id: string
           last_payout_at: string | null
+          locked_daily_rate: number | null
+          migration_start_at: string | null
           plan_id: string
           plan_name: string
           start_date: string
@@ -431,6 +697,8 @@ export type Database = {
           earned?: number
           id?: string
           last_payout_at?: string | null
+          locked_daily_rate?: number | null
+          migration_start_at?: string | null
           plan_id: string
           plan_name: string
           start_date?: string
@@ -447,6 +715,8 @@ export type Database = {
           earned?: number
           id?: string
           last_payout_at?: string | null
+          locked_daily_rate?: number | null
+          migration_start_at?: string | null
           plan_id?: string
           plan_name?: string
           start_date?: string
@@ -648,6 +918,7 @@ export type Database = {
           is_suspended: boolean
           language: string | null
           level: Database["public"]["Enums"]["level_name"]
+          network_balance: number
           network_volume: number
           production: number
           referral_code: string
@@ -671,6 +942,7 @@ export type Database = {
           is_suspended?: boolean
           language?: string | null
           level?: Database["public"]["Enums"]["level_name"]
+          network_balance?: number
           network_volume?: number
           production?: number
           referral_code: string
@@ -694,6 +966,7 @@ export type Database = {
           is_suspended?: boolean
           language?: string | null
           level?: Database["public"]["Enums"]["level_name"]
+          network_balance?: number
           network_volume?: number
           production?: number
           referral_code?: string
@@ -946,6 +1219,7 @@ export type Database = {
       }
       wallet_transactions: {
         Row: {
+          accrual_date: string | null
           amount: number
           asset: string
           balance_after: number | null
@@ -955,11 +1229,13 @@ export type Database = {
           id: string
           reference_id: string | null
           reference_type: string | null
+          source_balance: string | null
           status: string
           type: string
           user_id: string
         }
         Insert: {
+          accrual_date?: string | null
           amount: number
           asset?: string
           balance_after?: number | null
@@ -969,11 +1245,13 @@ export type Database = {
           id?: string
           reference_id?: string | null
           reference_type?: string | null
+          source_balance?: string | null
           status?: string
           type: string
           user_id: string
         }
         Update: {
+          accrual_date?: string | null
           amount?: number
           asset?: string
           balance_after?: number | null
@@ -983,6 +1261,7 @@ export type Database = {
           id?: string
           reference_id?: string | null
           reference_type?: string | null
+          source_balance?: string | null
           status?: string
           type?: string
           user_id?: string
@@ -1075,6 +1354,7 @@ export type Database = {
           id: string
           net: number
           reviewed_by: string | null
+          source_balance: string
           status: string
           tx_hash: string | null
           type: string
@@ -1089,6 +1369,7 @@ export type Database = {
           id?: string
           net: number
           reviewed_by?: string | null
+          source_balance?: string
           status?: string
           tx_hash?: string | null
           type: string
@@ -1103,6 +1384,7 @@ export type Database = {
           id?: string
           net?: number
           reviewed_by?: string | null
+          source_balance?: string
           status?: string
           tx_hash?: string | null
           type?: string
@@ -1188,9 +1470,30 @@ export type Database = {
         }
         Returns: string
       }
-      create_withdrawal: {
-        Args: { p_amount: number; p_type: string; p_wallet_address: string }
-        Returns: string
+      create_withdrawal:
+        | {
+            Args: { p_amount: number; p_type: string; p_wallet_address: string }
+            Returns: string
+          }
+        | {
+            Args: {
+              p_amount: number
+              p_source?: string
+              p_type: string
+              p_wallet_address: string
+            }
+            Returns: string
+          }
+      distribute_network_commissions: {
+        Args: {
+          p_accrual_date: string
+          p_earn_amount: number
+          p_earner_user_id: string
+          p_ref_id: string
+          p_ref_type: string
+          p_source_label: string
+        }
+        Returns: number
       }
       expire_old_deposit_intents: { Args: never; Returns: number }
       get_public_setting: { Args: { p_key: string }; Returns: string }
@@ -1242,6 +1545,14 @@ export type Database = {
           skipped: number
         }[]
       }
+      process_daily_returns_v1_deprecated: {
+        Args: never
+        Returns: {
+          completed: number
+          processed: number
+          skipped: number
+        }[]
+      }
       process_matched_deposit: {
         Args: {
           p_amount: number
@@ -1257,6 +1568,10 @@ export type Database = {
       }
       record_signup_event: { Args: { p_payload: Json }; Returns: string }
       refresh_fund_statuses: { Args: never; Returns: number }
+      reinvest_from_balance: {
+        Args: { p_amount: number; p_plan_id: string; p_source: string }
+        Returns: string
+      }
       system_consistency_check: {
         Args: never
         Returns: {
