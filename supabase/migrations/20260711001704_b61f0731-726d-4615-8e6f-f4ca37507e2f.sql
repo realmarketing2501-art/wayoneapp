@@ -1,0 +1,1 @@
+UPDATE public.levels SET unita_richieste = 50, name = 'Diamond' WHERE id = 'gold';
