@@ -52,7 +52,7 @@ function computeBreakdown(tx: TxLike): { formula?: string; note?: string } {
   const amount = Number(tx.amount) || 0;
   const desc = tx.description ?? '';
 
-  // Commissione referral: "1.5% da USERNAME (LABEL: X.YY USDT)"
+  // Commissione referral: "1.5% da USERNAME (LABEL: X.YY USDC)"
   const refM = desc.match(/([\d.]+)\s*%\s+da\s+([^\s(]+).*\(([^:]+):\s*([\d.]+)/i);
   if (tx.type === 'referral_commission' || (tx.type === 'team' && refM)) {
     if (refM) {
