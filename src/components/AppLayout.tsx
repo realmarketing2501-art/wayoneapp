@@ -42,7 +42,7 @@ export default function AppLayout() {
           >
             <UsdtMonogram size={32} letter="U" />
             <span className="font-display text-xl font-bold tracking-wide usdt-gold-text">
-              USDC
+              USDT
             </span>
           </button>
           <div className="flex items-center gap-1">

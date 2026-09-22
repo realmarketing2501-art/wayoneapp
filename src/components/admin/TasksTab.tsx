@@ -50,7 +50,7 @@ function Fields({ t, onChange }: { t: Omit<Task, 'id'>; onChange: (v: Partial<Ta
         <Input type="number" inputMode="numeric" value={t.total} onChange={(e) => onChange({ total: parseInt(e.target.value) || 1 })} className="h-7 text-xs" />
       </div>
       <div>
-        <Label className="text-[0.6rem] text-muted-foreground">Ricompensa USDC</Label>
+        <Label className="text-[0.6rem] text-muted-foreground">Ricompensa USDT</Label>
         <Input type="number" inputMode="decimal" step="0.01" value={t.reward} onChange={(e) => onChange({ reward: parseFloat(e.target.value) || 0 })} className="h-7 text-xs" />
       </div>
       <div className="flex items-end gap-2">

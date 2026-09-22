@@ -68,14 +68,14 @@ export default function ProfilePage() {
           <CardContent className="p-3 text-center sm:p-4">
             <p className="text-[0.65rem] text-muted-foreground sm:text-xs">{t('profile.available')}</p>
             <p className="font-display text-base font-bold text-primary sm:text-lg">{Number(profile?.balance ?? 0).toLocaleString()}</p>
-            <p className="text-[0.6rem] text-muted-foreground">USDC</p>
+            <p className="text-[0.6rem] text-muted-foreground">USDT</p>
           </CardContent>
         </Card>
         <Card>
           <CardContent className="p-3 text-center sm:p-4">
             <p className="text-[0.65rem] text-muted-foreground sm:text-xs">{t('profile.earned')}</p>
             <p className="font-display text-base font-bold text-accent sm:text-lg">{Number(profile?.total_earned ?? 0).toLocaleString()}</p>
-            <p className="text-[0.6rem] text-muted-foreground">USDC</p>
+            <p className="text-[0.6rem] text-muted-foreground">USDT</p>
           </CardContent>
         </Card>
       </div>

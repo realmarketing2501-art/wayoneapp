@@ -78,8 +78,8 @@ const SERVICE_FIELDS: Record<string, { key: string; label: string; type: 'text' 
   platform: [
     { key: 'wallet_trc20_active', label: 'Wallet TRC-20 Attivo', type: 'toggle' },
     { key: 'wallet_erc20_active', label: 'Wallet ERC-20 Attivo', type: 'toggle' },
-    { key: 'min_deposit', label: 'Deposito Minimo (USDC)', type: 'text', placeholder: '50' },
-    { key: 'min_withdraw', label: 'Prelievo Minimo (USDC)', type: 'text', placeholder: '10' },
+    { key: 'min_deposit', label: 'Deposito Minimo (USDT)', type: 'text', placeholder: '50' },
+    { key: 'min_withdraw', label: 'Prelievo Minimo (USDT)', type: 'text', placeholder: '10' },
     { key: 'fee_fast', label: 'Fee Prelievo Fast (%)', type: 'text', placeholder: '20' },
     { key: 'fee_medium', label: 'Fee Prelievo Medium (%)', type: 'text', placeholder: '10' },
     { key: 'fee_slow', label: 'Fee Prelievo Slow (%)', type: 'text', placeholder: '5' },
