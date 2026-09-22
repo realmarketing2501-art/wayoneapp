@@ -131,7 +131,7 @@ export default function SimulatorPage() {
           </Link>
           <div className="flex items-center gap-2">
             <UsdtMonogram size={28} letter="U" />
-            <span className="font-display text-lg font-bold usdt-gold-text">USDC</span>
+            <span className="font-display text-lg font-bold usdt-gold-text">USDT</span>
           </div>
         </div>
       </header>
@@ -231,8 +231,8 @@ export default function SimulatorPage() {
                     onValueChange={(v) => setAmount(v[0])}
                   />
                   <div className="mt-2 flex justify-between text-[0.65rem] text-muted-foreground">
-                    <span>{plan.min} USDC</span>
-                    <span>{fmt(sliderMax)} USDC</span>
+                    <span>{plan.min} USDT</span>
+                    <span>{fmt(sliderMax)} USDT</span>
                   </div>
                 </div>
                 <div className="mt-4 flex flex-wrap gap-2">
@@ -257,8 +257,8 @@ export default function SimulatorPage() {
 
             <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
               <StatCard icon={<Calendar className="h-4 w-4" />} label={t('simulator.duration')} value={t('simulator.planDays', { days: plan.days })} />
-              <StatCard icon={<TrendingUp className="h-4 w-4" />} label={t('simulator.dailyEarn')} value={`${fmt(sim.dailyEarn)} USDC`} />
-              <StatCard icon={<Calculator className="h-4 w-4" />} label={t('simulator.totalReturn')} value={`+${fmt(sim.totalEarn)} USDC`} highlight />
+              <StatCard icon={<TrendingUp className="h-4 w-4" />} label={t('simulator.dailyEarn')} value={`${fmt(sim.dailyEarn)} USDT`} />
+              <StatCard icon={<Calculator className="h-4 w-4" />} label={t('simulator.totalReturn')} value={`+${fmt(sim.totalEarn)} USDT`} highlight />
               <StatCard icon={<Sparkles className="h-4 w-4" />} label={t('simulator.roi')} value={`+${sim.roiPct.toFixed(2).replace('.', ',')}%`} highlight />
             </div>
 
@@ -270,7 +270,7 @@ export default function SimulatorPage() {
                       {t('simulator.finalBalanceLabel')}
                     </div>
                     <div className="mt-1 font-display text-3xl font-bold">
-                      {fmt(sim.finalBalance)} <span className="text-base text-muted-foreground">USDC</span>
+                      {fmt(sim.finalBalance)} <span className="text-base text-muted-foreground">USDT</span>
                     </div>
                     <div className="mt-1 text-xs text-muted-foreground">
                       {t('simulator.breakdown', { cap: fmt(clampedAmount), int: fmt(sim.totalEarn) })}
@@ -299,7 +299,7 @@ export default function SimulatorPage() {
                             <Badge variant="outline" className="text-[0.6rem]">{m.hours}h</Badge>
                           </div>
                           <div className="mt-1 text-[0.7rem] text-muted-foreground">{t('simulator.feeLabel', { pct: m.fee_pct })}</div>
-                          <div className="mt-2 text-base font-bold text-primary">{fmt(net)} USDC</div>
+                          <div className="mt-2 text-base font-bold text-primary">{fmt(net)} USDT</div>
                           <div className="text-[0.65rem] text-muted-foreground">{t('simulator.feeMinus', { val: fmt(fee) })}</div>
                         </div>
                       );

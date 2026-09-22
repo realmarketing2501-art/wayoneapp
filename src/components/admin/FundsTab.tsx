@@ -121,8 +121,8 @@ export default function FundsTab() {
       </div>
       <div><Label className="text-[0.6rem] text-muted-foreground">Rendim. tot %</Label><Input type="number" step="0.1" value={f.total_return} onChange={(e) => onChange({ total_return: parseFloat(e.target.value) || 0 })} className="h-7 text-xs" /></div>
       <div><Label className="text-[0.6rem] text-muted-foreground">Durata gg</Label><Input type="number" value={f.duration} onChange={(e) => onChange({ duration: parseInt(e.target.value) || 0 })} className="h-7 text-xs" /></div>
-      <div><Label className="text-[0.6rem] text-muted-foreground">Min USDC</Label><Input type="number" value={f.min_invest} onChange={(e) => onChange({ min_invest: parseFloat(e.target.value) || 0 })} className="h-7 text-xs" /></div>
-      <div><Label className="text-[0.6rem] text-muted-foreground">Max USDC</Label><Input type="number" value={f.max_invest} onChange={(e) => onChange({ max_invest: parseFloat(e.target.value) || 0 })} className="h-7 text-xs" /></div>
+      <div><Label className="text-[0.6rem] text-muted-foreground">Min USDT</Label><Input type="number" value={f.min_invest} onChange={(e) => onChange({ min_invest: parseFloat(e.target.value) || 0 })} className="h-7 text-xs" /></div>
+      <div><Label className="text-[0.6rem] text-muted-foreground">Max USDT</Label><Input type="number" value={f.max_invest} onChange={(e) => onChange({ max_invest: parseFloat(e.target.value) || 0 })} className="h-7 text-xs" /></div>
       <div><Label className="text-[0.6rem] text-muted-foreground">Goal</Label><Input type="number" value={f.goal} onChange={(e) => onChange({ goal: parseFloat(e.target.value) || 0 })} className="h-7 text-xs" /></div>
       <div><Label className="text-[0.6rem] text-muted-foreground">Raised</Label><Input type="number" value={f.raised} onChange={(e) => onChange({ raised: parseFloat(e.target.value) || 0 })} className="h-7 text-xs" /></div>
       <div><Label className="text-[0.6rem] text-muted-foreground">Apertura</Label><Input type="date" value={f.open_date} onChange={(e) => onChange({ open_date: e.target.value })} className="h-7 text-xs" /></div>

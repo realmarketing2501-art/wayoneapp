@@ -12,7 +12,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { useTranslation } from 'react-i18next';
 
 const networks = [
-  { id: 'TRC-20', label: 'TRC-20 (Tron)', fee: '~1 USDC', time: '~3 min' },
+  { id: 'TRC-20', label: 'TRC-20 (Tron)', fee: '~1 USDT', time: '~3 min' },
 ];
 
 const PRESET_AMOUNTS = [50, 100, 250, 500, 1000, 2500];
@@ -100,7 +100,7 @@ export default function DepositPage() {
 
             <div className="rounded-lg bg-secondary p-2.5 text-center">
               <p className="text-[0.65rem] text-muted-foreground">{t('deposit.sendExactly')}</p>
-              <p className="text-xl font-bold text-foreground font-mono">{Number(lastPending.amount_usdt).toFixed(2)} USDC</p>
+              <p className="text-xl font-bold text-foreground font-mono">{Number(lastPending.amount_usdt).toFixed(2)} USDT</p>
               <p className="text-[0.6rem] text-muted-foreground">
                 {t('deposit.onNetworkExpires', { network: lastPending.network, time: new Date(lastPending.expires_at).toLocaleTimeString(localeTag, { hour: '2-digit', minute: '2-digit' }) })}
               </p>
@@ -204,7 +204,7 @@ export default function DepositPage() {
                   <div key={intent.id} className="flex items-center justify-between border-b border-border pb-2 last:border-0">
                     <div className="min-w-0">
                       <p className="text-sm font-medium text-foreground font-mono">
-                        {Number(intent.amount_usdt).toFixed(2)} USDC
+                        {Number(intent.amount_usdt).toFixed(2)} USDT
                       </p>
                       <p className="text-[0.65rem] text-muted-foreground truncate">
                         ${Number(intent.amount_usd).toLocaleString()} · {intent.network} · {new Date(intent.created_at).toLocaleDateString(localeTag)}

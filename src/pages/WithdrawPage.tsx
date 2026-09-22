@@ -84,7 +84,7 @@ export default function WithdrawPage() {
         <CardContent className="space-y-4 p-4 sm:p-5">
           <div className="text-center">
             <p className="text-xs text-muted-foreground sm:text-sm">{t('withdraw.availableBalance')}</p>
-            <p className="font-display text-2xl font-bold text-primary">{balance.toLocaleString()} USDC</p>
+            <p className="font-display text-2xl font-bold text-primary">{balance.toLocaleString()} USDT</p>
           </div>
 
           <div className="space-y-1.5">
@@ -123,9 +123,9 @@ export default function WithdrawPage() {
 
           {numAmount > 0 && (
             <div className="rounded-lg bg-secondary p-3 text-sm">
-              <div className="flex justify-between text-xs"><span className="text-muted-foreground">{t('withdraw.amount')}</span><span>{numAmount.toFixed(2)} USDC</span></div>
-              <div className="flex justify-between text-xs"><span className="text-muted-foreground">{t('withdraw.feeLine', { pct: feePct })}</span><span className="text-destructive">-{fee.toFixed(2)} USDC</span></div>
-              <div className="mt-1 flex justify-between border-t border-border pt-1 text-sm font-semibold"><span>{t('withdraw.net')}</span><span className="text-primary">{net.toFixed(2)} USDC</span></div>
+              <div className="flex justify-between text-xs"><span className="text-muted-foreground">{t('withdraw.amount')}</span><span>{numAmount.toFixed(2)} USDT</span></div>
+              <div className="flex justify-between text-xs"><span className="text-muted-foreground">{t('withdraw.feeLine', { pct: feePct })}</span><span className="text-destructive">-{fee.toFixed(2)} USDT</span></div>
+              <div className="mt-1 flex justify-between border-t border-border pt-1 text-sm font-semibold"><span>{t('withdraw.net')}</span><span className="text-primary">{net.toFixed(2)} USDT</span></div>
             </div>
           )}
 
@@ -144,7 +144,7 @@ export default function WithdrawPage() {
                 <CardContent className="p-3">
                   <div className="flex items-center justify-between gap-2">
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-foreground">{Number(w.amount).toLocaleString()} USDC</p>
+                      <p className="text-sm font-medium text-foreground">{Number(w.amount).toLocaleString()} USDT</p>
                       <p className="text-[0.65rem] text-muted-foreground truncate">
                         {t('withdraw.historyMeta', { type: w.type, net: Number(w.net).toFixed(2), date: new Date(w.created_at).toLocaleDateString(localeTag) })}
                       </p>

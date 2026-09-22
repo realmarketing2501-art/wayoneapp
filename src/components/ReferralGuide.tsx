@@ -27,7 +27,7 @@ const COMMISSIONS = [
 
 const STEPS = [
   { icon: Share2, title: 'Condividi il link', desc: 'Invia il tuo link referral ai contatti.' },
-  { icon: UserPlus, title: 'Si registrano', desc: 'I tuoi referral aprono un account USDC.' },
+  { icon: UserPlus, title: 'Si registrano', desc: 'I tuoi referral aprono un account USDT.' },
   { icon: Wallet, title: 'Investono', desc: 'Quando attivano un piano, generano produzione.' },
   { icon: TrendingUp, title: 'Tu guadagni', desc: 'Commissioni automatiche fino a 4 livelli.' },
 ];
@@ -39,7 +39,7 @@ const FAQ = [
   },
   {
     q: 'Cosa rende un referral "attivo"?',
-    a: 'Un referral è considerato attivo dopo il suo primo deposito confermato in USDC.',
+    a: 'Un referral è considerato attivo dopo il suo primo deposito confermato in USDT.',
   },
   {
     q: 'Le commissioni si sommano alla rendita del piano?',
@@ -57,7 +57,7 @@ export function ReferralGuide({ url, code }: { url: string; code: string }) {
     [],
   );
 
-  const shareText = `Unisciti a USDC con il mio invito e inizia a guadagnare ogni giorno. Codice: ${code}`;
+  const shareText = `Unisciti a USDT con il mio invito e inizia a guadagnare ogni giorno. Codice: ${code}`;
   const encodedText = encodeURIComponent(`${shareText}\n${url}`);
   const encodedUrl = encodeURIComponent(url);
 
@@ -85,7 +85,7 @@ export function ReferralGuide({ url, code }: { url: string; code: string }) {
   const nativeShare = async () => {
     try {
       if (navigator.share) {
-        await navigator.share({ title: 'USDC', text: shareText, url });
+        await navigator.share({ title: 'USDT', text: shareText, url });
       } else {
         await navigator.clipboard.writeText(url);
         toast.success('Link copiato negli appunti');

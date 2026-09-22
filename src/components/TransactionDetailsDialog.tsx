@@ -25,8 +25,8 @@ export type TxLike = {
 };
 
 const TYPE_META: Record<string, { label: string; icon: any; color: string; hint: string }> = {
-  deposit:            { label: 'Deposito',              icon: ArrowDownLeft, color: 'text-primary',          hint: 'Accredito USDC ricevuto sul tuo conto Way One.' },
-  withdrawal:         { label: 'Prelievo',              icon: ArrowUpRight,  color: 'text-destructive',      hint: 'Uscita USDC verso il tuo wallet esterno.' },
+  deposit:            { label: 'Deposito',              icon: ArrowDownLeft, color: 'text-primary',          hint: 'Accredito USDT ricevuto sul tuo conto Way One.' },
+  withdrawal:         { label: 'Prelievo',              icon: ArrowUpRight,  color: 'text-destructive',      hint: 'Uscita USDT verso il tuo wallet esterno.' },
   admin_adjustment:   { label: 'Rettifica admin',       icon: Wallet,        color: 'text-amber-400',        hint: 'Accredito/addebito manuale effettuato dall\'amministratore.' },
   interest:           { label: 'Interesse piano',       icon: TrendingUp,    color: 'text-primary',          hint: 'Rendimento giornaliero maturato sul tuo piano attivo.' },
   fund_interest:      { label: 'Interesse fondo',       icon: Sparkles,      color: 'text-way-diamond',      hint: 'Rendimento giornaliero maturato su una quota di Fondo Speciale.' },
@@ -52,7 +52,7 @@ function computeBreakdown(tx: TxLike): { formula?: string; note?: string } {
   const amount = Number(tx.amount) || 0;
   const desc = tx.description ?? '';
 
-  // Commissione referral: "1.5% da USERNAME (LABEL: X.YY USDC)"
+  // Commissione referral: "1.5% da USERNAME (LABEL: X.YY USDT)"
   const refM = desc.match(/([\d.]+)\s*%\s+da\s+([^\s(]+).*\(([^:]+):\s*([\d.]+)/i);
   if (tx.type === 'referral_commission' || (tx.type === 'team' && refM)) {
     if (refM) {
@@ -61,8 +61,8 @@ function computeBreakdown(tx: TxLike): { formula?: string; note?: string } {
       const source = refM[3].trim();
       const base = Number(refM[4]);
       return {
-        formula: `${base.toFixed(4)} USDC × ${pct}% = ${amount.toFixed(4)} USDC`,
-        note: `L'invitato diretto "${from}" ha maturato ${base.toFixed(4)} USDC di ${source.toLowerCase()}. Ricevi il ${pct}% come commissione referral (livello 1).`,
+        formula: `${base.toFixed(4)} USDT × ${pct}% = ${amount.toFixed(4)} USDT`,
+        note: `L'invitato diretto "${from}" ha maturato ${base.toFixed(4)} USDT di ${source.toLowerCase()}. Ricevi il ${pct}% come commissione referral (livello 1).`,
       };
     }
     return { note: 'Commissione pari all\'1,5% dell\'interesse generato dai tuoi invitati diretti (L1).' };
@@ -75,7 +75,7 @@ function computeBreakdown(tx: TxLike): { formula?: string; note?: string } {
     const rate = Number(intM[2]);
     const capital = rate > 0 ? amount / (rate / 100) : 0;
     return {
-      formula: `${capital.toFixed(2)} USDC (capitale) × ${rate}%/giorno = ${amount.toFixed(4)} USDC`,
+      formula: `${capital.toFixed(2)} USDT (capitale) × ${rate}%/giorno = ${amount.toFixed(4)} USDT`,
       note: `Rendimento giornaliero del piano "${plan}" al tasso di ${rate}% al giorno.`,
     };
   }
@@ -173,7 +173,7 @@ export function TransactionDetailsDialog({ open, onOpenChange, tx }: Props) {
           <div className="rounded-lg border border-border bg-card p-3 text-center">
             <p className="text-[0.65rem] uppercase tracking-wide text-muted-foreground">Importo</p>
             <p className={`font-display text-2xl font-bold ${isOut ? 'text-destructive' : isIn ? 'text-primary' : 'text-foreground'}`}>
-              {isOut ? '-' : isIn ? '+' : ''}{amount.toFixed(4)} {effective.asset ?? 'USDC'}
+              {isOut ? '-' : isIn ? '+' : ''}{amount.toFixed(4)} {effective.asset ?? 'USDT'}
             </p>
             <div className="mt-1 flex justify-center gap-1">
               {effective.direction && (
@@ -229,7 +229,7 @@ export function TransactionDetailsDialog({ open, onOpenChange, tx }: Props) {
             {effective.balance_after != null && (
               <div className="rounded-md border border-border p-2">
                 <p className="flex items-center gap-1 text-muted-foreground"><Wallet className="h-3 w-3" /> Saldo dopo</p>
-                <p className="mt-0.5 font-medium">{Number(effective.balance_after).toFixed(2)} USDC</p>
+                <p className="mt-0.5 font-medium">{Number(effective.balance_after).toFixed(2)} USDT</p>
               </div>
             )}
             {effective.reference_type && (

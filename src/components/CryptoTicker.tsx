@@ -12,7 +12,7 @@ type Coin = {
 const COINS = [
   { id: 'bitcoin', symbol: 'BTC' },
   { id: 'ethereum', symbol: 'ETH' },
-  { id: 'tether', symbol: 'USDC' },
+  { id: 'tether', symbol: 'USDT' },
   { id: 'binancecoin', symbol: 'BNB' },
   { id: 'solana', symbol: 'SOL' },
   { id: 'ripple', symbol: 'XRP' },

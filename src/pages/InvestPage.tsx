@@ -121,7 +121,7 @@ export default function InvestPage() {
         <CardContent className="p-4">
           <p className="text-xs text-muted-foreground">{t('invest.availableBalance')}</p>
           <p className="font-display text-2xl font-bold text-primary">
-            {fmt(Number(profile?.balance_available ?? 0))} <span className="text-sm text-muted-foreground">USDC</span>
+            {fmt(Number(profile?.balance_available ?? 0))} <span className="text-sm text-muted-foreground">USDT</span>
           </p>
         </CardContent>
       </Card>
@@ -182,11 +182,11 @@ export default function InvestPage() {
             <div className="grid grid-cols-2 gap-2">
               <div className="rounded-lg bg-secondary p-3">
                 <p className="text-[0.65rem] text-muted-foreground">{t('invest.daily')}</p>
-                <p className="font-display text-base font-semibold text-primary">+{fmt(dailyEarn)} USDC</p>
+                <p className="font-display text-base font-semibold text-primary">+{fmt(dailyEarn)} USDT</p>
               </div>
               <div className="rounded-lg bg-secondary p-3">
                 <p className="text-[0.65rem] text-muted-foreground">{t('invest.total', { days })}</p>
-                <p className="font-display text-base font-semibold text-accent">+{fmt(totalEarn)} USDC</p>
+                <p className="font-display text-base font-semibold text-accent">+{fmt(totalEarn)} USDT</p>
               </div>
             </div>
           )}
@@ -218,7 +218,7 @@ export default function InvestPage() {
                       <div className="min-w-0">
                         <p className="text-sm font-medium text-foreground truncate">{inv.plan_name}</p>
                         <p className="text-xs text-muted-foreground">
-                          {Number(inv.amount).toFixed(2)} USDC · {inv.daily_rate}{t('invest.planRatePerDay')} ·{' '}
+                          {Number(inv.amount).toFixed(2)} USDT · {inv.daily_rate}{t('invest.planRatePerDay')} ·{' '}
                           {inv.days_remaining > 0 ? t('invest.daysRemaining', { n: inv.days_remaining }) : t('invest.completed')}
                         </p>
                       </div>

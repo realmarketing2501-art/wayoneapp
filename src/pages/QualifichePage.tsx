@@ -71,7 +71,7 @@ export default function QualifichePage() {
                   </div>
                   <div className="space-y-1">
                     <div className="flex justify-between text-[0.65rem]">
-                      <span className="text-muted-foreground flex items-center gap-1"><TrendingUp className="h-3 w-3" /> Rete USDC</span>
+                      <span className="text-muted-foreground flex items-center gap-1"><TrendingUp className="h-3 w-3" /> Rete USDT</span>
                       <span className="text-foreground font-medium">{Math.round(currentProd)}/{Math.round(Number(levels[currentIdx + 1].produzione_richiesta ?? 0))}</span>
                     </div>
                     <Progress value={Math.min(100, (currentProd / (Number(levels[currentIdx + 1].produzione_richiesta) || 1)) * 100)} className="h-1.5" />
@@ -114,7 +114,7 @@ export default function QualifichePage() {
                     <p className="font-semibold text-foreground">{l.unita_richieste || '—'}</p>
                   </div>
                   <div>
-                    <p className="text-[0.6rem] text-muted-foreground">Rete USDC</p>
+                    <p className="text-[0.6rem] text-muted-foreground">Rete USDT</p>
                     <p className="font-semibold text-foreground">{l.produzione_richiesta ? Number(l.produzione_richiesta).toLocaleString() : '—'}</p>
                   </div>
                   <div>
@@ -127,7 +127,7 @@ export default function QualifichePage() {
                     <div className="rounded-md bg-accent/10 border border-accent/30 px-2.5 py-1.5 flex items-center gap-2">
                       <Gift className="h-3.5 w-3.5 text-accent" />
                       <p className="text-[0.7rem] text-foreground">
-                        Bonus una-tantum: <span className="font-bold text-accent">+{l.bonus_valore.toLocaleString()} USDC</span>
+                        Bonus una-tantum: <span className="font-bold text-accent">+{l.bonus_valore.toLocaleString()} USDT</span>
                       </p>
                     </div>
                   </div>
@@ -158,10 +158,10 @@ export default function QualifichePage() {
             <section className="space-y-1.5">
               <h3 className="font-bold text-foreground flex items-center gap-1.5"><Coins className="h-4 w-4 text-primary" /> 1. Investi</h3>
               <p className="text-muted-foreground text-xs">
-                Deposita USDC e attiva un piano <strong>a 90 giorni</strong>. Ogni giorno ricevi automaticamente la % del tuo livello sul capitale investito.
+                Deposita USDT e attiva un piano <strong>a 90 giorni</strong>. Ogni giorno ricevi automaticamente la % del tuo livello sul capitale investito.
               </p>
               <div className="rounded-md bg-secondary p-2 text-[0.7rem]">
-                <p><strong>Esempio Starter</strong> (1.0%/gg): 1.000 USDC × 1.0% = <span className="text-primary font-bold">10 USDC/giorno</span> × 90 = <span className="text-primary font-bold">900 USDC totali</span>.</p>
+                <p><strong>Esempio Starter</strong> (1.0%/gg): 1.000 USDT × 1.0% = <span className="text-primary font-bold">10 USDT/giorno</span> × 90 = <span className="text-primary font-bold">900 USDT totali</span>.</p>
               </div>
             </section>
 
@@ -171,8 +171,8 @@ export default function QualifichePage() {
                 Condividi il tuo link referral. Ogni volta che un tuo invitato guadagna interesse giornaliero, <strong>tu ricevi una commissione</strong> pari alla % del tuo livello — senza toglierla a lui.
               </p>
               <div className="rounded-md bg-secondary p-2 text-[0.7rem] space-y-1">
-                <p><strong>Sei Builder (8%)</strong> e hai 5 diretti che investono 1.000 USDC ciascuno:</p>
-                <p>5 × 10 USDC/gg × <span className="text-accent font-bold">8%</span> = <span className="text-accent font-bold">4 USDC/gg extra</span> = <span className="text-accent font-bold">120 USDC/mese</span> passivi.</p>
+                <p><strong>Sei Builder (8%)</strong> e hai 5 diretti che investono 1.000 USDT ciascuno:</p>
+                <p>5 × 10 USDT/gg × <span className="text-accent font-bold">8%</span> = <span className="text-accent font-bold">4 USDT/gg extra</span> = <span className="text-accent font-bold">120 USDT/mese</span> passivi.</p>
               </div>
             </section>
 
@@ -189,7 +189,7 @@ export default function QualifichePage() {
                       <span className="text-primary font-semibold">{l.giornaliero_90}%/gg</span>
                       {' · '}
                       <span className="text-accent font-semibold">{l.bonus_percentuale}% referral</span>
-                      {l.bonus_valore > 0 && <> {' · '}<span className="text-foreground">+{l.bonus_valore} USDC</span></>}
+                      {l.bonus_valore > 0 && <> {' · '}<span className="text-foreground">+{l.bonus_valore} USDT</span></>}
                     </span>
                   </div>
                 ))}
@@ -199,7 +199,7 @@ export default function QualifichePage() {
             <section className="space-y-1.5">
               <h3 className="font-bold text-foreground flex items-center gap-1.5"><Gift className="h-4 w-4 text-primary" /> 4. Bonus una-tantum</h3>
               <p className="text-muted-foreground text-xs">
-                La prima volta che raggiungi Builder/Leader/Elite/Diamond ricevi un <strong>bonus in USDC accreditato subito</strong> sul saldo, oltre a tutti i guadagni ricorrenti.
+                La prima volta che raggiungi Builder/Leader/Elite/Diamond ricevi un <strong>bonus in USDT accreditato subito</strong> sul saldo, oltre a tutti i guadagni ricorrenti.
               </p>
             </section>
 

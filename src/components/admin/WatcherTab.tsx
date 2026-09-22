@@ -158,7 +158,7 @@ export default function WatcherTab() {
               {needsReview.map((tx: any) => (
                 <div key={tx.id} className="rounded-lg border border-border p-2.5 text-xs space-y-1">
                   <div className="flex justify-between">
-                    <span className="font-mono text-foreground">{Number(tx.amount).toFixed(2)} USDC</span>
+                    <span className="font-mono text-foreground">{Number(tx.amount).toFixed(2)} USDT</span>
                     <Badge variant="destructive" className="text-[0.55rem]">{tx.network}</Badge>
                   </div>
                   <p className="text-muted-foreground font-mono text-[0.6rem] truncate">TxHash: {tx.tx_hash}</p>
@@ -190,7 +190,7 @@ export default function WatcherTab() {
                 return (
                   <div key={tx.id} className="flex items-center justify-between border-b border-border pb-2 last:border-0 text-xs">
                     <div className="min-w-0">
-                      <p className="font-mono font-medium text-foreground">{Number(tx.amount).toFixed(2)} USDC</p>
+                      <p className="font-mono font-medium text-foreground">{Number(tx.amount).toFixed(2)} USDT</p>
                       <p className="text-[0.6rem] text-muted-foreground truncate">{tx.network} · {tx.tx_hash?.slice(0, 16)}... · {new Date(tx.created_at).toLocaleString('it-IT')}</p>
                     </div>
                     <Badge variant={s.variant} className="shrink-0 text-[0.55rem]">{s.label}</Badge>
