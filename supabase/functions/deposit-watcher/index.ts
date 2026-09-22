@@ -210,7 +210,7 @@ async function watchERC20(supabase: any, config: Record<string, string>) {
       method: "eth_getLogs",
       params: [{
         fromBlock: "0x" + fromBlock.toString(16),
-        toBlock: "0x" + latestBlock.toString(16),
+        toBlock: "0x" + toBlock.toString(16),
         address: USDT_ERC20_CONTRACT,
         topics: [transferTopic, null, paddedWallet],
       }],
