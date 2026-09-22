@@ -1,0 +1,2 @@
+UPDATE public.api_integrations SET is_active = false, status = 'inactive', notes = coalesce(notes,'') || ' [Disattivato: rete ERC-20 non offerta agli utenti]', updated_at = now() WHERE service_key = 'eth_erc20';
+UPDATE public.watcher_state SET status = 'disabled', total_errors = 0, last_error = null, last_error_at = null, updated_at = now() WHERE network = 'ERC-20';

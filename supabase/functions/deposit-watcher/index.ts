@@ -190,8 +190,12 @@ async function watchERC20(supabase: any, config: Record<string, string>) {
   if (blockData.error) throw new Error(`Infura: ${blockData.error.message}`);
   const latestBlock = parseInt(blockData.result, 16);
 
-  // Scan from last known block (or last 100 blocks)
-  const fromBlock = state?.last_block_number ? Number(state.last_block_number) + 1 : latestBlock - 100;
+  // Scan from last known block (or last 100 blocks), capped to Infura's 10k range limit
+  const MAX_RANGE = 9000;
+  let fromBlock = state?.last_block_number ? Number(state.last_block_number) + 1 : latestBlock - 100;
+  if (fromBlock < 0 || fromBlock > latestBlock) fromBlock = Math.max(0, latestBlock - 100);
+  if (latestBlock - fromBlock > MAX_RANGE) fromBlock = latestBlock - MAX_RANGE;
+  const toBlock = latestBlock;
 
   // Use eth_getLogs to find USDT Transfer events TO company wallet
   // Transfer(address,address,uint256) topic
@@ -206,7 +210,7 @@ async function watchERC20(supabase: any, config: Record<string, string>) {
       method: "eth_getLogs",
       params: [{
         fromBlock: "0x" + fromBlock.toString(16),
-        toBlock: "0x" + latestBlock.toString(16),
+        toBlock: "0x" + toBlock.toString(16),
         address: USDT_ERC20_CONTRACT,
         topics: [transferTopic, null, paddedWallet],
       }],
