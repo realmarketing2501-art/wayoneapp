@@ -161,7 +161,7 @@ export default function QualifichePage() {
                 Deposita USDT e attiva un piano <strong>a 90 giorni</strong>. Ogni giorno ricevi automaticamente la % del tuo livello sul capitale investito.
               </p>
               <div className="rounded-md bg-secondary p-2 text-[0.7rem]">
-                <p><strong>Esempio Starter</strong> (1.0%/gg): 1.000 USDT × 1.0% = <span className="text-primary font-bold">10 USDT/giorno</span> × 90 = <span className="text-primary font-bold">900 USDT totali</span>.</p>
+                <p><strong>Esempio Oneway Start</strong> (0,4%/gg): 1.000 USDT × 0,4% = <span className="text-primary font-bold">4 USDT/giorno</span> × 90 = <span className="text-primary font-bold">360 USDT totali</span>.</p>
               </div>
             </section>
 
@@ -171,8 +171,8 @@ export default function QualifichePage() {
                 Condividi il tuo link referral. Ogni volta che un tuo invitato guadagna interesse giornaliero, <strong>tu ricevi una commissione</strong> pari alla % del tuo livello — senza toglierla a lui.
               </p>
               <div className="rounded-md bg-secondary p-2 text-[0.7rem] space-y-1">
-                <p><strong>Sei Builder (8%)</strong> e hai 5 diretti che investono 1.000 USDT ciascuno:</p>
-                <p>5 × 10 USDT/gg × <span className="text-accent font-bold">8%</span> = <span className="text-accent font-bold">4 USDT/gg extra</span> = <span className="text-accent font-bold">120 USDT/mese</span> passivi.</p>
+                <p><strong>Sei Oneway Plus (8%)</strong> e hai 5 diretti che investono 1.000 USDT ciascuno (0,4%/gg = 4 USDT/gg):</p>
+                <p>5 × 4 USDT/gg × <span className="text-accent font-bold">8%</span> = <span className="text-accent font-bold">1,6 USDT/gg extra</span> ≈ <span className="text-accent font-bold">48 USDT/mese</span> passivi.</p>
               </div>
             </section>
 
@@ -199,7 +199,7 @@ export default function QualifichePage() {
             <section className="space-y-1.5">
               <h3 className="font-bold text-foreground flex items-center gap-1.5"><Gift className="h-4 w-4 text-primary" /> 4. Bonus una-tantum</h3>
               <p className="text-muted-foreground text-xs">
-                La prima volta che raggiungi Builder/Leader/Elite/Diamond ricevi un <strong>bonus in USDT accreditato subito</strong> sul saldo, oltre a tutti i guadagni ricorrenti.
+                La prima volta che raggiungi Oneway Plus / Pro / Elite / Prime ricevi un <strong>bonus in USDT accreditato subito</strong> sul saldo, oltre a tutti i guadagni ricorrenti.
               </p>
             </section>
 
