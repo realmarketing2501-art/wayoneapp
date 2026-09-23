@@ -153,12 +153,16 @@ async function testEthereum(config: Record<string, string>) {
   if (!infura_api_key || !company_wallet) {
     return { success: false, message: "Campi obbligatori mancanti (Infura Key, Wallet)" };
   }
-  if (!company_wallet.startsWith("0x") || company_wallet.length !== 42) {
+  if (!/^0x[0-9a-fA-F]{40}$/.test(company_wallet)) {
     return { success: false, message: "Indirizzo wallet Ethereum non valido (deve essere 0x + 40 hex)" };
   }
+  const ALLOWED_ETH_NETWORKS = ["mainnet", "sepolia", "holesky"];
+  const net = network || "mainnet";
+  if (!ALLOWED_ETH_NETWORKS.includes(net)) {
+    return { success: false, message: `Rete non consentita. Reti ammesse: ${ALLOWED_ETH_NETWORKS.join(", ")}` };
+  }
   try {
-    const net = network || "mainnet";
-    const res = await fetch(`https://${net}.infura.io/v3/${infura_api_key}`, {
+    const res = await fetch(`https://${net}.infura.io/v3/${encodeURIComponent(infura_api_key)}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
