@@ -57,6 +57,44 @@ export default function CompensationTab() {
     onError: (e: Error) => toast({ title: 'Errore', description: e.message, variant: 'destructive' }),
   });
 
+  // Bonus rete L1-L5 (percentuali sugli interessi della downline)
+  const { data: netPcts } = useQuery({
+    queryKey: ['network_pcts'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('admin_settings')
+        .select('key,value')
+        .in('key', ['network_l1_pct', 'network_l2_pct', 'network_l3_pct', 'network_l4_pct', 'network_l5_pct']);
+      if (error) throw error;
+      const map = Object.fromEntries((data ?? []).map((r) => [r.key, r.value]));
+      return [1, 2, 3, 4, 5].reduce<Record<number, string>>((acc, lv) => {
+        acc[lv] = map[`network_l${lv}_pct`] ?? '0';
+        return acc;
+      }, {});
+    },
+    staleTime: 30_000,
+  });
+  const [netEdit, setNetEdit] = useState<Record<number, string>>({});
+  const netValue = (lv: number) => netEdit[lv] ?? netPcts?.[lv] ?? '0';
+  const netDirty = Object.keys(netEdit).length > 0;
+
+  const saveNet = useMutation({
+    mutationFn: async () => {
+      for (const [lv, val] of Object.entries(netEdit)) {
+        const { error } = await supabase
+          .from('admin_settings')
+          .upsert({ key: `network_l${lv}_pct`, value: String(parseFloat(val) || 0) }, { onConflict: 'key' });
+        if (error) throw error;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['network_pcts'] });
+      setNetEdit({});
+      toast({ title: 'Bonus rete salvati' });
+    },
+    onError: (e: Error) => toast({ title: 'Errore', description: e.message, variant: 'destructive' }),
+  });
+
   const saveMutation = useMutation({
     mutationFn: async ({ id, patch }: { id: string; patch: Partial<LevelConfig> }) => {
       const { error } = await supabase.from('levels').update(patch).eq('id', id);
