@@ -12,15 +12,16 @@ export interface LevelStaticInfo {
   label: string;
 }
 
+/** Etichette allineate ai nomi presenti nella tabella `levels` su DB. */
 export const LEVEL_LABELS: Record<LevelName, string> = {
-  gamma: 'Starter',
-  beta: 'Builder',
-  bronze: 'Leader',
-  silver: 'Leader',
-  silver_elite: 'Elite',
-  gold: 'Diamond',
-  gold_elite: 'Diamond',
-  oro_vip: 'Diamond',
+  gamma: 'Oneway Start',
+  beta: 'Oneway Plus',
+  bronze: 'Oneway Pro',
+  silver: 'Oneway Pro',
+  silver_elite: 'Oneway Elite',
+  gold: 'Oneway Prime',
+  gold_elite: 'Oneway Prime',
+  oro_vip: 'Oneway Prime',
 };
 
 export const LEVEL_ORDER: LevelName[] = ['gamma', 'beta', 'bronze', 'silver', 'silver_elite', 'gold', 'gold_elite', 'oro_vip'];
