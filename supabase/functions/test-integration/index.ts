@@ -101,16 +101,36 @@ Deno.serve(async (req) => {
   }
 });
 
+// Only these Tron API hosts may be contacted by the server
+const ALLOWED_TRON_HOSTS = new Set([
+  "api.trongrid.io",
+  "api.shasta.trongrid.io",
+  "nile.trongrid.io",
+  "api.nileex.io",
+]);
+
 async function testTron(config: Record<string, string>) {
   const { api_url, api_key, company_wallet } = config;
   if (!api_url || !api_key || !company_wallet) {
     return { success: false, message: "Campi obbligatori mancanti (URL, API Key, Wallet)" };
   }
-  if (!company_wallet.startsWith("T") || company_wallet.length < 30) {
+  if (!/^T[1-9A-HJ-NP-Za-km-z]{25,40}$/.test(company_wallet)) {
     return { success: false, message: "Indirizzo wallet TRON non valido (deve iniziare con T)" };
   }
+  let base: URL;
   try {
-    const url = `${api_url.replace(/\/$/, "")}/v1/accounts/${company_wallet}`;
+    base = new URL(api_url);
+  } catch {
+    return { success: false, message: "URL API non valido" };
+  }
+  if (base.protocol !== "https:" || !ALLOWED_TRON_HOSTS.has(base.hostname)) {
+    return {
+      success: false,
+      message: `Host API non consentito. Host ammessi: ${[...ALLOWED_TRON_HOSTS].join(", ")}`,
+    };
+  }
+  try {
+    const url = `https://${base.hostname}/v1/accounts/${encodeURIComponent(company_wallet)}`;
     const res = await fetch(url, {
       headers: { "TRON-PRO-API-KEY": api_key },
     });
