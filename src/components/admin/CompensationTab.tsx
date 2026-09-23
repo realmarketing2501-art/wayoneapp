@@ -57,6 +57,44 @@ export default function CompensationTab() {
     onError: (e: Error) => toast({ title: 'Errore', description: e.message, variant: 'destructive' }),
   });
 
+  // Bonus rete L1-L5 (percentuali sugli interessi della downline)
+  const { data: netPcts } = useQuery({
+    queryKey: ['network_pcts'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('admin_settings')
+        .select('key,value')
+        .in('key', ['network_l1_pct', 'network_l2_pct', 'network_l3_pct', 'network_l4_pct', 'network_l5_pct']);
+      if (error) throw error;
+      const map = Object.fromEntries((data ?? []).map((r) => [r.key, r.value]));
+      return [1, 2, 3, 4, 5].reduce<Record<number, string>>((acc, lv) => {
+        acc[lv] = map[`network_l${lv}_pct`] ?? '0';
+        return acc;
+      }, {});
+    },
+    staleTime: 30_000,
+  });
+  const [netEdit, setNetEdit] = useState<Record<number, string>>({});
+  const netValue = (lv: number) => netEdit[lv] ?? netPcts?.[lv] ?? '0';
+  const netDirty = Object.keys(netEdit).length > 0;
+
+  const saveNet = useMutation({
+    mutationFn: async () => {
+      for (const [lv, val] of Object.entries(netEdit)) {
+        const { error } = await supabase
+          .from('admin_settings')
+          .upsert({ key: `network_l${lv}_pct`, value: String(parseFloat(val) || 0) }, { onConflict: 'key' });
+        if (error) throw error;
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['network_pcts'] });
+      setNetEdit({});
+      toast({ title: 'Bonus rete salvati' });
+    },
+    onError: (e: Error) => toast({ title: 'Errore', description: e.message, variant: 'destructive' }),
+  });
+
   const saveMutation = useMutation({
     mutationFn: async ({ id, patch }: { id: string; patch: Partial<LevelConfig> }) => {
       const { error } = await supabase.from('levels').update(patch).eq('id', id);
@@ -149,6 +187,32 @@ export default function CompensationTab() {
               </Button>
             )}
           </div>
+        </div>
+
+        {/* Commissioni di rete L1-L5 (bonus sugli interessi della downline) */}
+        <div className="rounded-lg border border-accent/30 bg-accent/5 p-2.5">
+          <p className="text-[0.65rem] font-semibold text-foreground mb-1.5">
+            Bonus rete — % sugli interessi giornalieri della downline
+          </p>
+          <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
+            {([1, 2, 3, 4, 5] as const).map((lv) => (
+              <div key={lv}>
+                <Label className="text-[0.6rem] text-muted-foreground">Livello {lv} (%)</Label>
+                <Input
+                  type="number"
+                  step="0.1"
+                  value={netValue(lv)}
+                  onChange={(e) => setNetEdit((d) => ({ ...d, [lv]: e.target.value }))}
+                  className="h-7 text-xs"
+                />
+              </div>
+            ))}
+          </div>
+          {netDirty && (
+            <Button size="sm" className="h-7 text-xs gap-1 mt-2" onClick={() => saveNet.mutate()} disabled={saveNet.isPending}>
+              <Save className="h-3 w-3" /> Salva bonus rete
+            </Button>
+          )}
         </div>
         <div className="space-y-2">
           {levels.map((orig) => {
