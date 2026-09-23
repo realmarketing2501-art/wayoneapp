@@ -150,6 +150,32 @@ export default function CompensationTab() {
             )}
           </div>
         </div>
+
+        {/* Commissioni di rete L1-L5 (bonus sugli interessi della downline) */}
+        <div className="rounded-lg border border-accent/30 bg-accent/5 p-2.5">
+          <p className="text-[0.65rem] font-semibold text-foreground mb-1.5">
+            Bonus rete — % sugli interessi giornalieri della downline
+          </p>
+          <div className="grid grid-cols-3 gap-2 sm:grid-cols-5">
+            {([1, 2, 3, 4, 5] as const).map((lv) => (
+              <div key={lv}>
+                <Label className="text-[0.6rem] text-muted-foreground">Livello {lv} (%)</Label>
+                <Input
+                  type="number"
+                  step="0.1"
+                  value={netValue(lv)}
+                  onChange={(e) => setNetEdit((d) => ({ ...d, [lv]: e.target.value }))}
+                  className="h-7 text-xs"
+                />
+              </div>
+            ))}
+          </div>
+          {netDirty && (
+            <Button size="sm" className="h-7 text-xs gap-1 mt-2" onClick={() => saveNet.mutate()} disabled={saveNet.isPending}>
+              <Save className="h-3 w-3" /> Salva bonus rete
+            </Button>
+          )}
+        </div>
         <div className="space-y-2">
           {levels.map((orig) => {
             const l = merged(orig);
