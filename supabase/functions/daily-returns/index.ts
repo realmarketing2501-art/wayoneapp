@@ -6,16 +6,37 @@ import { createClient } from "npm:@supabase/supabase-js@2.45.0";
  * (FOR UPDATE su investimento + profilo, guardia anti doppio pagamento, ledger).
  * Questa edge function è solo il trigger schedulabile.
  */
-Deno.serve(async (req) => {
+async function isAuthorized(req: Request): Promise<boolean> {
+  // 1) Scheduled invocation with the shared cron secret (fail closed if unset)
   const cronSecret = Deno.env.get("CRON_SECRET");
-  if (cronSecret) {
-    const provided = req.headers.get("x-cron-secret");
-    if (provided !== cronSecret) {
-      return new Response(JSON.stringify({ error: "Unauthorized" }), {
-        status: 401,
-        headers: { "Content-Type": "application/json" },
-      });
-    }
+  const provided = req.headers.get("x-cron-secret");
+  if (cronSecret && provided && provided === cronSecret) return true;
+
+  // 2) Manual invocation by an authenticated admin user
+  const authHeader = req.headers.get("Authorization");
+  if (!authHeader?.startsWith("Bearer ")) return false;
+  const token = authHeader.replace("Bearer ", "");
+
+  const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+  if (token === serviceKey) return true;
+
+  const admin = createClient(Deno.env.get("SUPABASE_URL")!, serviceKey);
+  const { data: userData, error } = await admin.auth.getUser(token);
+  if (error || !userData?.user) return false;
+  const { data: roles } = await admin
+    .from("user_roles")
+    .select("role")
+    .eq("user_id", userData.user.id)
+    .eq("role", "admin");
+  return !!roles && roles.length > 0;
+}
+
+Deno.serve(async (req) => {
+  if (!(await isAuthorized(req))) {
+    return new Response(JSON.stringify({ error: "Unauthorized" }), {
+      status: 401,
+      headers: { "Content-Type": "application/json" },
+    });
   }
   try {
     const supabase = createClient(
