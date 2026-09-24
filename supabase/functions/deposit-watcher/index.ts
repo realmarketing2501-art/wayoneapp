@@ -51,6 +51,15 @@ Deno.serve(async (req) => {
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
   );
 
+  // Read-only diagnostic: no DB writes, no crediting
+  if (new URL(req.url).searchParams.get("diagnostic") === "trc20") {
+    const { data: cfg } = await supabase.from("api_integrations").select("config").eq("service_key", "tron_trc20").single();
+    const out = await watchTRC20(supabase, cfg?.config as Record<string, string>, true);
+    return new Response(JSON.stringify({ diagnostic: true, timestamp: new Date().toISOString(), ...out }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+
   const results = { trc20: null as any, erc20: null as any, expired: 0, matched: 0 };
 
   try {
