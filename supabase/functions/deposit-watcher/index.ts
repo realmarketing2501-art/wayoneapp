@@ -51,6 +51,15 @@ Deno.serve(async (req) => {
     Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
   );
 
+  // Read-only diagnostic: no DB writes, no crediting
+  if (new URL(req.url).searchParams.get("diagnostic") === "trc20") {
+    const { data: cfg } = await supabase.from("api_integrations").select("config").eq("service_key", "tron_trc20").single();
+    const out = await watchTRC20(supabase, cfg?.config as Record<string, string>, true);
+    return new Response(JSON.stringify({ diagnostic: true, timestamp: new Date().toISOString(), ...out }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+
   const results = { trc20: null as any, erc20: null as any, expired: 0, matched: 0 };
 
   try {
@@ -102,38 +111,87 @@ Deno.serve(async (req) => {
   }
 });
 
-async function watchTRC20(supabase: any, config: Record<string, string>) {
+const TRC20_ENDPOINT = "/v1/accounts/{wallet}/transactions/trc20";
+
+// Fetch one TronGrid page with retry on 5xx/429. Logs full diagnostics (never the API key).
+async function fetchTronPage(url: string, apiKey: string, wallet: string) {
+  const delays = [0, 1000, 3000];
+  let last: { status: number; body: string } = { status: 0, body: "" };
+  for (let attempt = 0; attempt < delays.length; attempt++) {
+    if (delays[attempt]) await new Promise((r) => setTimeout(r, delays[attempt]));
+    let status = 0;
+    let text = "";
+    try {
+      const res = await fetch(url, { headers: { "TRON-PRO-API-KEY": apiKey, Accept: "application/json" } });
+      status = res.status;
+      text = await res.text();
+      if (res.ok) return { ok: true as const, status, json: JSON.parse(text) };
+    } catch (e) {
+      text = `network error: ${(e as Error).message}`;
+    }
+    last = { status, body: text };
+    console.error(JSON.stringify({
+      level: "error",
+      source: "TronGrid",
+      endpoint: TRC20_ENDPOINT,
+      url, // contains no API key (key is sent only as header)
+      http_status: status,
+      response_body: text.slice(0, 2000),
+      wallet,
+      attempt: attempt + 1,
+      timestamp: new Date().toISOString(),
+    }));
+    if (status && status < 500 && status !== 429) break; // non-retryable
+  }
+  return { ok: false as const, ...last };
+}
+
+async function watchTRC20(supabase: any, config: Record<string, string>, diagnostic = false) {
   const { api_url, api_key, company_wallet } = config;
   if (!api_url || !api_key || !company_wallet) {
     throw new Error("TRC-20 config incomplete");
   }
 
-  // Get last sync state
   const { data: state } = await supabase
     .from("watcher_state")
     .select("*")
     .eq("network", "TRC-20")
     .single();
 
-  await supabase.from("watcher_state").update({ status: "syncing", last_sync_at: new Date().toISOString() }).eq("network", "TRC-20");
-
-  // Query TRC20 USDT transfers TO company wallet
-  const minTimestamp = state?.last_block_timestamp
-    ? new Date(state.last_block_timestamp).getTime()
-    : Date.now() - 3600000; // last hour if first run
-
-  const url = `${api_url.replace(/\/$/, "")}/v1/accounts/${company_wallet}/transactions/trc20?only_to=true&limit=50&min_timestamp=${minTimestamp}&contract_address=${USDT_TRC20_CONTRACT}`;
-
-  const res = await fetch(url, {
-    headers: { "TRON-PRO-API-KEY": api_key },
-  });
-
-  if (!res.ok) {
-    throw new Error(`TronGrid responded ${res.status}`);
+  if (!diagnostic) {
+    await supabase.from("watcher_state").update({ status: "syncing", last_sync_at: new Date().toISOString() }).eq("network", "TRC-20");
   }
 
-  const body = await res.json();
-  const txs = body.data || [];
+  const minTimestamp = state?.last_block_timestamp
+    ? new Date(state.last_block_timestamp).getTime()
+    : Date.now() - 3600000;
+
+  const base = api_url.replace(/\/$/, "");
+  let url: string | null =
+    `${base}/v1/accounts/${encodeURIComponent(company_wallet)}/transactions/trc20?only_to=true&only_confirmed=true&limit=200&min_timestamp=${minTimestamp}&contract_address=${USDT_TRC20_CONTRACT}`;
+
+  const txs: any[] = [];
+  const pages: any[] = [];
+  for (let page = 0; url && page < 10; page++) {
+    const r = await fetchTronPage(url, api_key, company_wallet);
+    if (!r.ok) {
+      const err = `TronGrid responded ${r.status} | url=${url} | wallet=${company_wallet} | body=${r.body.slice(0, 300)}`;
+      if (diagnostic) return { error: err, http_status: r.status, url, wallet: company_wallet, response_body: r.body.slice(0, 2000), pages };
+      throw new Error(err);
+    }
+    const data = r.json.data || [];
+    pages.push({ url, http_status: r.status, count: data.length });
+    // Only incoming USDT transfers to the company wallet
+    for (const tx of data) {
+      if (tx.to === company_wallet && tx.token_info?.address === USDT_TRC20_CONTRACT) txs.push(tx);
+    }
+    const fp = r.json.meta?.fingerprint;
+    url = fp ? r.json.meta?.links?.next || `${url.replace(/&fingerprint=[^&]*/, "")}&fingerprint=${encodeURIComponent(fp)}` : null;
+  }
+
+  if (diagnostic) {
+    return { http_status: 200, wallet: company_wallet, endpoint: TRC20_ENDPOINT, pages, incoming_usdt_txs: txs.length, sample: txs.slice(0, 5).map(t => ({ tx: t.transaction_id, from: t.from, value: Number(t.value) / 1e6, ts: new Date(t.block_timestamp).toISOString() })) };
+  }
   let detected = 0;
   let latestTimestamp = state?.last_block_timestamp;
   let latestBlock = state?.last_block_number || 0;
