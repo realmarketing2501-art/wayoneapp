@@ -137,9 +137,19 @@ export default function WatcherTab() {
                 <div>Accreditati: <span className="text-foreground">{ws.total_credited}</span></div>
                 <div>Errori: <span className={cn("text-foreground", ws.total_errors > 0 && "text-destructive")}>{ws.total_errors}</span></div>
               </div>
+              <div className="rounded border border-border p-2 space-y-1 text-[0.65rem] text-muted-foreground">
+                <div>Ultima sync riuscita: <span className="text-foreground">{ws.last_success_at ? new Date(ws.last_success_at).toLocaleString('it-IT') : '—'}</span></div>
+                <div>Periodo sincronizzato: <span className="text-foreground">{ws.last_sync_from ? `${new Date(ws.last_sync_from).toLocaleString('it-IT')} → ${new Date(ws.last_sync_to).toLocaleString('it-IT')}` : '—'}</span></div>
+                <div className="grid grid-cols-3 gap-1">
+                  <div>Trovate: <span className="text-foreground">{ws.last_found ?? 0}</span></div>
+                  <div>Nuove: <span className="text-foreground">{ws.last_new ?? 0}</span></div>
+                  <div>Già elaborate: <span className="text-foreground">{ws.last_duplicates ?? 0}</span></div>
+                </div>
+              </div>
               {ws.last_error && (
-                <div className="rounded bg-destructive/10 p-2 text-[0.6rem] text-destructive">
+                <div className="rounded bg-destructive/10 p-2 text-[0.6rem] text-destructive break-all">
                   {ws.last_error}
+                  {ws.last_error_at && <span className="block opacity-70">{new Date(ws.last_error_at).toLocaleString('it-IT')}</span>}
                 </div>
               )}
             </CardContent>

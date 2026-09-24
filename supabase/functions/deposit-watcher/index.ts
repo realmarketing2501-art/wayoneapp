@@ -162,82 +162,96 @@ async function watchTRC20(supabase: any, config: Record<string, string>, diagnos
     await supabase.from("watcher_state").update({ status: "syncing", last_sync_at: new Date().toISOString() }).eq("network", "TRC-20");
   }
 
-  const minTimestamp = state?.last_block_timestamp
-    ? new Date(state.last_block_timestamp).getTime()
-    : Date.now() - 3600000;
+  // Persistent checkpoint: last fully successful sync end, minus a safety overlap.
+  const OVERLAP_MS = 10 * 60 * 1000;
+  const INITIAL_LOOKBACK_MS = 24 * 3600 * 1000;
+  const MAX_PAGES = 50;
+  const syncTo = Date.now();
+  const checkpoint = state?.last_success_at
+    ? new Date(state.last_success_at).getTime()
+    : state?.last_block_timestamp
+      ? new Date(state.last_block_timestamp).getTime()
+      : syncTo - INITIAL_LOOKBACK_MS;
+  const minTimestamp = Math.max(0, checkpoint - OVERLAP_MS);
 
   const base = api_url.replace(/\/$/, "");
   let url: string | null =
-    `${base}/v1/accounts/${encodeURIComponent(company_wallet)}/transactions/trc20?only_to=true&only_confirmed=true&limit=200&min_timestamp=${minTimestamp}&contract_address=${USDT_TRC20_CONTRACT}`;
+    `${base}/v1/accounts/${encodeURIComponent(company_wallet)}/transactions/trc20?only_to=true&only_confirmed=true&limit=200&order_by=block_timestamp,asc&min_timestamp=${minTimestamp}&max_timestamp=${syncTo}&contract_address=${USDT_TRC20_CONTRACT}`;
 
   const txs: any[] = [];
   const pages: any[] = [];
-  for (let page = 0; url && page < 10; page++) {
+  let page = 0;
+  for (; url && page < MAX_PAGES; page++) {
     const r = await fetchTronPage(url, api_key, company_wallet);
     if (!r.ok) {
       const err = `TronGrid responded ${r.status} | url=${url} | wallet=${company_wallet} | body=${r.body.slice(0, 300)}`;
       if (diagnostic) return { error: err, http_status: r.status, url, wallet: company_wallet, response_body: r.body.slice(0, 2000), pages };
-      throw new Error(err);
+      throw new Error(err); // checkpoint NOT advanced -> next run re-covers the gap
     }
     const data = r.json.data || [];
     pages.push({ url, http_status: r.status, count: data.length });
-    // Only incoming USDT transfers to the company wallet
     for (const tx of data) {
       if (tx.to === company_wallet && tx.token_info?.address === USDT_TRC20_CONTRACT) txs.push(tx);
     }
     const fp = r.json.meta?.fingerprint;
     url = fp ? r.json.meta?.links?.next || `${url.replace(/&fingerprint=[^&]*/, "")}&fingerprint=${encodeURIComponent(fp)}` : null;
   }
+  const truncated = !!url; // more pages remain beyond MAX_PAGES
 
   if (diagnostic) {
-    return { http_status: 200, wallet: company_wallet, endpoint: TRC20_ENDPOINT, pages, incoming_usdt_txs: txs.length, sample: txs.slice(0, 5).map(t => ({ tx: t.transaction_id, from: t.from, value: Number(t.value) / 1e6, ts: new Date(t.block_timestamp).toISOString() })) };
+    return { http_status: 200, wallet: company_wallet, endpoint: TRC20_ENDPOINT, sync_from: new Date(minTimestamp).toISOString(), sync_to: new Date(syncTo).toISOString(), pages, incoming_usdt_txs: txs.length, truncated, sample: txs.slice(0, 5).map(t => ({ tx: t.transaction_id, from: t.from, value: Number(t.value) / 1e6, ts: new Date(t.block_timestamp).toISOString() })) };
   }
-  let detected = 0;
-  let latestTimestamp = state?.last_block_timestamp;
-  let latestBlock = state?.last_block_number || 0;
+
+  let newCount = 0;
+  let dupCount = 0;
+  let latestTs = 0;
+  let latestBlock = Number(state?.last_block_number || 0);
 
   for (const tx of txs) {
-    const amount = parseInt(tx.value || "0") / 1e6; // USDT has 6 decimals on TRC20
-    const txHash = tx.transaction_id;
-    const toAddr = tx.to;
-    const fromAddr = tx.from;
+    const amount = parseInt(tx.value || "0") / 1e6;
+    if (amount <= 0 || !tx.transaction_id) continue;
     const blockNum = tx.block_timestamp ? Math.floor(tx.block_timestamp / 1000) : 0;
-    const blockTs = tx.block_timestamp ? new Date(tx.block_timestamp).toISOString() : null;
 
-    if (amount <= 0) continue;
-
-    // Insert if not duplicate (upsert-like with ON CONFLICT)
-    const { error } = await supabase.from("detected_transactions").upsert({
-      tx_hash: txHash,
+    // Unique (tx_hash, network): re-read txs from the overlap are ignored, never re-credited.
+    const { data: inserted, error } = await supabase.from("detected_transactions").upsert({
+      tx_hash: tx.transaction_id,
       network: "TRC-20",
-      from_address: fromAddr,
-      to_address: toAddr,
+      from_address: tx.from,
+      to_address: tx.to,
       amount,
       token: "USDT",
-      confirmations: MIN_CONFIRMATIONS_TRC20, // TronGrid returns confirmed txs
+      confirmations: MIN_CONFIRMATIONS_TRC20,
       block_number: blockNum,
-      block_timestamp: blockTs,
+      block_timestamp: tx.block_timestamp ? new Date(tx.block_timestamp).toISOString() : null,
       status: "detected",
-    }, { onConflict: "tx_hash,network", ignoreDuplicates: true });
+    }, { onConflict: "tx_hash,network", ignoreDuplicates: true }).select("id");
 
-    if (!error) detected++;
-
-    if (tx.block_timestamp && (!latestTimestamp || new Date(tx.block_timestamp) > new Date(latestTimestamp))) {
-      latestTimestamp = new Date(tx.block_timestamp).toISOString();
-    }
+    if (error) throw new Error(`DB insert failed for ${tx.transaction_id}: ${error.message}`);
+    if (inserted && inserted.length > 0) newCount++; else dupCount++;
+    if (tx.block_timestamp > latestTs) latestTs = tx.block_timestamp;
     if (blockNum > latestBlock) latestBlock = blockNum;
   }
 
-  // Update watcher state
+  // If truncated, only advance up to the last processed tx (asc order), so the rest is picked up next run.
+  const newCheckpoint = truncated && latestTs ? latestTs : syncTo;
+
   await supabase.from("watcher_state").update({
     status: "idle",
     last_sync_at: new Date().toISOString(),
-    last_block_number: latestBlock || state?.last_block_number || 0,
-    last_block_timestamp: latestTimestamp || state?.last_block_timestamp,
-    total_detected: (state?.total_detected || 0) + detected,
+    last_success_at: new Date(newCheckpoint).toISOString(),
+    last_sync_from: new Date(minTimestamp).toISOString(),
+    last_sync_to: new Date(syncTo).toISOString(),
+    last_found: txs.length,
+    last_new: newCount,
+    last_duplicates: dupCount,
+    last_pages: page,
+    last_error: null,
+    last_block_number: latestBlock,
+    last_block_timestamp: latestTs ? new Date(latestTs).toISOString() : state?.last_block_timestamp,
+    total_detected: (state?.total_detected || 0) + newCount,
   }).eq("network", "TRC-20");
 
-  return { detected, txs_scanned: txs.length };
+  return { found: txs.length, new: newCount, duplicates: dupCount, pages: page, truncated };
 }
 
 async function watchERC20(supabase: any, config: Record<string, string>) {

@@ -1301,9 +1301,16 @@ export type Database = {
           id: string
           last_block_number: number
           last_block_timestamp: string | null
+          last_duplicates: number
           last_error: string | null
           last_error_at: string | null
+          last_found: number
+          last_new: number
+          last_pages: number
+          last_success_at: string | null
           last_sync_at: string | null
+          last_sync_from: string | null
+          last_sync_to: string | null
           network: string
           status: string
           total_confirmed: number
@@ -1317,9 +1324,16 @@ export type Database = {
           id?: string
           last_block_number?: number
           last_block_timestamp?: string | null
+          last_duplicates?: number
           last_error?: string | null
           last_error_at?: string | null
+          last_found?: number
+          last_new?: number
+          last_pages?: number
+          last_success_at?: string | null
           last_sync_at?: string | null
+          last_sync_from?: string | null
+          last_sync_to?: string | null
           network: string
           status?: string
           total_confirmed?: number
@@ -1333,9 +1347,16 @@ export type Database = {
           id?: string
           last_block_number?: number
           last_block_timestamp?: string | null
+          last_duplicates?: number
           last_error?: string | null
           last_error_at?: string | null
+          last_found?: number
+          last_new?: number
+          last_pages?: number
+          last_success_at?: string | null
           last_sync_at?: string | null
+          last_sync_from?: string | null
+          last_sync_to?: string | null
           network?: string
           status?: string
           total_confirmed?: number
